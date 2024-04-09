@@ -1,0 +1,771 @@
+﻿@{
+	var uid_ = !string.IsNullOrEmpty(Context.Session.GetString(loginModel.SessionKeyName1));
+
+	var tooltip_ = " User Name : " + Context.Session.GetString(loginModel.SessionKeyName5) + Environment.NewLine+ " Bank Name : " + Context.Session.GetString(loginModel.SessionKeyName6)
+			+ Environment.NewLine + " Role Name : " + Context.Session.GetString(loginModel.SessionKeyName7) + Environment.NewLine + 
+			" Valid Until : " + Context.Session.GetString(loginModel.SessionKeyName2);
+}
+
+<style>
+	.u-side-nav--second-level-menu-link.active {
+		color: #d61f2a;
+	}
+
+	.hide {
+		display: none;
+	}
+	.active{
+		color: #d61f2a;
+	}
+</style>
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>@ViewData["Title"] - NIFT Image Based Clearing</title>
+		@* <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>*@
+	<script src="~/js/Jquery-3.7.0.js" type="text/javascript"></script>
+		<link rel="shortcut icon" href="~/assets/img/logo/favicon.png">
+		<link href="~/assets/css/proximanova.css" rel="stylesheet" />
+		<link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/font-awsome/css/all.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/icon-awesome/css/font-awesome.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/icon-line/css/simple-line-icons.css" rel="stylesheet" />
+		<link href="~/assets/vendor/icon-etlinefont/style.css" rel="stylesheet" />
+		<link href="~/assets/vendor/icon-line-pro/style.css" rel="stylesheet" />
+		<link href="~/assets/vendor/icon-hs/style.css" rel="stylesheet" />
+		<link href="~/assets/vendor/hs-admin-icons/hs-admin-icons.css" rel="stylesheet" />
+		<link href="~/assets/vendor/animate.css" rel="stylesheet" />
+		@* <link href="~/assets/vendor/malihu-scrollbar/jquery.mCustomScrollbar.css" rel="stylesheet" /> *@
+		<link href="~/assets/vendor/flatpickr/dist/css/flatpickr.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/chartist-js/chartist.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/chartist-js-tooltip/chartist-plugin-tooltip.css" rel="stylesheet" />
+		<link href="~/assets/vendor/fancybox/jquery.fancybox.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/hamburgers/hamburgers.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet" />
+		<link href="~/assets/vendor/datatables/css/datatables.min.css" rel="stylesheet" />
+		<link href="~/assets/css/unify-admin.css" rel="stylesheet" />
+		<link href="~/assets/css/custom.css" rel="stylesheet" />
+		<link href="~/assets/vendor/select2/select2.min.css" rel="stylesheet" />
+	<link href="~/assets/vendor/toastr/toastr.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+	@if (uid_)
+	{
+		<div class="loader-wrapper" id="loade_it">
+			<span class="loader">
+				<img src="~/assets/img/logo/favicon.png" alt="Logo">
+			</span>
+		</div>
+
+		<!-- Start Header -->
+		<header id="js-header" class="u-header u-header--sticky-top">
+			<div class="u-header__section u-header__section--admin-dark g-min-height-65">
+				<nav class="navbar no-gutters g-pa-0">
+					<div class="col-auto d-flex flex-nowrap u-header-logo-toggler g-py-12">
+						<a href="/IBCSHome" class="navbar-brand d-flex align-self-center g-hidden-xs-down g-line-height-1 py-0">
+							<img src="~/assets/img/logo/cheqpro2.png" class="img-fluid">
+						</a>
+						<a class="js-side-nav u-header__nav-toggler d-flex align-self-center ml-auto" href="#" data-hssm-class="u-side-nav--mini u-sidebar-navigation-v1--mini" data-hssm-body-class="u-side-nav-mini" data-hssm-is-close-all-except-this="true" data-hssm-target="#sideNav">
+							<i class="fa-solid fa-arrow-left text-white"></i>
+						</a>
+					</div>
+
+					<div class="u-header--search col-sm g-py-12 g-ml-15--sm g-ml-20--md g-mr-10--sm" aria-labelledby="searchInvoker" action="#!">
+						<p class="mb-0" id="ct"></p>
+					</div>
+
+					<div class=" col-sm g-py-12 g-ml-15--sm g-ml-20--md g-mr-10--sm">
+						<div class="media" href="~/IBCSHome">
+							<div style="padding-top: 5px;padding-left: 5px;padding-right: 10px;">
+								<h6>Clearing Date</h6>
+							</div>
+							<div style="width: 60%;">
+							@{
+								if (!string.IsNullOrEmpty(Context.Session.GetString(GetProdtModel.dtFrom)))
+								{
+									
+									<select id="input_date" class="form-control" style="background:white;color:black;" onchange="GetProdate()">
+											<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.dtFrom)</option>
+											<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT2)</option>
+										<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT3)</option>
+										<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT4)</option>
+											<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT5)</option>
+									</select>
+									
+								}
+								else
+								{
+									
+										<select id="input_date" class="form-control" style="background:white;color:black;" onchange="GetProdate()">
+											<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT1)</option>
+											<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT2)</option>
+										<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT3)</option>
+										<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT4)</option>
+											<option style="background:white;color:black;">@Context.Session.GetString(GetProdtModel.DT5)</option>
+									</select>
+									
+								}
+							}
+							</div>
+						</div>
+						
+					</div>
+
+					<div class="col-auto d-flex g-py-12 g-pl-40--lg ml-auto">
+						<div class="col-auto d-flex g-pt-5 g-pt-0--sm g-pl-10 g-pl-20--sm">
+							<div class="g-pos-rel g-px-10--lg">
+								<a id="profileMenuInvoker" class="d-block" href="#" aria-controls="profileMenu" aria-haspopup="true" aria-expanded="false" data-dropdown-event="click" data-dropdown-target="#profileMenu" data-dropdown-type="css-animation" data-dropdown-duration="300" data-dropdown-animation-in="fadeIn" data-dropdown-animation-out="fadeOut">
+									<span class="g-pos-rel">
+										<span class="u-badge-v2--xs u-badge--top-right g-hidden-sm-up g-bg-secondary g-mr-5"></span>
+										<img class="g-width-30 g-width-40--md g-height-30 g-height-40--md rounded-circle g-mr-10--sm" src="~/assets/img/user.png" alt="Image description" title="@tooltip_" />
+									</span>
+									<span class="g-pos-rel g-top-2">
+										<span class="g-hidden-sm-down">@Context.Session.GetString(loginModel.SessionKeyName5) - @Context.Session.GetString(loginModel.SessionKeyName6)
+											- @Context.Session.GetString(loginModel.SessionKeyName7)
+										</span>
+										<i class="hs-admin-angle-down g-pos-rel g-top-2 g-ml-10"></i>
+									</span>
+								</a>
+								<ul id="profileMenu" onmouseover="" class="g-pos-abs g-left-0 g-width-100x--lg g-nowrap g-py-20 g-mt-17 rounded" aria-labelledby="profileMenuInvoker">
+									@* <li class="g-mb-10">
+								<a class="media g-color-primary--hover g-py-5 g-px-20" href="#">
+									<span class="d-flex align-self-center g-mr-12">
+										<i class="fa-solid fa-circle-info"></i>
+									</span>
+									<span class="media-body align-self-center">Info</span>
+								</a>
+							</li> *@
+									<li class="g-mb-10">
+										<a class="media g-color-primary--hover g-py-5 g-px-20" href="~/logoff">
+											<span class="d-flex align-self-center g-mr-12">
+												<i class="fa-solid fa-right-from-bracket"></i>
+											</span>
+											<span class="media-body align-self-center">Log Out</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</header>
+		<!-- End Header -->
+
+		<main class="container-fluid px-0 g-pt-65">
+			<div class="row no-gutters g-pos-rel">
+				<!-- Start Sidebar Nav -->
+				<div id="sideNav" class="col-auto u-sidebar-navigation-v1 u-sidebar-navigation--dark">
+					<ul id="sideNavMenu" class="u-sidebar-navigation-v1-menu u-side-nav--top-level-menu g-min-height-100vh mb-0">
+						@* <li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--top-level-menu-item">
+							<div class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" href="~/IBCSHome">
+								@{
+									if (!string.IsNullOrEmpty(Context.Session.GetString(GetProdtModel.dtFrom)))
+									{
+											<select id="input_date" class="form-control" onchange="GetProdate()">
+												<option>@Context.Session.GetString(GetProdtModel.dtFrom)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT2)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT3)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT4)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT5)</option>
+											</select>
+									}
+									else
+									{
+											<select id="input_date" class="form-control" onchange="GetProdate()">
+												<option>@Context.Session.GetString(GetProdtModel.DT1)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT2)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT3)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT4)</option>
+												<option>@Context.Session.GetString(GetProdtModel.DT5)</option>
+											</select>
+									}
+								}
+								
+							</div>
+						</li> *@
+
+						<li id="home_" class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--top-level-menu-item has-active">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" href="~/IBCSHome">
+								<span class="d-flex align-self-center g-pos-rel g-font-size-18 g-mr-18">
+									<i class="fa-solid fa-house"></i>
+								</span>
+								<span class="media-body align-self-center">Home</span>
+							</a>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" id="rep_" href="#" data-hssm-target="#subMenu1">
+								<span class="d-flex align-self-center g-pos-rel g-font-size-18 g-mr-18">
+									<i class="fa-sharp fa-regular fa-files"></i>
+								</span>
+								<span class="media-body align-self-center">Reports</span>
+								<span class="d-flex align-self-center u-side-nav--control-icon">
+									<i class="hs-admin-angle-right main-menu-right"></i>
+								</span>
+								<span class="u-side-nav--has-sub-menu__indicator"></span>
+							</a>
+							<ul id="subMenu1" class="u-sidebar-navigation-v1-menu u-side-nav--second-level-menu mb-0">
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bktrsc" href="/Reports/BkTrSc">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Bank Transfer Scroll</span>
+									</a>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="brtrsc" href="/Reports/BrTrSc">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Branch Transfer Scroll</span>
+									</a>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="trsb" href="/Reports/TreasuryBook">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Treasury Scoreboard</span>
+									</a>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="sbk_" href="/Reports/SubBook">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Treasury Sub-Book</span>
+									</a>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="rtgsrep" href="/Reports/RTGSReports">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">SBP Composite NETS</span>
+									</a>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bknet" href="/Reports/BkNETS">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">SBP Consolidated Position</span>
+									</a>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" href="#" id="int_a" data-hssm-target="#subMenuLevels1">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-sharp fa-regular fa-files"></i>
+										</span>
+										<span class="media-body align-self-center">Intercity Reports</span>
+										<span class="d-flex align-self-center u-side-nav--control-icon">
+											<i class="hs-admin-angle-right sub-menu-right"></i>
+										</span>
+									</a>
+									<ul id="subMenuLevels1" class="u-side-nav--third-level-menu u-sidebar-navigation-v1-menu mb-0">
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="intbkts" href="/Reports/IntercityBankTS">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-building-columns"></i>
+												</span>
+												<span class="media-body align-self-center">Bank Transfer Scroll</span>
+											</a>
+										</li>
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="intbrts" href="/Reports/IntercityBranchTS">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-building-columns"></i>
+												</span>
+												<span class="media-body align-self-center">Branch Transfer Scroll</span>
+											</a>
+										</li>
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="intsbk" href="/Reports/IntercitySubBook">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-building-columns"></i>
+												</span>
+												<span class="media-body align-self-center">Treasury Sub-Book</span>
+											</a>
+										</li>
+										@* <li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bknet" href="/Reports/BkNETS">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-building-columns"></i>
+												</span>
+												<span class="media-body align-self-center">SBP Consolidated Position</span>
+											</a>
+										</li> *@
+									</ul>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" href="#" id="memo_" data-hssm-target="#subMenuLevels2">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-memo"></i>
+										</span>
+										<span class="media-body align-self-center">Return Memo (Outward)</span>
+										<span class="d-flex align-self-center u-side-nav--control-icon">
+											<i class="hs-admin-angle-right sub-menu-right"></i>
+										</span>
+									</a>
+									<ul id="subMenuLevels2" class="u-side-nav--third-level-menu u-sidebar-navigation-v1-menu mb-0">
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="brmemo" href="/Reports/BrMemo">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-memo"></i>
+												</span>
+												<span class="media-body align-self-center">Branch Return Memo</span>
+											</a>
+										</li>
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="cpumemo" href="/Reports/CPUMemo">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-memo"></i>
+												</span>
+												<span class="media-body align-self-center">CPU Return Memo</span>
+											</a>
+										</li>
+									</ul>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bkadvice" href="/Imagedata/BkAdvice">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">Advices</span>
+									</a>
+								</li>
+
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" href="#" id="mis_" data-hssm-target="#subMenuLevels3">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">MIS</span>
+										<span class="d-flex align-self-center u-side-nav--control-icon">
+											<i class="hs-admin-angle-right sub-menu-right"></i>
+										</span>
+									</a>
+									<ul id="subMenuLevels3" class="u-side-nav--third-level-menu u-sidebar-navigation-v1-menu mb-0">
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="pkisummary" href="/Reports/PKISummary">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-file"></i>
+												</span>
+												<span class="media-body align-self-center">Dongle Report</span>
+											</a>
+										</li>
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="rtndt" href="/Reports/RtnDtLogRpt">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-file"></i>
+												</span>
+												<span class="media-body align-self-center">Return Log Report</span>
+											</a>
+										</li>
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="usrdt" href="/Reports/UsrDtLogRpt">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-file"></i>
+												</span>
+												<span class="media-body align-self-center">User Log Report</span>
+											</a>
+										</li>
+										<li class="u-side-nav--third-level-menu-item">
+											<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bkhv" href="/Reports/BkHv">
+												<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+													<i class="fa-regular fa-file"></i>
+												</span>
+												<span class="media-body align-self-center">Bank High Value Report</span>
+											</a>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" id="imgfl_" href="#" data-hssm-target="#subMenu2">
+								<span class="d-flex align-self-center g-pos-rel g-font-size-18 g-mr-18">
+									<i class="fa-regular fa-file"></i>
+								</span>
+								<span class="media-body align-self-center">Image/Data Files</span>
+								<span class="d-flex align-self-center u-side-nav--control-icon">
+									<i class="hs-admin-angle-right main-menu-right"></i>
+								</span>
+								<span class="u-side-nav--has-sub-menu__indicator"></span>
+							</a>
+							<ul id="subMenu2" class="u-sidebar-navigation-v1-menu u-side-nav--second-level-menu mb-0">
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="df_" href="/Imagedata/Down_bankdf">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">Bank Data File</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="df_2" href="/Imagedata/Down_branchdf">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">Branch Data File</span>
+									</a>
+								</li>
+								@* <li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="df_2" href="/Imagedata/BranchICLFile">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">Branch ICL File</span>
+									</a>
+								</li> *@
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bICL_HubFile" href="/Imagedata/HubICLFile">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">Bank ICL HUB File</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bICL_Upload" href="/Imagedata/UploadICLFile">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">Upload Inward Return File (Offline)</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="bICL_view" href="/Imagedata/FileTraffic">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-file"></i>
+										</span>
+										<span class="media-body align-self-center">File Transfer View</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" href="#" id="sc_p" data-hssm-target="#subMenu3">
+								<span class="d-flex align-self-center g-pos-rel g-font-size-18 g-mr-18">
+									<i class="hs-admin-layers"></i>
+								</span>
+								<span class="media-body align-self-center">Scoreboard Position</span>
+								<span class="d-flex align-self-center u-side-nav--control-icon">
+									<i class="hs-admin-angle-right main-menu-right"></i>
+								</span>
+								<span class="u-side-nav--has-sub-menu__indicator"></span>
+							</a>
+							<ul id="subMenu3" class="u-sidebar-navigation-v1-menu u-side-nav--second-level-menu mb-0">
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="net_" href="/Scoreboard/Netboard">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Scoreboard Banks Net Position</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="city_" href="/Scoreboard/Cityboard">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Scoreboard Banks Clearing Position</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="br_" href="/Scoreboard/Branchboard">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Scoreboard Branch Clearing Position</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" href="#" id="rtn_" data-hssm-target="#subMenu4">
+								<span class="d-flex align-self-center g-pos-rel g-font-size-18 g-mr-18">
+									<i class="fa-regular fa-building-columns"></i>
+								</span>
+								<span class="media-body align-self-center">Online Inward Return</span>
+								<span class="d-flex align-self-center u-side-nav--control-icon">
+									<i class="hs-admin-angle-right main-menu-right"></i>
+								</span>
+								<span class="u-side-nav--has-sub-menu__indicator"></span>
+							</a>
+							<ul id="subMenu4" class="u-sidebar-navigation-v1-menu u-side-nav--second-level-menu mb-0">
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="mark_" href="/Marking/Inwardmarking">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Auto Posting</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="mark_" href="/Marking/Inwardmarking">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Online Inward Return Marking</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="auth" href="/Marking/Inwardauthorization">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Inward Return Authorization</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="summ" href="/Marking/ReturnSummary">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Inward Return Summary</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" id="cyc_" href="/Cycleinfo/CycleTime">
+								<span class="d-flex align-self-center g-font-size-18 g-mr-18">
+									<i class="fa-regular fa-ticket"></i>
+								</span>
+								<span class="media-body align-self-center">Clearing Cycle Timing</span>
+							</a>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" id="bkem_" href="/Cycleinfo/BankEmail">
+								<span class="d-flex align-self-center g-pos-rel g-font-size-18 g-mr-18">
+									<i class="fa-regular fa-envelope"></i>
+								</span>
+								<span class="media-body align-self-center">Bank Branch Email Setup</span>
+							</a>
+						</li>
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" id="comp_" href="/Tickets/ComplaintManagement">
+								<span class="d-flex align-self-center g-font-size-18 g-mr-18">
+									<i class="fa-regular fa-ticket"></i>
+								</span>
+								<span class="media-body align-self-center">Complain Management</span>
+							</a>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" id="req_" href="/Tickets/OtherRequest">
+								<span class="d-flex align-self-center g-font-size-18 g-mr-18">
+									<i class="fa-regular fa-ticket"></i>
+								</span>
+								<span class="media-body align-self-center">Request</span>
+							</a>
+						</li>
+
+						<li class="u-sidebar-navigation-v1-menu-item u-side-nav--has-sub-menu u-side-nav--top-level-menu-item">
+							<a class="media u-side-nav--top-level-menu-link u-side-nav--hide-on-hidden g-px-15 g-py-12" id="info_" href="#" data-hssm-target="#subMenu5">
+								<span class="d-flex align-self-center g-pos-rel g-font-size-18 g-mr-18">
+									<i class="fa-regular fa-circle-info"></i>
+								</span>
+								<span class="media-body align-self-center">Info</span>
+								<span class="d-flex align-self-center u-side-nav--control-icon">
+									<i class="hs-admin-angle-right main-menu-right"></i>
+								</span>
+								<span class="u-side-nav--has-sub-menu__indicator"></span>
+							</a>
+							<ul id="subMenu5" class="u-sidebar-navigation-v1-menu u-side-nav--second-level-menu mb-0">
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="circ_" href="/Reports/BkCircular">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-building-columns"></i>
+										</span>
+										<span class="media-body align-self-center">Circular</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="help_" href="/Reports/BkHelp">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-circle-question"></i>
+										</span>
+										<span class="media-body align-self-center">Help</span>
+									</a>
+								</li>
+								<li class="u-sidebar-navigation-v1-menu-item u-side-nav--second-level-menu-item">
+									<a class="media u-side-nav--second-level-menu-link g-px-15 g-py-12" id="contact_" href="~/ContactUs">
+										<span class="d-flex align-self-center g-mr-15 g-mt-minus-1">
+											<i class="fa-regular fa-phone"></i>
+										</span>
+										<span class="media-body align-self-center">Contact Us</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<!-- End Sidebar Nav -->
+				<div class="col g-ml-45 g-ml-0--lg g-pb-65--md">
+					@* <div class="tick_">
+					<div class="ticker-wrap">
+						<div class="ticker">
+							<div class="ticker__item">NIFT Image Based Cheque Clearing</div>
+							<div class="ticker__item">Certificate Valid Until : @Context.Session.GetString(loginModel.SessionKeyName2)</div>
+						</div>
+					</div>
+					</div> *@
+					@RenderBody()
+				</div>
+			</div>
+		</main>
+	}
+	else
+	{
+		<link href="~/assets/css/login.css" rel="stylesheet" />
+		IgnoreBody();
+		<form class="signin-form" id="form1">
+			<div class="container">
+				<div class="row no-gutters justify-content-center">
+					<div class="col-lg-6">
+						<div class="card logout-card">
+							<img src="/assets/img/logo/cheqpro2.png" class="d-block mx-auto login-logo pt-4" />
+							<h5 class="mb-0 text-center">IBCS Clearing System</h5>
+							<div class="wrap text-center">
+								<div class="login-wrap p-4 px-md-5 py-md-4">
+									<div class="d-flex">
+										<div class="w-100">
+											<h3 class="mb-4 font-weight-bold text-danger">System Message</h3>
+											<h4>Your session is expired due to security reasons.</h4>
+											<h4>Please Login again by clicking the button below.</h4>
+											<h4>Or Contact <span class="font-weight-bold text-danger">NIFT@111 112 222 EXT 247, 277 & 276</span> for further details.</h4>
+											<h4>Thank You.</h4>
+										</div>
+									</div>
+									<div class="form-group text-center my-3">
+										<a href="/login" class="btn btn-secondary btn-lg rounded submit px-3 w-100">Re-Login</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<p class="mt-4 mb-0 text-center powered">Powered by NIFT</p>
+			</div>
+			
+		</form>
+	}
+	
+	<script src="~/assets/vendor/jquery/jquery.min.js"></script>
+		<script src="~/js/Top.js" type="text/javascript"></script>
+		
+		<script src="~/assets/vendor/jquery-migrate/jquery-migrate.min.js"></script>
+		<script src="~/assets/vendor/popper.js/popper.min.js"></script>
+		<script src="~/assets/vendor/bootstrap/bootstrap.min.js"></script>
+		<script src="~/assets/vendor/cookiejs/jquery.cookie.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/widget.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/version.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/keycode.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/position.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/unique-id.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/safe-active-element.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/widgets/menu.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/widgets/mouse.js"></script>
+		<script src="~/assets/vendor/jquery-ui/ui/widgets/datepicker.js"></script>
+		<script src="~/assets/vendor/appear.js"></script>
+		<script src="~/assets/vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
+		<script src="~/assets/vendor/flatpickr/dist/js/flatpickr.min.js"></script>
+		@* <script src="~/assets/vendor/malihu-scrollbar/jquery.mCustomScrollbar.concat.min.js"></script> *@
+		<script src="~/assets/vendor/chartist-js/chartist.min.js"></script>
+		<script src="~/assets/vendor/chartist-js-tooltip/chartist-plugin-tooltip.js"></script>
+		<script src="~/assets/vendor/fancybox/jquery.fancybox.min.js"></script>
+		<script src="~/assets/js/hs.core.js"></script>
+		<script src="~/assets/js/components/hs.side-nav.js"></script>
+		<script src="~/assets/js/helpers/hs.hamburgers.js"></script>
+		<script src="~/assets/js/components/hs.range-datepicker.js"></script>
+		<script src="~/assets/js/components/hs.datepicker.js"></script>
+		<script src="~/assets/js/components/hs.dropdown.js"></script>
+		<script src="~/assets/js/components/hs.scrollbar.js"></script>
+		<script src="~/assets/js/components/hs.area-chart.js"></script>
+		<script src="~/assets/js/components/hs.donut-chart.js"></script>
+		<script src="~/assets/js/components/hs.bar-chart.js"></script>
+		<script src="~/assets/js/helpers/hs.focus-state.js"></script>
+		<script src="~/assets/js/components/hs.popup.js"></script>
+		<script src="~/assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
+		<script src="~/assets/vendor/datatables/js/datatables.min.js"></script>
+		<script src="~/assets/js/custom.js"></script>
+		<script src="~/assets/vendor/select2/select2.min.js"></script>
+
+	<script type="text/javascript">
+		document.onreadystatechange = function () {
+			var state = document.readyState
+			if (state == 'interactive') {
+				document.getElementById('loade_it').style.visibility = "visible";
+			} else if (state == 'complete') {
+				setTimeout(function () {
+					document.getElementById('loade_it').style.visibility = "hidden";
+				}, 100);
+			}
+		}
+
+		$(document).ready(function () {
+			$.ajax({
+				type: 'GET',
+				url: '/GetProdt?handler=LoadDt',
+				success: function (result) {
+					var resp = result.split("|");
+					if (resp[0] == "Success") {
+						$('#input_date option').remove();
+						$('#input_date').append('<option selected value=' + resp[1] + '>' + resp[1] + '</option>');
+						$('#input_date').append('<option value=' + resp[2] + '>' + resp[2] + '</option>');
+						$('#input_date').append('<option value=' + resp[3] + '>' + resp[3] + '</option>');
+						$('#input_date').append('<option value=' + resp[4] + '>' + resp[4] + '</option>');
+						$('#input_date').append('<option value=' + resp[5] + '>' + resp[5] + '</option>');
+
+					}
+				}
+			});
+			});
+			function GetProdate() {
+				document.getElementById('loade_it').style.visibility = "visible";
+				var ddlbank = document.querySelector('#input_date');
+				var option1 = ddlbank.value;
+				$.ajax({
+					type: 'GET',
+					url: '/GetProdt?handler=SelectedDt',
+					dataType: 'json',
+					data: { "dt": option1 },
+					success: function (res) {
+						if (res == "login") {
+							window.location.replace('/login');
+						}
+					}
+
+				});
+				document.getElementById('loade_it').style.visibility = "hidden";
+			}
+		
+	</script>
+
+
+		@await RenderSectionAsync("Scripts", required: false)
+	</body>
+	</html>

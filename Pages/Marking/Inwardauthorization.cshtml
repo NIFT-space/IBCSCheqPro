@@ -1,0 +1,2214 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Marking.InwardauthorizationModel
+@{
+    var ex = "";
+}
+<style>
+    .hide {
+        display: none;
+    }
+</style>
+<div class="loader-wrapper" id="loader_ctauth" style="visibility:hidden">
+    <span class="loader">
+        <img src="~/assets/img/logo/favicon.png" alt="Logo">
+    </span>
+</div>
+<div class="g-pa-20">
+    <div id="div_msg" class="card bg-danger text-white shadow hide">
+        <div class="card-body">
+            <label id="msg"></label>
+        </div>
+    </div>
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+            <li class="list-inline-item">
+                <h4 class="mb-0 text-white">Online Inward Return Authorization</h4>
+            </li>
+        </ul>
+    </div>
+
+    <section class="section1">
+        <div class="row mt-3">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <form method="post">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-6 g-mb-10">
+                                <label for="oira_bank">Bank:</label>
+                                <select name="DDL_Bank" id="DDL_Bank" class="form-control">
+                                    @if (Model.instBanks != null)
+                                    {
+                                        @foreach (var bk in Model.instBanks)
+                                        {
+                                            <option value="@bk.InstId">@bk.InstName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-lg-6 g-mb-10">
+                                <label for="oira_cycle">Cycle:</label>
+                                <select name="DDL_Cycle" id="DDL_Cycle" class="form-control">
+                                    @if (Model.cycle != null)
+                                    {
+                                        @foreach (var cyc in Model.cycle)
+                                        {
+                                            <option value="@cyc.CycleNo">@cyc.CycleDesc</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-lg-6 g-mb-10">
+                                <label for="oira_city">City:</label>
+                                <select name="DDL_City" id="DDL_City" class="form-control">
+                                    @if (Model.cities != null)
+                                    {
+                                        @foreach (var ct in Model.cities)
+                                        {
+                                            <option value="@ct.cityid">@ct.cityname</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-lg-6 g-mb-10 text-right mt-3 mt-lg-auto">
+                                <button type="button" id="submit_" class="btn btn-danger btn-submit"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                            </div>
+
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="table-responsive h-100">
+                    <table class="table u-table--v3--bordered g-color-black text-center table-striped h-100">
+                        <thead>
+                            <tr>
+                                <th>Summary</th>
+                                <th>Count</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-danger">Awaiting Auth</td>
+                                <td><span id="lblAwtAuthcount"></span></td>
+                                <td><span id="lblAwtAuthAmount"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-danger">Authorized</td>
+                                <td><span id="lblAuthcount"></span></td>
+                                <td><span id="lblAuthAmount"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-danger">Rejected</td>
+                                <td><span id="lblRejcount"></span></td>
+                                <td><span id="lblRejAmount"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <ul class="nav nav-pills mb-3 oira-tabs" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="awaiting-tab" data-toggle="pill" data-target="#awaiting" type="button" role="tab" aria-controls="awaiting" aria-selected="true">Awaiting Auth</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="authorize-tab" data-toggle="pill" data-target="#authorize" type="button" role="tab" aria-controls="authorize" aria-selected="false">Authorized</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="rejected-tab" data-toggle="pill" data-target="#rejected" type="button" role="tab" aria-controls="rejected" aria-selected="false">Rejected</button>
+                    </li>
+                </ul>
+                <div class="tab-content mt-4" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="awaiting" role="tabpanel" aria-labelledby="awaiting-tab">
+                        <div class="table-responsive">
+
+                            <table id="Awitauth_tab" class="table u-table--v3--bordered g-color-black text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Branch Name</th>
+                                        <th>Pay</th>
+                                        <th>Amount</th>
+                                        <th>Awaiting Auth</th>
+                                        <th>Amount</th>
+                                        <th>Authorized</th>
+                                        <th>Amount</th>
+                                        <th>Rejected</th>
+                                        <th>Amount</th>
+                                        <th>Deffer</th>
+                                        <th>Amount</th>
+                                        <th>Returns</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @* @if (Model.obj != null)
+                                {
+                                @foreach (var file in Model.obj)
+                                {
+                                    <tr>
+                                    <td>@file.BranchName</td>
+                                    <td>@file.Pay</td>
+                                    <td>@file.PayAmount</td>
+                                    <td>@file.NoAction</td>
+                                    <td>@file.NoActionAmount</td>
+                                    <td>@file.Authorize</td>
+                                    <td>@file.AuthorizeAmount</td>
+                                    <td>@file.Reject</td>
+                                    <td>@file.RejectAmount</td>
+                                    <td>@file.Defer</td>
+                                    <td>@file.DeferAmount</td>
+                               <td><button type="button" onclick="return ImageButton1('@file.BranchID')" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td>
+                                    </tr>
+                                }
+                                } *@
+                                </tbody>
+                                <tbody id="Awtauthrefresh">
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="authorize" role="tabpanel" aria-labelledby="authorize-tab">
+                        <div class="table-responsive">
+
+                            <table id="auth_tab" class="table u-table--v3--bordered g-color-black text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Branch Name</th>
+                                        <th>Pay</th>
+                                        <th>Amount</th>
+                                        <th>Awaiting Auth</th>
+                                        <th>Amount</th>
+                                        <th>Authorized</th>
+                                        <th>Amount</th>
+                                        <th>Rejected</th>
+                                        <th>Amount</th>
+                                        <th>Deffer</th>
+                                        <th>Amount</th>
+                                        <th>Returns</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="authrefresh">
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
+                    </div>
+                    <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
+                        <div class="table-responsive">
+                            <table id="Rej_tab" class="table u-table--v3--bordered g-color-black text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Branch Name</th>
+                                        <th>Pay</th>
+                                        <th>Amount</th>
+                                        <th>Awaiting Auth</th>
+                                        <th>Amount</th>
+                                        <th>Authorized</th>
+                                        <th>Amount</th>
+                                        <th>Rejected</th>
+                                        <th>Amount</th>
+                                        <th>Deffer</th>
+                                        <th>Amount</th>
+                                        <th>Returns</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="Rejrefresh">
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section2">
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 text-right">
+                                <button type="button" class="btn btn-danger back_btn_1"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                
+                        <div class="table-responsive mt-4">
+                            <table class="table table-bordered table-striped bank-transfer text-center" id="oira_transfer_2">
+                                <thead>
+                                    <tr>
+                                        <th>Tr Seq No</th>
+                                        <th>OW Bank</th>
+                                        <th>OW Branch</th>
+                                        <th>Acc No</th>
+                                        <th>Chq No</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Image</th>
+                                        <th>Authorized/Rejected</th>
+                                        <th>Comments</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        <tbody id="tableBody1">
+                                    @* <tr>
+                                        <td>@file.hostID</td>
+                                        <td>@file.RBkNm</td>
+                                        <td>@file.RBrNm</td>
+                                        <td>@file.AccNo</td>
+                                        <td>@file.ChqNo</td>
+                                        <td>@file.Amount</td>
+                                        <td>@file.Std</td>
+                                        <td>
+                                            <button onclick="return ImageButton1('@file.hostID','@file.SBkNm',
+                                                       '@file.SBrNm','@file.RBkNm','@file.RBrNm','@file.TrCode','@file.CycleDesc',
+                                                        '@file.ChqNo','@file.AccNo','@file.TrId','@file.IWOWID','@file.ClgType','@file.CityName','@file.Amount',
+                                                        '@file.IQA','@file.UV','@file.Bar','@file.MICR','@file.Std','@file.Dup','@file.WMark','@file.AvgChqSize','@file.TChq','@file.TChq',
+                                                        '@file.reasonid','@file.Reason','@file.TruncTime','@file.TruncBy','@file.Settled','@file.SetTime','@file.SetBy','@file.AuthBy',
+                                                        '@file.AuthDateTime','@file.IsAuth','@file.Undersize_Image','@file.Folded_or_Torn_Document_Corners','@file.Folded_or_Torn_Document_Edges',
+                                                        '@file.Framing_Error','@file.Document_Skew','@file.Oversize_Image','@file.Piggy_Back','@file.Image_Too_Light','@file.Image_Too_Dark',
+                                                        '@file.Horizontal_Streaks','@file.Below_Minimum_Compressed_Image_Size','@file.Above_Maximum_Compressed_Image_Size','@file.Spot_Noise','@file.Front_Rear_Dimension_Mismatch',
+                                                        '@file.Carbon_Strip','@file.Out_of_Focus')" type="button" class="btn btn-secondary view_btn">
+                                                <i class="fa-solid fa-eye"></i> View
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <i class="fa-solid fa-square-check fa-2x" id="Authorized" onclick="myFunction1('@file.hostID','@file.IsAuth')"></i>
+                                            <i class="fa-solid fa-square-xmark fa-2x" id="Rejected" onclick="myFunction2('@file.hostID', '@file.Settled', $('#DDL_Cycle').val(), $('#DDL_City').val())"></i>
+
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" id="edit_btn"><i class="fa-solid fa-pen"></i> Edit</button>
+                                            <p class="mb-0 pt-3">Maker</p>
+                                            <input type="text" class="form-control" id="" hidden>
+                                            <p class="mb-0">Authorizer</p>
+                                            <input type="text" class="form-control" id="" hidden>
+                                        </td>
+                                    </tr> *@
+                                </tbody>
+                            </table>
+                        </div>
+                   
+
+                <p class="mb-0 mt-3 font-weight-bold">Note: Account number if not read from MICR will not be included in duplicate cheques as well as in additional information statistics</p>
+                <button type="button" onclick="AuthorizeAll($('#DDL_Cycle').val(), $('#DDL_City').val(), $('#DDL_Bank').val())" class="btn btn-danger mt-3">Authorize All</button>
+                <button type="button" onclick="UnAuthorizeAll($('#DDL_Cycle').val(), $('#DDL_City').val(), $('#DDL_Bank').val())" class="btn btn-danger mt-3">UnAuthorize All</button>
+                <button type="button" onclick="SendForReview($('#DDL_Cycle').val(), $('#DDL_City').val(), $('#DDL_Bank').val())" class="btn btn-danger mt-3">Send for Review All</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section3">
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-12 text-right">
+                                <button type="button" class="btn btn-danger back_btn_2"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table-responsive">
+                    <table class="table table-bordered table-striped text-center" id="oira_transfer2">
+                        <thead>
+                            <tr>
+                                <th>Tr Seq No</th>
+                                <th>OW Bank Name</th>
+                                <th>OW Branch Name</th>
+                                <th>IW Bank Name</th>
+                                <th>IW Branch Name</th>
+                                <th>Tran Code</th>
+                                <th>Acc No</th>
+                                <th>Chq No</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody2">
+                        </tbody>
+                    </table>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 col-lg-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="bg-danger p-2 text-center text-white font-weight-bold">IQA Result</div>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <table class="table iqa-result-table">
+                            <tbody>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Undersize Instrument</td>
+                                                    <td><span id="UnderInstrument"></span></td>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 p-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Folded or Torn Document Corners</td>
+                                                    <td><span id="FdCorners"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Folded or Torn Document Edges</td>
+                                                    <td><span id="FdEdges"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Framing Error</td>
+                                                    <td><span id="FramingError"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 p-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Document Skew</td>
+                                                    <td><span id="DocumentSkew"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Oversize Instrument</td>
+                                                    <td><span id="OSInstrument"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Piggy Back</td>
+                                                    <td><span id="PiggyBack"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 p-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Image Too Light</td>
+                                                    <td><span id="ImageTooLight"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Image Too Dark</td>
+                                                    <td><span id="ImageTooDark"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Horizontal Streaks</td>
+                                                    <td><span id="HorizontalStreaks"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 p-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Below Mimimum Compressed Image Size</td>
+                                                    <td><span id="BMCISize"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Above Mimimum Compressed Image Size</td>
+                                                    <td><span id="AMCISize"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Front Rear Dimension Mismatch</td>
+                                                    <td><span id="FRDMismatch"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 p-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Carbon Strip</td>
+                                                    <td><span id="CarbonStrip"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Out of Focus</td>
+                                                    <td><span id="OutofFocus"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="box1">
+                    <img src="@ViewData["ImageDataURL"]" id="img1" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(1)"></i>
+                    </div>
+                </div>
+
+                <div class="box2 mt-3">
+                    <img src="@ViewData["ImageDataURL2"]" id="img2" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(2)"></i>
+                    </div>
+                </div>
+
+                <div class="box3 mt-3">
+                    <img src="@ViewData["ImageDataURL3"]" id="img3" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(3)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="myModal" class="modal img-modal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- <span class="rotate cursor" onclick="rotate()"><i class="fa-solid fa-rotate fa-1x"></i></span> -->
+                    <span class="close cursor" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
+                </div>
+                <div class="modal-body">
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL"]" id="img4" class="w-100" alt="Cheque">
+                    </div>
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL2"]" id="img5" class="w-100" alt="Cheque">
+                    </div>
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL2"]" id="img6" class="w-100" alt="Cheque">
+                    </div>
+                    <a class="prev-btn" onclick="plusSlides(-1)"><i class="fa-solid fa-chevron-left"></i></a>
+                    <a class="next-btn" onclick="plusSlides(1)"><i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        ////GET PROCESS DATE//////
+        var ddlbank = document.querySelector('#input_date');
+        var option1 = ddlbank.value;
+        $.ajax({
+            type: 'GET',
+            url: '/Marking/Inwardauthorization?handler=SelectedDt',
+            dataType: 'json',
+            data: { "dt": option1 }
+        });
+
+        if (location.search != '') {
+            try {
+                $("#DDL_Bank").val(location.search.split('&')[0].split('=')[1]);
+                $("#DDL_City").val(location.search.split('&')[1].split('=')[1]);
+                $("#DDL_Cycle").val(location.search.split('&')[2].split('=')[1]);
+            }
+            catch { }
+        }
+
+        $("#submit_").click(function () {
+            document.getElementById('loader_ctauth').style.visibility = "visible";
+            var DDL_Bank = $('#DDL_Bank').val();
+            var DDL_City = $('#DDL_City').val();
+            var DDL_Cycle = $('#DDL_Cycle').val();
+            var rowCount = 0;
+            var rowCountauth = 0;
+            var rowCountrej = 0;
+            var totalAmount = 0;
+            var tot_rej = 0;
+            var tot_auth = 0;
+            if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null)) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Marking/Inwardauthorization?handler=FetchFiles',
+                    dataType: 'json',
+                    data: {
+                        "Tab": 1,
+                        "DDL_Bank": DDL_Bank,
+                        "DDL_City": DDL_City,
+                        "DDL_Cycle": DDL_Cycle
+                    }, headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (data) {
+                        
+                        var table = $("#Awitauth_tab");
+                        table.empty();
+
+                        table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                            '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+                        if (data.obj == null) {
+                            $.each(data.objAuth, function (idx, elem) {
+                                rowCount += elem.nonAuth;
+                                rowCountauth += elem.authorize;
+                                rowCountrej += elem.reject;
+                                totalAmount += parseFloat(elem.nonAuthAmount);
+                                tot_auth += parseFloat(elem.authorizeAmount);
+                                tot_rej += parseFloat(elem.rejectAmount);
+                            })
+                        }
+                        else {
+                            $.each(data.obj, function (idx, elem) {
+
+                                // if (elem.noAction > 0) {
+                                table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                    '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                                    '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                                //}
+                            })
+                            $.each(data.objAuth, function (idx, elem) {
+                                rowCount += elem.nonAuth;
+                                rowCountauth += elem.authorize;
+                                rowCountrej += elem.reject;
+                                totalAmount += parseFloat(elem.nonAuthAmount);
+                                tot_auth += parseFloat(elem.authorizeAmount);
+                                tot_rej += parseFloat(elem.rejectAmount);
+                            })
+                        }
+                        $('#lblAwtAuthcount').empty();
+                        $('#lblAwtAuthAmount').empty();
+                        $('#lblAwtAuthcount').text(rowCount);
+                        $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+                        $('#lblAuthcount').empty();
+                        $('#lblAuthAmount').empty();
+                        $('#lblAuthcount').text(rowCountauth);
+                        $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+                        $('#lblRejcount').empty();
+                        $('#lblRejAmount').empty();
+                        $('#lblRejcount').text(rowCountrej);
+                        $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+                    }
+                });
+                
+                //window.location.replace('/Marking/Inwardauthorization' + '?d1=' + DDL_Bank + '&d2=' + DDL_City + '&d3=' + DDL_Cycle );
+            }
+            else {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select required fields!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+            setTimeout(
+                function () {
+                    document.getElementById('loader_ctauth').style.visibility = "hidden";
+                }, 1000);
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#auth').addClass('active');
+        $('#rtn_').addClass('u-side-nav-opened active');
+        $('#subMenu4').css('display', 'block');
+        $(".section2").hide();
+        $(".section3").hide();
+        // $(".view_btn_1").on("click",function(){
+        //     $(".section2").show();
+        //     $(".section1").hide();
+        //     $(".section3").hide();
+        // });
+       
+        $(".view_btn").on("click", function () {
+            $(".section3").show();
+            $(".section1").hide();
+            $(".section2").hide();
+        });
+        $(".back_btn_1").on("click", function () {
+            $(".section1").show();
+            $(".section2").hide();
+            $(".section3").hide();
+        });
+        $(".back_btn_2").on("click", function () {
+            $(".section2").show();
+            $(".section1").hide();
+            $(".section3").hide();
+        });
+
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        var totalAmount = 0;
+        // $.ajax({
+        //     type: 'GET',
+        //     url: '/Marking/Inwardauthorization?handler=ClickTab',
+        //     dataType: 'json',
+        //     data: {
+        //         "Tab": 1,
+        //         "DDL_Bank": DDL_Bank,
+        //         "DDL_City": DDL_City,
+        //         "DDL_Cycle": DDL_Cycle
+        //     },
+        //     success: function (data) {
+        //         var table = $("#Awitauth_tab");
+        //         table.empty();
+
+        //         table.append('<thead><tr><th>Branch Name </th><th> Pay </th><th> Amount </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+        //             '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+        //         $.each(data, function (idx, elem) {
+        //             if (elem.nonAuth == 1) {
+        //                 table.append('<tbody><tr><td>' + elem.branchName + '</td>' + '<td>' + elem.pay + '</td>' + '<td>' + elem.payAmount + '</td>' +
+        //                     '<td>' + elem.nonAuth + '</td>' + '<td>' + elem.nonAuthAmount + '</td>' + '<td>' + elem.authorize + '</td>' + '<td>' + elem.authorizeAmount + '</td>' +
+        //                     '<td>' + elem.reject + '</td>' + '<td>' + elem.rejectAmount + '</td>' + '<td>' + elem.defer + '</td>' + '<td>' + elem.deferAmount + '</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ');" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+        //                 rowCount++;
+        //                 totalAmount += parseFloat(elem.nonAuthAmount);
+        //             }
+        //         });
+        //         $('#lblAwtAuthcount').empty();
+        //         $('#lblAwtAuthAmount').empty();
+        //         $('#lblAwtAuthcount').text(rowCount);
+        //         $('#lblAwtAuthAmount').text(totalAmount.toFixed(2));
+        //     }
+        // });
+
+
+        // $("#submit_").click(function () {
+        //     var DDL_Bank1 = $('#DDL_Bank').val();
+        //     var DDL_City1 = $('#DDL_City').val();
+        //     var DDL_Cycle1 = $('#DDL_Cycle').val();
+        //     $.ajax({
+        //         type: 'GET',
+        //         url: '/Marking/Inwardauthorization?handler=ClickTab',
+        //         dataType: 'json',
+        //         data: {
+        //             "Tab": 1,
+        //             "DDL_Bank": DDL_Bank1,
+        //             "DDL_City": DDL_City1,
+        //             "DDL_Cycle": DDL_Cycle1
+        //         },
+        //         success: function (data) {
+        //             var table = $("#Awitauth_tab");
+        //             table.empty();
+
+        //             table.append('<thead><tr><th>Branch Name </th><th> Pay </th><th> Amount </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+        //                 '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+        //             $.each(data, function (idx, elem) {
+        //                 if (elem.nonAuth == 1) {
+        //                     table.append('<tbody><tr><td>' + elem.branchName + '</td>' + '<td>' + elem.pay + '</td>' + '<td>' + elem.payAmount + '</td>' +
+        //                         '<td>' + elem.nonAuth + '</td>' + '<td>' + elem.nonAuthAmount + '</td>' + '<td>' + elem.authorize + '</td>' + '<td>' + elem.authorizeAmount + '</td>' +
+        //                         '<td>' + elem.reject + '</td>' + '<td>' + elem.rejectAmount + '</td>' + '<td>' + elem.defer + '</td>' + '<td>' + elem.deferAmount + '</td>' + '<td>'
+        //                         + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ');" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Detail</button></td></tr></tbody>');
+        //                         // <button type="button" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+        //                     rowCount++;
+        //                     totalAmount += parseFloat(elem.nonAuthAmount);
+        //                 }
+        //             });
+        //             $('#lblAwtAuthcount').empty();
+        //             $('#lblAwtAuthAmount').empty();
+        //             $('#lblAwtAuthcount').text(rowCount);
+        //             $('#lblAwtAuthAmount').text(totalAmount.toFixed(2));
+        //         }
+        //     });
+
+        // });
+        // $("#maker").hide();
+        // $("#authorizer").hide();
+        // $("#edit_btn").on("click",function(){
+        //     $("#maker").show();
+        //     $("#authorizer").show();
+        // });
+
+        //             $('#oira_bank').select2();
+        // $('#oira_city').select2();
+        // $('#oira_cycle').select2();
+
+        // $('#oira_transfer_1').DataTable( {
+        //     dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //     "<'row'<'col-sm-12'tr>>" +
+        //     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //     buttons : [ { extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' } ],
+        // });
+
+        // $('#oira_transfer_2').DataTable( {
+        //     dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //     "<'row'<'col-sm-12'tr>>" +
+        //     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //     buttons : [ { extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' } ],
+        // });
+
+        // $('#oira_transfer_3').DataTable( {
+        //     dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //     "<'row'<'col-sm-12'tr>>" +
+        //     "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //     buttons : [ { extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' } ],
+        // });
+
+        $('#Awtauthrefresh').empty();
+        var rowCount = 0;
+        var rowCountauth = 0;
+        var rowCountrej = 0;
+        var totalAmount = 0;
+        var tot_rej = 0;
+        var tot_auth = 0;
+        var DDL_Bank1 = $('#DDL_Bank').val();
+        var DDL_City1 = $('#DDL_City').val();
+        var DDL_Cycle1 = $('#DDL_Cycle').val();
+        var DDL_Cycle1 = $('#DDL_Cycle').val();
+        $.ajax({
+            type: 'POST',
+            url: '/Marking/Inwardauthorization?handler=FetchFiles',
+            dataType: 'json',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: {
+                "Tab": 1,
+                "DDL_Bank": DDL_Bank1,
+                "DDL_City": DDL_City1,
+                "DDL_Cycle": DDL_Cycle1
+            },
+            success: function (data) {
+                var table = $("#Awitauth_tab");
+                table.empty();
+
+                table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                    '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+                if (data.obj == null) {
+                    $.each(data.objAuth, function (idx, elem) {
+                        rowCount += elem.nonAuth;
+                        rowCountauth += elem.authorize;
+                        rowCountrej += elem.reject;
+                        totalAmount += parseFloat(elem.nonAuthAmount);
+                        tot_auth += parseFloat(elem.authorizeAmount);
+                        tot_rej += parseFloat(elem.rejectAmount);
+                    })
+                }
+                else {
+                    $.each(data.obj, function (idx, elem) {
+
+                        // if (elem.noAction > 0) {
+                        table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                            '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                            '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                        //}
+                    })
+                    $.each(data.objAuth, function (idx, elem) {
+                        rowCount += elem.nonAuth;
+                        rowCountauth += elem.authorize;
+                        rowCountrej += elem.reject;
+                        totalAmount += parseFloat(elem.nonAuthAmount);
+                        tot_auth += parseFloat(elem.authorizeAmount);
+                        tot_rej += parseFloat(elem.rejectAmount);
+                    })
+                }
+                
+                $('#lblAwtAuthcount').empty();
+                $('#lblAwtAuthAmount').empty();
+                $('#lblAwtAuthcount').text(rowCount);
+                $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+                $('#lblAuthcount').empty();
+                $('#lblAuthAmount').empty();
+                $('#lblAuthcount').text(rowCountauth);
+                $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+                $('#lblRejcount').empty();
+                $('#lblRejAmount').empty();
+                $('#lblRejcount').text(rowCountrej);
+                $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+            }
+        });
+
+        $('#awaiting-tab').click(function () {
+            $('#Awtauthrefresh').empty();
+            var rowCount = 0;
+            var rowCountauth = 0;
+            var rowCountrej = 0;
+            var totalAmount = 0;
+            var tot_rej = 0;
+            var tot_auth = 0;
+            var DDL_Bank1 = $('#DDL_Bank').val();
+            var DDL_City1 = $('#DDL_City').val();
+            var DDL_Cycle1 = $('#DDL_Cycle').val();
+            $.ajax({
+                type: 'POST',
+                url: '/Marking/Inwardauthorization?handler=ClickTab',
+                dataType: 'json',
+                data: {
+                    "Tab": 1,
+                    "DDL_Bank": DDL_Bank1,
+                    "DDL_City": DDL_City1,
+                    "DDL_Cycle": DDL_Cycle1
+                },
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    var table = $("#Awitauth_tab");
+                    table.empty();
+
+                    table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                        '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+                    
+                        $.each(data, function (idx, elem) {
+                            if (elem.noAction > 0) {
+                                table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                    '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                                    '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                                // rowCount += elem.nonAuth;
+                                // totalAmount += parseFloat(elem.nonAuthAmount);
+                                // tot_auth += parseFloat(elem.authorizeAmount);
+                                // tot_rej += parseFloat(elem.rejectAmount);
+                            }
+                        });
+                    
+                    // $('#lblAwtAuthcount').empty();
+                    // $('#lblAwtAuthAmount').empty();
+                    // $('#lblAwtAuthcount').text(rowCount);
+                    // $('#lblAwtAuthAmount').text(totalAmount.toFixed(2));
+                    // $('#lblAuthcount').empty();
+                    // $('#lblAuthAmount').empty();
+                    // $('#lblAuthcount').text(rowCountauth);
+                    // $('#lblAuthAmount').text(tot_auth.toFixed(2));
+                    // $('#lblRejcount').empty();
+                    // $('#lblRejAmount').empty();
+                    // $('#lblRejcount').text(rowCountrej);
+                    // $('#lblRejAmount').text(tot_rej.toFixed(2));
+                }
+            });
+        });
+
+        $('#authorize-tab').click(function () {
+            $('#authrefresh').empty();
+            var rowCount = 0;
+            var rowCountauth = 0;
+            var rowCountrej = 0;
+            var totalAmount = 0;
+            var tot_rej = 0;
+            var tot_auth = 0;
+            var DDL_Bank1 = $('#DDL_Bank').val();
+            var DDL_City1 = $('#DDL_City').val();
+            var DDL_Cycle1 = $('#DDL_Cycle').val();
+            $.ajax({
+                type: 'POST',
+                url: '/Marking/Inwardauthorization?handler=ClickTab',
+                dataType: 'json',
+                data: {
+                    "Tab": 2,
+                    "DDL_Bank": DDL_Bank1,
+                    "DDL_City": DDL_City1,
+                    "DDL_Cycle": DDL_Cycle1
+                },
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    var table = $("#auth_tab");
+                    table.empty();
+
+                    table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                        '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+                    
+                        $.each(data, function (idx, elem) {
+                            if (elem.authorize > 0) {
+                                table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                    '<td>0</td>' + '<td>0</td>' + '<td>' + elem.authorize + '</td>' + '<td>' + addComas(parseFloat(elem.authorizeAmount).toFixed(2)) + '</td>' +
+                                    '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',1);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+
+                                // rowCountauth += elem.authorize;
+                                // totalAmount += parseFloat(elem.nonAuthAmount);
+                                // tot_auth += parseFloat(elem.authorizeAmount);
+                                // tot_rej += parseFloat(elem.rejectAmount);
+                            }
+                        });
+                    
+                    // $('#lblAwtAuthcount').empty();
+                    // $('#lblAwtAuthAmount').empty();
+                    // $('#lblAwtAuthcount').text(rowCount);
+                    // $('#lblAwtAuthAmount').text(totalAmount.toFixed(2));
+                    // $('#lblAuthcount').empty();
+                    // $('#lblAuthAmount').empty();
+                    // $('#lblAuthcount').text(rowCountauth);
+                    // $('#lblAuthAmount').text(tot_auth.toFixed(2));
+                    // $('#lblRejcount').empty();
+                    // $('#lblRejAmount').empty();
+                    // $('#lblRejcount').text(rowCountrej);
+                    // $('#lblRejAmount').text(tot_rej.toFixed(2));
+                }
+            });
+        });
+
+        $('#rejected-tab').click(function () {
+            $('#Rejrefresh').empty();
+            var DDL_Bank1 = $('#DDL_Bank').val();
+            var DDL_City1 = $('#DDL_City').val();
+            var DDL_Cycle1 = $('#DDL_Cycle').val();
+            var rowCount = 0;
+            var rowCountauth = 0;
+            var rowCountrej = 0;
+            var totalAmount = 0;
+            var tot_rej = 0;
+            var tot_auth = 0;
+            $.ajax({
+                type: 'POST',
+                url: '/Marking/Inwardauthorization?handler=ClickTab',
+                dataType: 'json',
+                data: {
+                    "Tab": 3,
+                    "DDL_Bank": DDL_Bank1,
+                    "DDL_City": DDL_City1,
+                    "DDL_Cycle": DDL_Cycle1
+                },
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function (data) {
+                    var table = $("#Rej_tab");
+                    table.empty();
+
+                    table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                        '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+                    
+                        $.each(data, function (idx, elema) {
+                            if (elema.reject > 0) {
+                                table.append('<tbody><tr><td>' + elema.branchName + '</td>' +
+                                    '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' +
+                                    '<td>' + elema.reject + '</td>' + '<td>' + addComas(parseFloat(elema.rejectAmount).toFixed(2)) + '</td>' + '<td>' + elema.defer + '</td>' + '<td>' + addComas(parseFloat(elema.deferAmount).toFixed(2)) + '</td>' + '<td><button type="button" onclick="return ImageButton1(' + elema.branchID + ',2);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+
+                                // rowCountrej += elem.reject;
+                                // totalAmount += parseFloat(elem.nonAuthAmount);
+                                // tot_auth += parseFloat(elem.authorizeAmount);
+                                // tot_rej += parseFloat(elem.rejectAmount);
+                            }
+                        });
+                    
+                    // $('#lblAwtAuthcount').empty();
+                    // $('#lblAwtAuthAmount').empty();
+                    // $('#lblAwtAuthcount').text(rowCount);
+                    // $('#lblAwtAuthAmount').text(totalAmount.toFixed(2));
+                    // $('#lblAuthcount').empty();
+                    // $('#lblAuthAmount').empty();
+                    // $('#lblAuthcount').text(rowCountauth);
+                    // $('#lblAuthAmount').text(tot_auth.toFixed(2));
+                    // $('#lblRejcount').empty();
+                    // $('#lblRejAmount').empty();
+                    // $('#lblRejcount').text(rowCountrej);
+                    // $('#lblRejAmount').text(tot_rej.toFixed(2));
+                }
+            });
+        });
+
+        // function loadData(targetId, selectedTab) {
+        //     $.ajax({
+        //         url: '/Marking/Inwardauthorizaion?handler=ClickTab&selectedTab=' + selectedTab,
+        //         method: 'GET',
+        //         success: function (data) {
+        //             $('#' + targetId).html(data);
+        //         },
+        //         error: function () {
+        //             console.error('Error loading data');
+        //         }
+        //     });
+        // }
+    });
+</script>
+
+<script>
+    function addComas(x) {
+        var parts = x.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    }
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        if (n > slides.length) {
+            slideIndex = 1
+        }
+        if (n < 1) {
+            slideIndex = slides.length
+        }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slides[slideIndex - 1].style.display = "block";
+    }
+
+    // function myFunction1(a) {
+    //     a.classList.toggle("fa-circle-xmark");
+    // }
+
+    // function myFunction2(b) {
+    //     b.classList.toggle("fa-circle-check");
+    // }
+</script>
+
+
+<script>
+    function ImageButton1(branchID, st_) {
+        $('#tableBody1').empty();
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        var table = $('#tableBody1');
+        $.ajax({
+            type: 'POST',
+            url: '/Marking/Inwardauthorization?handler=DetailsClick',
+            dataType: 'JSON',
+            data: {
+                "DDL_Bank": DDL_Bank, "DDL_branch": branchID, "DDL_City": DDL_City, "DDL_Cycle": DDL_Cycle, "st_": st_
+            },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                if(data == "mFailed")
+                {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Maker & checker can not be same person!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                    return;
+                }
+                $.each(data, function (idx, elem) {
+                    if (elem.reason != null) {
+                        var class_ = "";
+                        var class_2 = "";
+                        if (elem.isAuth == 0) {
+                            class_ = "far fa-square-check check fa-2x";
+                        }
+                        else {
+                            class_ = "far fa-square-check check fa-2x fas";
+                        }
+                        if (elem.settled == 0) {
+                            class_2 = "far fa-square-xmark xmark fa-2x";
+                        }
+                        else {
+                            class_2 = "far fa-square-xmark xmark fa-2x fas";
+                        }
+                        table.append('<tr><td>' + elem.trCode + '</td> <td>' + elem.rBkNm + '</td> <td>' + elem.rBrNm + '</td>' +
+                            '<td>' + String('0000000000000000' + elem.accNo).slice(-16) + '</td> <td>' + String('00000000' + elem.chqNo).slice(-8) + '</td> <td>' + addComas(parseFloat(elem.amount).toFixed(2)) + '</td> <td>' + elem.reason + '</td>' +
+                            '<td><button onclick="return ImageButton2(\'' + elem.hostID + '\', \'' + elem.trCode + '\', \'' + elem.sBkNm + '\', \'' + elem.sBrNm + '\', \'' + elem.rBkNm + '\', \'' + elem.rBrNm + '\', \'' + String('000' + elem.trId).slice(-3) + '\', \'' + elem.sBkId + '\', \'' + elem.sBrId + '\'' +
+                            ',\'' + elem.accNo + '\', \'' + elem.chqNo + '\', \'' + elem.amount + '\', \'' + elem.rBrId + '\', \'' + elem.undersize_Image + '\'' +
+                            ',\'' + elem.folded_or_Torn_Document_Corners + '\', \'' + elem.folded_or_Torn_Document_Edges + '\', \'' + elem.framing_Error + '\', \'' + elem.document_Skew + '\', \'' + elem.oversize_Image + '\'' +
+                            ',\'' + elem.piggy_Back + '\', \'' + elem.image_Too_Light + '\', \'' + elem.image_Too_Dark + '\', \'' + elem.horizontal_Streaks + '\', \'' + elem.below_Minimum_Compressed_Image_Size + '\'' +
+                            ',\'' + elem.above_Maximum_Compressed_Image_Size + '\', \'' + elem.front_Rear_Dimension_Mismatch + '\', \'' + elem.carbon_Strip + '\', \'' + elem.out_of_Focus + '\', \'' + elem.cycleDesc + '\', \'' + elem.clgType + '\', \'' + elem.cityName + '\')" type="button" class="btn btn-secondary view_btn">' +
+                            '<i class= "fa-solid fa-eye"></i>View</button></td><td><i class= \'' + class_ + '\' id = "Authorized" onclick = "myFunction1(' + elem.hostID + ',' + elem.isAuth + ', ' + DDL_Bank + ' , ' + DDL_Cycle + ', ' + DDL_City + ')" > </i>' +
+                            '<i class=\'' + class_2 + '\' id ="Rejected" onclick = "myFunction2(' + elem.hostID + ', ' + elem.settled + ', ' + DDL_Bank + ' , ' + DDL_Cycle + ', ' + DDL_City + ')" > </i></td>' +
+
+                            '<td><button type="button" class="btn btn-danger" id="edit_btn_' + elem.hostID + '" onclick="Click_Edit(' + elem.hostID + ')"><i class="fa-solid fa-pen"></i> Edit</button>' +
+                            '<p class="mb-0 pt-3"> Maker </p><input type = "text" class= "form-control" id = "maker" hidden ><label> ' + elem.comment1 + '</label>' +
+                            '<p class="mb-0"> Authorizer </p><input type = "text" class= "form-control" id = "authorizer_' + elem.hostID + '" style = "display:none;" ><label> ' + elem.comment2 + '</label>' +
+                            '<button type = "button" class="btn btn-danger"  id="upd_btn_'+ elem.hostID +'" onclick="Update_Comment(' + elem.hostID + ')" style = "display:none;"> Update </button>' +
+                            '<button type = "button" class= "btn btn-danger" id="canc_btn_' + elem.hostID + '" onclick="Click_Canc(' + elem.hostID + ')" style = "display:none;"> Cancel </button></td></tr> ');
+                    }
+                });
+                $(".section2").show();
+                $(".section1").hide();
+                $(".section3").hide();
+            }
+        });
+    }
+    function Click_Edit(hostID) {
+        var upd = "#upd_btn_" + hostID;
+        var canc = "#canc_btn_" + hostID;
+        var maker_ = "#authorizer_" + hostID;
+        $(maker_).show();
+        $(upd).show();
+        $(canc).show();
+    }
+    function Click_Canc(hostID) {
+        var upd = "#upd_btn_" + hostID;
+        var canc = "#canc_btn_" + hostID;
+        var maker_ = "#authorizer_" + hostID;
+        $(maker_).hide();
+        $(upd).hide();
+        $(canc).hide();
+    }
+    // $(".btn").click(function () {
+    //     $("#authorizer").show();
+    //     $("#upd_btn").show();
+    //     $("#canc_btn").show();
+    // });
+    // $("#canc_btn").click(function () {
+    //     $("#authorizer").hide();
+    //     $("#upd_btn").hide();
+    //     $("#canc_btn").hide();
+    // });
+    function Update_Comment(hostid) {
+        var mkr_orig = '#authorizer_' + hostid;
+        var mkr_comment = $(mkr_orig).val();
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        var upd = "#upd_btn_" + hostid;
+        var canc = "#canc_btn_" + hostid;
+        var maker_ = "#authorizer_" + hostid;
+        if (mkr_comment == "" && mkr_comment == null) {
+            setTimeout(
+                function () {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Please enter comments!");
+                }, 5000);
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/marking/Inwardauthorization?handler=UpdateComment',
+            dataType: 'json',
+            data: {
+                "comments": mkr_comment, "DDL_Bank": DDL_Bank, "DDL_City": DDL_City, "DDL_Cycle": DDL_Cycle, "hostid": hostid
+            },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                if (data == "Success") {
+                    $(maker_).hide();
+                    $(upd).hide();
+                    $(canc).hide();
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Comment successfully updated");
+                    setTimeout(
+                    function () {
+                        $("#div_msg").addClass("hide")
+                    }, 5000);
+                }
+                else if (data == "CFailed") {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle is closed you cannot update comments!");
+                    $(maker_).hide();
+                    $(upd).hide();
+                    $(canc).hide();
+                    setTimeout(
+                        function () {
+                            $("#div_msg").addClass("hide")
+                        }, 5000);
+                }
+                else if (data == "Failed") {
+                    setTimeout(
+                        function () {
+                            $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                            $("#msg").text("Unable to update comments! Please try again!");
+                        }, 5000);
+                }
+            },
+            error: function () {
+                setTimeout(
+                    function () {
+                        $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                        $("#msg").text("Unable to update comments! Please try again!");
+                    }, 5000);
+            }
+        });
+        
+        $(maker_).hide();
+        $(upd).hide();
+        $(canc).hide();
+    }
+
+
+    function ImageButton2(hostID, TrCode, SBkNm, SBrNm, rBkNm, rBrNm, TrId, SBkId, SBrId, AccNo, ChqNo, Amount, RBrId, Undersize_Image, Folded_or_Torn_Document_Corners
+        ,Folded_or_Torn_Document_Edges,Framing_Error ,Document_Skew ,Oversize_image ,Piggy_Back ,Image_Too_Light ,Image_Too_Dark ,Horizontal_Streaks ,
+        Below_Minimum_Compressed_Image_Size ,Above_Maximum_Compressed_Image_Size ,Front_Rear_Dimension_Mismatch ,Carbon_Strip ,Out_of_Focus ,CycleDesc ,ClgType,CityName)
+    {
+        document.getElementById('loader_ctauth').style.visibility = "visible";
+        $(".section3").show();
+        $(".section1").hide();
+        $(".section2").hide();
+        $('#tableBody2').empty();
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        var table = $('#tableBody2');
+        $.ajax({
+            type: 'POST',
+            url: '/Marking/Inwardauthorization?handler=CheckImages',
+            dataType: 'JSON',
+            data: { "hostid": hostID },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                var resp = data.split("|");
+                table.empty();
+                table.append('<td>' + TrCode + '</td>', '<td>' + SBkNm + '</td>', '<td>' + SBrNm + '</td>', '<td>' + rBkNm + '</td>', '<td>' + rBrNm + '</td>',
+                    '<td>' + String('000' + TrId).slice(-3) + '</td>', '<td>' + String('0000000000000000' + AccNo).slice(-16) + '</td>', '<td>' + String('00000000' + ChqNo).slice(-8) + '</td>', '<td>' + addComas(parseFloat(Amount).toFixed(2)) + '</td>');
+
+                if (Undersize_Image == "Not OK") {
+                    $('#UnderInstrument').css('color', '#d61f2a');
+                    $('#UnderInstrument').css('font-weight', 'bold');
+                }
+                if (Folded_or_Torn_Document_Corners == "Not OK") {
+                    $('#FdCorners').css('color', '#d61f2a');
+                    $('#FdCorners').css('font-weight', 'bold');
+                }
+                if (Folded_or_Torn_Document_Edges == "Not OK") {
+                    $('#FdEdges').css('color', '#d61f2a');
+                    $('#FdEdges').css('font-weight', 'bold');
+                }
+                if (Framing_Error == "Not OK") {
+                    $('#FramingError').css('color', '#d61f2a');
+                    $('#FramingError').css('font-weight', 'bold');
+                }
+                if (Document_Skew == "Not OK") {
+                    $('#DocumentSkew').css('color', '#d61f2a');
+                    $('#DocumentSkew').css('font-weight', 'bold');
+                }
+                if (Oversize_image == "Not OK") {
+                    $('#OSInstrument').css('color', '#d61f2a');
+                    $('#OSInstrument').css('font-weight', 'bold');
+                }
+                if (Piggy_Back == "Not OK") {
+                    $('#PiggyBack').css('color', '#d61f2a');
+                    $('#PiggyBack').css('font-weight', 'bold');
+                }
+                if (Image_Too_Light == "Not OK") {
+                    $('#ImageTooLight').css('color', '#d61f2a');
+                    $('#ImageTooLight').css('font-weight', 'bold');
+                }
+                if (Image_Too_Dark == "Not OK") {
+                    $('#ImageTooDark').css('color', '#d61f2a');
+                    $('#ImageTooDark').css('font-weight', 'bold');
+                }
+                if (Horizontal_Streaks == "Not OK") {
+                    $('#HorizontalStreaks').css('color', '#d61f2a');
+                    $('#HorizontalStreaks').css('font-weight', 'bold');
+                }
+                if (Below_Minimum_Compressed_Image_Size == "Not OK") {
+                    $('#BMCISize').css('color', '#d61f2a');
+                    $('#BMCISize').css('font-weight', 'bold');
+                }
+                if (Above_Maximum_Compressed_Image_Size == "Not OK") {
+                    $('#AMCISize').css('color', '#d61f2a');
+                    $('#AMCISize').css('font-weight', 'bold');
+                }
+                if (Front_Rear_Dimension_Mismatch == "Not OK") {
+                    $('#FRDMismatch').css('color', '#d61f2a');
+                    $('#FRDMismatch').css('font-weight', 'bold');
+                }
+                if (Carbon_Strip == "Not OK") {
+                    $('#CarbonStrip').css('color', '#d61f2a');
+                    $('#CarbonStrip').css('font-weight', 'bold');
+                }
+                if (Out_of_Focus == "Not OK") {
+                    $('#OutofFocus').css('color', '#d61f2a');
+                    $('#OutofFocus').css('font-weight', 'bold');
+                }
+                $("#UnderInstrument").text(Undersize_Image);
+                $("#FdCorners").text(Folded_or_Torn_Document_Corners);
+                $("#FdEdges").text(Folded_or_Torn_Document_Edges);
+                $("#FramingError").text(Framing_Error);
+                $("#DocumentSkew").text(Document_Skew);
+                $("#OSInstrument").text(Oversize_image);
+                $("#PiggyBack").text(Piggy_Back);
+                $("#ImageTooLight").text(Image_Too_Light);
+                $("#ImageTooDark").text(Image_Too_Dark);
+                $("#HorizontalStreaks").text(Horizontal_Streaks);
+                $("#BMCISize").text(Below_Minimum_Compressed_Image_Size);
+                $("#AMCISize").text(Above_Maximum_Compressed_Image_Size);
+                $("#FRDMismatch").text(Front_Rear_Dimension_Mismatch);
+                $("#CarbonStrip").text(Carbon_Strip);
+                $("#OutofFocus").text(Out_of_Focus);
+
+                $("#img1").attr('src', resp[1]);
+                $("#img2").attr('src', resp[2]);
+                $("#img3").attr('src', resp[3]);
+                $("#img4").attr('src', resp[1]);
+                $("#img5").attr('src', resp[2]);
+                $("#img6").attr('src', resp[3]);
+
+                document.getElementById('loader_ctauth').style.visibility = "hidden";
+            }
+        });
+    }
+
+
+    // function AuthorizeAll(selectedCycle, selectedCity, selectedBank) {
+    //     $.ajax({
+    //         url: '/Marking/Inwardauthorization?handler=AuthorizeAll',
+    //         method: 'POST',
+    //         data: {
+
+    //             "selectedCycle": selectedCycle,
+    //             "selectedCity": selectedCity,
+    //             "selectedBank": selectedBank
+    //         },
+    //         headers: {
+    //             RequestVerificationToken:
+    //                 $('input:hidden[name="__RequestVerificationToken"]').val()
+    //         },
+    //         success: function (data) {
+    //             console.log("Authorization response: " + data);
+    //             if (data === true) {
+    //                 $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+    //                 $("#msg").text("Authorized successfully");
+    //                 setTimeout(
+    //                     function () {
+    //                         $('#div_msg').addClass("hide");
+    //                     }, 5000);
+    //                 document.getElementById('loader_ctauth').style.visibility = "visible";
+    //                 var DDL_Bank = $('#DDL_Bank').val();
+    //                 var DDL_City = $('#DDL_City').val();
+    //                 var DDL_Cycle = $('#DDL_Cycle').val();
+    //                 var rowCount = 0;
+    //                 var rowCountauth = 0;
+    //                 var rowCountrej = 0;
+    //                 var totalAmount = 0;
+    //                 var tot_rej = 0;
+    //                 var tot_auth = 0;
+    //                 if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null)) {
+
+    //                     $.ajax({
+    //                         type: 'POST',
+    //                         url: '/Marking/Inwardauthorization?handler=FetchFiles',
+    //                         dataType: 'json',
+    //                         data: {
+    //                             "Tab": 1,
+    //                             "DDL_Bank": DDL_Bank,
+    //                             "DDL_City": DDL_City,
+    //                             "DDL_Cycle": DDL_Cycle
+    //                         }, headers: {
+    //                             RequestVerificationToken:
+    //                                 $('input:hidden[name="__RequestVerificationToken"]').val()
+    //                         },
+    //                         success: function (data) {
+    //                             var table = $("#Awitauth_tab");
+    //                             table.empty();
+
+    //                             table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+    //                                 '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+    //                             $.each(data, function (idx, elem) {
+
+    //                                 if (elem.noAction > 0) {
+    //                                     table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+    //                                         '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+    //                                         '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+    //                                     rowCount += elem.nonAuth;
+    //                                     rowCountauth += elem.authorize;
+    //                                     rowCountrej += elem.reject;
+    //                                     totalAmount += parseFloat(elem.nonAuthAmount);
+    //                                     tot_auth += parseFloat(elem.authorizeAmount);
+    //                                     tot_rej += parseFloat(elem.rejectAmount);
+    //                                 }
+    //                             })
+
+    //                             $('#lblAwtAuthcount').empty();
+    //                             $('#lblAwtAuthAmount').empty();
+    //                             $('#lblAwtAuthcount').text(rowCount);
+    //                             $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+    //                             $('#lblAuthcount').empty();
+    //                             $('#lblAuthAmount').empty();
+    //                             $('#lblAuthcount').text(rowCountauth);
+    //                             $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+    //                             $('#lblRejcount').empty();
+    //                             $('#lblRejAmount').empty();
+    //                             $('#lblRejcount').text(rowCountrej);
+    //                             $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+    //                         }
+    //                     });
+    //                     document.getElementById('loader_ctauth').style.visibility = "hidden";
+    //                     //window.location.replace('/Marking/Inwardauthorization' + '?d1=' + DDL_Bank + '&d2=' + DDL_City + '&d3=' + DDL_Cycle);
+    //                 }
+    //             }
+    //             else {
+    //                 $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+    //                 $("#msg").text("Unable to authorize!");
+    //                 setTimeout(
+    //                     function () {
+    //                         $('#div_msg').addClass("hide");
+    //                     }, 5000);
+    //             }
+    //         },
+    //         error: function () {
+    //             $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+    //             $("#msg").text("Unable to Authorize Please mark again!");
+    //             setTimeout(
+    //                 function () {
+    //                     $('#div_msg').addClass("hide");
+    //                 }, 5000);
+    //         }
+    //     });
+    // }
+    function AuthorizeAll(selectedCycle, selectedCity, selectedBank) {
+        $.ajax({
+            url: '/Marking/Inwardauthorization?handler=AuthorizeAll',
+            method: 'POST',
+            data: {
+                "selectedCycle": selectedCycle,
+                "selectedCity": selectedCity,
+                "selectedBank": selectedBank
+            },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                console.log("Authorization response: " + data);
+                if (data === true) {
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("All Returns Authorized successfully");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                    document.getElementById('loader_ctauth').style.visibility = "visible";
+                    $(".section1").show();
+                    $(".section2").hide();
+                    $(".section3").hide();
+                    var DDL_Bank = $('#DDL_Bank').val();
+                    var DDL_City = $('#DDL_City').val();
+                    var DDL_Cycle = $('#DDL_Cycle').val();
+                    var rowCount = 0;
+                    var rowCountauth = 0;
+                    var rowCountrej = 0;
+                    var totalAmount = 0;
+                    var tot_rej = 0;
+                    var tot_auth = 0;
+                    if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null)) {
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Marking/Inwardauthorization?handler=FetchFiles',
+                            dataType: 'json',
+                            data: {
+                                "Tab": 1,
+                                "DDL_Bank": DDL_Bank,
+                                "DDL_City": DDL_City,
+                                "DDL_Cycle": DDL_Cycle
+                            }, headers: {
+                                RequestVerificationToken:
+                                    $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (data) {
+                                var table = $("#Awitauth_tab");
+                                table.empty();
+
+                                table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                                    '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+                                if (data.obj == null) {
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+                                else {
+                                    $.each(data.obj, function (idx, elem) {
+
+                                        // if (elem.noAction > 0) {
+                                        table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                            '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                                            '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                                        //}
+                                    })
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+
+                                $('#lblAwtAuthcount').empty();
+                                $('#lblAwtAuthAmount').empty();
+                                $('#lblAwtAuthcount').text(rowCount);
+                                $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+                                $('#lblAuthcount').empty();
+                                $('#lblAuthAmount').empty();
+                                $('#lblAuthcount').text(rowCountauth);
+                                $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+                                $('#lblRejcount').empty();
+                                $('#lblRejAmount').empty();
+                                $('#lblRejcount').text(rowCountrej);
+                                $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+                            }
+                        });
+                        document.getElementById('loader_ctauth').style.visibility = "hidden";
+                        //window.location.replace('/Marking/Inwardauthorization' + '?d1=' + DDL_Bank + '&d2=' + DDL_City + '&d3=' + DDL_Cycle);
+                    }
+                }
+                else if (data == "CycleFailed") {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle Is Closed!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Unable to Authorize All Records!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+            },
+            error: function () {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Unable to Authorize Please mark again!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+        });
+    }
+
+    function UnAuthorizeAll(selectedCycle, selectedCity, selectedBank) {
+        $.ajax({
+            url: '/Marking/Inwardauthorization?handler=UnAuthorizeAll',
+            method: 'POST',
+            data: {
+
+                "selectedCycle": selectedCycle,
+                "selectedCity": selectedCity,
+                "selectedBank": selectedBank
+            },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                console.log("UnAuthorizationAll response: " + data);
+                if (data === true) {
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Un-Authorized successfully");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+
+                    document.getElementById('loader_ctauth').style.visibility = "visible";
+                    $(".section1").show();
+                    $(".section2").hide();
+                    $(".section3").hide();
+                    var DDL_Bank = $('#DDL_Bank').val();
+                    var DDL_City = $('#DDL_City').val();
+                    var DDL_Cycle = $('#DDL_Cycle').val();
+                    var rowCount = 0;
+                    var rowCountauth = 0;
+                    var rowCountrej = 0;
+                    var totalAmount = 0;
+                    var tot_rej = 0;
+                    var tot_auth = 0;
+                    if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null)) {
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Marking/Inwardauthorization?handler=FetchFiles',
+                            dataType: 'json',
+                            data: {
+                                "Tab": 1,
+                                "DDL_Bank": DDL_Bank,
+                                "DDL_City": DDL_City,
+                                "DDL_Cycle": DDL_Cycle
+                            }, headers: {
+                                RequestVerificationToken:
+                                    $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (data) {
+                                var table = $("#Awitauth_tab");
+                                table.empty();
+
+                                table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                                    '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+                                if (data.obj == null) {
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+                                else {
+                                    $.each(data.obj, function (idx, elem) {
+
+                                        // if (elem.noAction > 0) {
+                                        table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                            '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                                            '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                                        //}
+                                    })
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+
+                                $('#lblAwtAuthcount').empty();
+                                $('#lblAwtAuthAmount').empty();
+                                $('#lblAwtAuthcount').text(rowCount);
+                                $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+                                $('#lblAuthcount').empty();
+                                $('#lblAuthAmount').empty();
+                                $('#lblAuthcount').text(rowCountauth);
+                                $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+                                $('#lblRejcount').empty();
+                                $('#lblRejAmount').empty();
+                                $('#lblRejcount').text(rowCountrej);
+                                $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+                            }
+                        });
+                        document.getElementById('loader_ctauth').style.visibility = "hidden";
+                    }
+                }
+                else if (data == "CycleFailed") {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle Is Closed!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Unable to Un-Authorize!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+            },
+            error: function () {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Unable to Un-Authorize Please mark again!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+        });
+    }
+
+    function SendForReview(selectedCycle, selectedCity, selectedBank) {
+        $.ajax({
+            url: '/Marking/Inwardauthorization?handler=RejectedAll',
+            method: 'POST',
+            data: {
+                "selectedCycle": selectedCycle,
+                "selectedCity": selectedCity,
+                "selectedBank": selectedBank
+            },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                console.log("UnAuthorizationAll response: " + data);
+                if (data === true) {
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Rejected successfully");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+
+                    document.getElementById('loader_ctauth').style.visibility = "visible";
+                    $(".section1").show();
+                    $(".section2").hide();
+                    $(".section3").hide();
+                    var DDL_Bank = $('#DDL_Bank').val();
+                    var DDL_City = $('#DDL_City').val();
+                    var DDL_Cycle = $('#DDL_Cycle').val();
+                    var rowCount = 0;
+                    var rowCountauth = 0;
+                    var rowCountrej = 0;
+                    var totalAmount = 0;
+                    var tot_rej = 0;
+                    var tot_auth = 0;
+                    if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null)) {
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Marking/Inwardauthorization?handler=FetchFiles',
+                            dataType: 'json',
+                            data: {
+                                "Tab": 1,
+                                "DDL_Bank": DDL_Bank,
+                                "DDL_City": DDL_City,
+                                "DDL_Cycle": DDL_Cycle
+                            }, headers: {
+                                RequestVerificationToken:
+                                    $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (data) {
+                                var table = $("#Awitauth_tab");
+                                table.empty();
+
+                                table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                                    '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+                                if (data.obj == null) {
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+                                else {
+                                    $.each(data.obj, function (idx, elem) {
+
+                                        // if (elem.noAction > 0) {
+                                        table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                            '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                                            '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                                        //}
+                                    })
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+
+                                $('#lblAwtAuthcount').empty();
+                                $('#lblAwtAuthAmount').empty();
+                                $('#lblAwtAuthcount').text(rowCount);
+                                $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+                                $('#lblAuthcount').empty();
+                                $('#lblAuthAmount').empty();
+                                $('#lblAuthcount').text(rowCountauth);
+                                $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+                                $('#lblRejcount').empty();
+                                $('#lblRejAmount').empty();
+                                $('#lblRejcount').text(rowCountrej);
+                                $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+                            }
+                        });
+                        document.getElementById('loader_ctauth').style.visibility = "hidden";
+
+                        //window.location.replace('/Marking/Inwardauthorization' + '?d1=' + DDL_Bank + '&d2=' + DDL_City + '&d3=' + DDL_Cycle);
+                    }
+                }
+                else if (data == "CycleFailed")
+                {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle Is Closed!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Unable to reject!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+            },
+            error: function () {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Unable to reject Please mark again!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+        });
+    }
+</script>
+
+<script>
+    /////SINGLE AUTHORIZE//////
+    function myFunction1(hostID, IsAuth,selectedbank, selectedCycle, selectedCity) {
+        $.ajax({
+            url: '/Marking/Inwardauthorization?handler=AuthorizeUpdate',
+            method: 'POST',
+            data: {
+                "hostID": hostID,
+                "IsAuth": IsAuth,
+                "selectedbank":selectedbank,
+                "selectedCycle": selectedCycle,
+                "selectedCity": selectedCity
+            },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                console.log("Authorization response: " + data);
+                if (data === true) {
+                    $("#Authorized").addClass("fas");
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Authorized successfully");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                    document.getElementById('loader_ctauth').style.visibility = "visible";
+                    $(".section1").show();
+                    $(".section2").hide();
+                    $(".section3").hide();
+                    var DDL_Bank = $('#DDL_Bank').val();
+                    var DDL_City = $('#DDL_City').val();
+                    var DDL_Cycle = $('#DDL_Cycle').val();
+                    var rowCount = 0;
+                    var rowCountauth = 0;
+                    var rowCountrej = 0;
+                    var totalAmount = 0;
+                    var tot_rej = 0;
+                    var tot_auth = 0;
+                    if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null)) {
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Marking/Inwardauthorization?handler=FetchFiles',
+                            dataType: 'json',
+                            data: {
+                                "Tab": 1,
+                                "DDL_Bank": DDL_Bank,
+                                "DDL_City": DDL_City,
+                                "DDL_Cycle": DDL_Cycle
+                            }, headers: {
+                                RequestVerificationToken:
+                                    $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (data) {
+                                var table = $("#Awitauth_tab");
+                                table.empty();
+
+                                table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                                    '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+                                if (data.obj == null) {
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+                                else {
+                                    $.each(data.obj, function (idx, elem) {
+
+                                        // if (elem.noAction > 0) {
+                                        table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                            '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                                            '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                                        //}
+                                    })
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+
+                                $('#lblAwtAuthcount').empty();
+                                $('#lblAwtAuthAmount').empty();
+                                $('#lblAwtAuthcount').text(rowCount);
+                                $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+                                $('#lblAuthcount').empty();
+                                $('#lblAuthAmount').empty();
+                                $('#lblAuthcount').text(rowCountauth);
+                                $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+                                $('#lblRejcount').empty();
+                                $('#lblRejAmount').empty();
+                                $('#lblRejcount').text(rowCountrej);
+                                $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+                            }
+                        });
+                        document.getElementById('loader_ctauth').style.visibility = "hidden";
+                        //window.location.replace('/Marking/Inwardauthorization' + '?d1=' + DDL_Bank + '&d2=' + DDL_City + '&d3=' + DDL_Cycle);
+                    }
+                }
+                else {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle is Closed!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+            },
+            error: function () {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Unable to Authorize Please mark again!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+        });
+    }
+
+    ////SINGLE REJECT/////
+    function myFunction2(hostID, Settled,selectedbank, selectedCycle, selectedCity) {
+        $.ajax({
+            url: '/Marking/Inwardauthorization?handler=RejectedUpdate',
+            method: 'POST',
+            data: {
+                "hostID": hostID,
+                "Settled": Settled,
+                "selectedbank": selectedbank,
+                "selectedCycle": selectedCycle,
+                "selectedCity": selectedCity
+            },
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            success: function (data) {
+                console.log("Rejected response: " + data);
+                if (data === true) {
+                    $("#Rejected").addClass("fas")
+                    $("#Authorized").addClass("fas");
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Rejected successfully");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                    document.getElementById('loader_ctauth').style.visibility = "visible";
+                    $(".section1").show();
+                    $(".section2").hide();
+                    $(".section3").hide();
+                    var DDL_Bank = $('#DDL_Bank').val();
+                    var DDL_City = $('#DDL_City').val();
+                    var DDL_Cycle = $('#DDL_Cycle').val();
+                    var rowCount = 0;
+                    var rowCountauth = 0;
+                    var rowCountrej = 0;
+                    var totalAmount = 0;
+                    var tot_rej = 0;
+                    var tot_auth = 0;
+                    if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null)) {
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Marking/Inwardauthorization?handler=FetchFiles',
+                            dataType: 'json',
+                            data: {
+                                "Tab": 1,
+                                "DDL_Bank": DDL_Bank,
+                                "DDL_City": DDL_City,
+                                "DDL_Cycle": DDL_Cycle
+                            }, headers: {
+                                RequestVerificationToken:
+                                    $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            success: function (data) {
+                                var table = $("#Awitauth_tab");
+                                table.empty();
+
+                                table.append('<thead><tr><th>Branch Name </th><th> Awaiting Auth </th><th> Amount </th><th> Authorized </th>' +
+                                    '<th> Amount </th> <th> Rejected </th><th> Amount </th><th> Deffer </th><th> Amount </th><th> Returns </th></tr></thead>');
+
+                                if (data.obj == null) {
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+                                else {
+                                    $.each(data.obj, function (idx, elem) {
+
+                                        // if (elem.noAction > 0) {
+                                        table.append('<tbody><tr><td>' + elem.branchName + '</td>' +
+                                            '<td>' + elem.nonAuth + '</td>' + '<td>' + addComas(parseFloat(elem.nonAuthAmount).toFixed(2)) + '</td>' + '<td>0</td>' + '<td>0</td>' +
+                                            '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td>0</td>' + '<td><button type="button" onclick="return ImageButton1(' + elem.branchID + ',0);" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr></tbody>');
+                                        //}
+                                    })
+                                    $.each(data.objAuth, function (idx, elem) {
+                                        rowCount += elem.nonAuth;
+                                        rowCountauth += elem.authorize;
+                                        rowCountrej += elem.reject;
+                                        totalAmount += parseFloat(elem.nonAuthAmount);
+                                        tot_auth += parseFloat(elem.authorizeAmount);
+                                        tot_rej += parseFloat(elem.rejectAmount);
+                                    })
+                                }
+
+                                $('#lblAwtAuthcount').empty();
+                                $('#lblAwtAuthAmount').empty();
+                                $('#lblAwtAuthcount').text(rowCount);
+                                $('#lblAwtAuthAmount').text(addComas(parseFloat(totalAmount).toFixed(2)));
+                                $('#lblAuthcount').empty();
+                                $('#lblAuthAmount').empty();
+                                $('#lblAuthcount').text(rowCountauth);
+                                $('#lblAuthAmount').text(addComas(parseFloat(tot_auth).toFixed(2)));
+                                $('#lblRejcount').empty();
+                                $('#lblRejAmount').empty();
+                                $('#lblRejcount').text(rowCountrej);
+                                $('#lblRejAmount').text(addComas(parseFloat(tot_rej).toFixed(2)));
+                            }
+                        });
+                        document.getElementById('loader_ctauth').style.visibility = "hidden";
+                        //window.location.replace('/Marking/Inwardauthorization' + '?d1=' + DDL_Bank + '&d2=' + DDL_City + '&d3=' + DDL_Cycle);
+                    }
+                }
+                else {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle is Closed!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+            },
+            error: function () {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Unable to reject Please mark again!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+        });
+    }
+
+</script>

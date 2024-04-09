@@ -1,0 +1,626 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Cycleinfo.BankEmailModel
+@{
+    // var GetCities = Model.LoadCitySpecificUser();
+
+    // var GetBranches = Model.LoadBranchSpecificUser();
+    // var GetDomains = Model.LoadBankDomains();
+    // var GetReports = Model.LoadReports();
+}
+<style>
+    .hide {
+        display: none;
+    }
+    .edit{
+        font-weight:700;
+        text-decoration:underline;
+        cursor:pointer;
+    }
+</style>
+<div class="g-pa-20">
+    <div id="div_msg" class="card bg-danger text-white shadow hide">
+        <div class="card-body">
+            <label id="msg"></label>
+        </div>
+    </div>
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+                <li class="list-inline-item">
+                    <h4 class="mb-0 text-white">Bank Branch User Email Setup</h4>
+                </li>
+        </ul>
+    </div>
+    <form method="post">
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <div class="row">
+
+                        <div class="col-sm-6 g-mb-10">
+                            <label for="cityval">City:</label>
+                            <select class="form-control" id="cityval" onchange="GetselectedCity()">
+                                @if (Model.city != null)
+                                {
+                                    @foreach (var cities in Model.city)
+                                    {
+                                        <option value="@cities.cityid">@cities.cityname</option>
+                                    }
+                                }
+                            </select>
+                                        </div>
+                
+                                        <div class="col-sm-6 g-mb-10">
+                                            <label for="branchval">Branch:</label>
+                                            <select class="form-control" id="branchval" onchange="GetSelectdata()">
+                                @* @if (Model.Branch != null)
+                                {
+                                    @foreach (var branches in Model.Branch)
+                                    {
+                                        <option value="@branches.branchID">@branches.branchName</option>
+                                    }
+                                } *@
+                            </select>
+                                        </div>
+                                    </div>
+                    
+                                    <div class="row mt-2">
+                                        <div class="col-sm-6 col-md-6 col-lg-3 g-mb-10">
+                            <label for="ruser1">User 1:</label>
+                            <input type="text" class="form-control" id="ruser1" name="bbuer_user1" placeholder="User Name 1">
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6 col-lg-3 g-mb-10">
+                            <label for="rmn1">Mobile Number:</label>
+                            <input type="tel" class="form-control" id="rmn1" name="bbuer_mobile1" placeholder="Enter Mobile No">
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6 col-lg-3 g-mb-10">
+                            <label for="rea1">Email Address:</label>
+                            <input type="tel" class="form-control" id="rea1" name="bbuer_mobile1" placeholder="Enter Email">
+                                        </div>
+                
+                                        <div class="col-md-6 col-lg-3 g-mb-10 mt-md-auto">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="domain1">a</label>
+                                                </div>
+                                <select class="form-control" id="domain1">
+                                    @if (Model.Domain != null)
+                                    {
+                                        @foreach (var domains in Model.Domain)
+                                        {
+                                            <option value="@domains.emailDomain">@domains.emailDomain</option>
+                                        }
+                                    }
+                                </select>
+                                            </div>
+                                        </div>
+                                   </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-sm-6 col-md-6 col-lg-3 g-mb-10">
+                            <label for="ruser2">User 2:</label>
+                            <input type="text" class="form-control" id="ruser2" name="bbuer_user2" placeholder="User Name 2">
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6 col-lg-3 g-mb-10">
+                            <label for="rmn2">Mobile Number:</label>
+                            <input type="tel" class="form-control" id="rmn2" name="bbuer_mobile2" placeholder="Enter Mobile No">
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6 col-lg-3 g-mb-10">
+                            <label for="rea2">Email Address:</label>
+                            <input type="tel" class="form-control" id="rea2" name="bbuer_mobile2" placeholder="Enter Email">
+                                        </div>
+                
+                                        <div class="col-md-6 col-lg-3 g-mb-10 mt-md-auto">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                    <label class="input-group-text" for="domain2">a</label>
+                                                </div>
+                                <select class="form-control" id="domain2">
+                                    @if (Model.Domain != null)
+                                    {
+                                        @foreach (var domains in Model.Domain)
+                                        {
+                                            <option value="@domains.emailDomain">@domains.emailDomain</option>
+                                        }
+                                    }
+                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-12 text-lg-right">
+                            <button type="button" id="ajax" class="btn btn-secondary"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                            <button type="button" id="btnupd" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Update</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+					</div>
+                    </form>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="table-responsive-md">
+                                <table class="table table-bordered table-striped bank-transfer text-center" id="user_email">
+                                    <thead>
+                                        <tr>
+                                            <th>User 1</th>
+                                            <th>Email</th>
+                                            <th></th>
+                                            <th>Address</th>
+                                            <th>Mobile</th>
+                                            <th>User 2</th>
+                                            <th>Email</th>
+                                            <th></th>
+                                            <th>Address</th>
+                                            <th>Mobile</th>
+                                            <th>City</th>
+                                            <th>Update Date</th>
+                                            <th>Register ID</th>
+                                            <th>Edit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        @{
+                            if (Model.BankUserDetails != null && Model.BankUserDetails.Count != 0)
+                            {
+                                foreach (var rows in Model.BankUserDetails)
+                                {
+                                        <tr>
+                                            <td id="user1" align="center" scope="col">@rows.userName1</td>
+                                            <td id="email1" align="center" scope="col">@rows.email1</td>
+                                            <td scope="col">&nbsp;</td>
+                                            <td align="center" scope="col">@rows.domain1</td>
+                                            <td id="mobile1" align="center" scope="col">@rows.mobile1</td>
+                                            <td id="user2" align="center" scope="col">@rows.userName2</td>
+                                            <td id="email2" align="center" scope="col">@rows.email2</td>
+                                            <td scope="col">&nbsp;</td>
+                                            <td align="center" scope="col">@rows.domain2</td>
+                                            <td id="mobile2" align="center" scope="col">@rows.mobile2</td>
+                                            <td align="center" scope="col">@rows.cityName</td>
+                                            <td align="center" scope="col">@rows.updatedate</td>
+                                            <td>@rows.regID</td>
+                                            <td><a class="edit" style="font-weight:700;" align="center" scope="col" id="@rows.regID">Edit </a>
+                                            </td>
+                                        </tr>
+                                }
+                            }
+                        }
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#bkem_').addClass('active');
+        var reg_saved;
+        $('#bbuer_city').select2();
+        $('#bbuer_branch').select2();
+
+        $('#user_email').DataTable({
+            // dom: 'lBfrtip',
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            // buttons: [ 'csv', 'excel' ],
+            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        });
+
+        var sel_city = $('#cityval Option:selected').val();
+        $.ajax({
+            url: '/Cycleinfo/BankEmail?handler=City_ID',
+            data: 'city='+sel_city,
+            type: 'GET',
+            success: function (resp) {
+                $('#branchval').empty();
+                $.each(resp, function (id, br) {
+                    $('#branchval').append('<option value=' + br.branchID + '>' + br.branchName + '</option>')
+                });
+            }
+        });
+
+
+        var regID;
+        $('#ajax').click(function () {
+            var CityID = document.getElementById("cityval").value;
+            var BranchCode = document.getElementById("branchval").value;
+            var UserName1 = document.getElementById("ruser1").value;
+            var Mobile1 = document.getElementById("rmn1").value;
+            var Email1 = document.getElementById("rea1").value;
+            var Domain1 = document.getElementById("domain1").value;
+            var UserName2 = document.getElementById("ruser2").value;
+            var Mobile2 = document.getElementById("rmn2").value;
+            var Email2 = document.getElementById("rea2").value;
+            var Domain2 = document.getElementById("domain2").value;
+            var UserID = "";
+            var UserPWD = "";
+            var Phone1 = "";
+            var Phone2 = "";
+            var BankCode = "";
+            var Updatedate = "";
+            var IsUpdate = "";
+
+            if (CityID == "") {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select the city!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+                return false;
+
+            }
+            if (BranchCode == "") {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select the BranchCode!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+                return false;
+
+            }
+            // if (UserName1 == "") {
+            //     $("#ruser1").css("display", "block");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Mobile1 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "block");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Email1 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "block");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (UserName2 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "block");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Mobile2 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " block");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Email2 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "block");
+            //     return false;
+
+            // }
+            var registration = {
+                CityID: CityID,
+                BranchCode: BranchCode,
+                UserName1: UserName1,
+                Mobile1: Mobile1,
+                Email1: Email1,
+                Domain1: Domain1,
+                UserName2: UserName2,
+                Mobile2: Mobile2,
+                Email2: Email2,
+                Domain2: Domain2,
+                UserID: UserID,
+                UserPWD: UserPWD,
+                Phone1: Phone1,
+                Phone2: Phone2,
+                BankCode: BankCode,
+                Updatedate: Updatedate,
+                IsUpdate: IsUpdate
+            }
+            console.log(registration);
+            $.ajax({
+                type: 'Post',
+                url: '/Cycleinfo/BankEmail?handler=SetBankBranchUserEmail',
+                contentType: "application/json",
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(registration),
+                dataType: 'json',
+                success: function (response) {
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Record Updated Successfully");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                    window.location.reload();
+                }
+            });
+        });
+
+        //$('#edit_').click(function () {
+        //function edit_() {
+        
+        $("#user_email").on('click', '.edit', function () {
+           // event.preventDefault();
+            var UserName1 = $(this).closest("tr").find("td").eq(0).text();
+            var Email1 = $(this).closest("tr").find("td").eq(1).text();
+            var Mobile1 = $(this).closest("tr").find("td").eq(4).text();
+            var UserName2 = $(this).closest("tr").find("td").eq(5).text();
+            var Email2 = $(this).closest("tr").find("td").eq(6).text();
+            var Mobile2 = $(this).closest("tr").find("td").eq(9).text();
+            var Domain1 = $(this).closest("tr").find("td").eq(13).text();
+            var Domain2 = $(this).closest("tr").find("td").eq(14).text();
+            regID = $(this).closest("tr").find("td").eq(12).text();
+            reg_saved = regID;
+            console.log(UserName1);
+            console.log(Email1);
+            console.log(Mobile1);
+            console.log(UserName2);
+            console.log(Email2);
+            console.log(Mobile2);
+            console.log("regid" + regID);
+            console.log("d1" + Domain1);
+            console.log("d2" + Domain2);
+            document.getElementById('ruser1').value = UserName1;
+            document.getElementById('rmn1').value = Mobile1;
+            document.getElementById('rea1').value = Email1;
+            document.getElementById('ruser2').value = UserName2;
+            document.getElementById('rmn2').value = Mobile2;
+            document.getElementById('rea2').value = Email2;
+            //$('.domone').val(Domain1).append('change');
+            //$('.domtwo').val(Domain2).trigger('change');
+            $("#ajax").css("display", "none");
+            $("#btnedit").css("display", "block");
+        });
+
+        $("#export_").click(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/Reports/PKISummary?handler=DownloadData'
+            });
+        });
+
+
+        $('#btnupd').click(function () {
+            var UserName1 = document.getElementById("ruser1").value;
+            var Email1 = document.getElementById('rea1').value;
+            var Domain1 = document.getElementById("domain1").value;
+            var Mobile1 = document.getElementById("rmn1").value;
+            var UserName2 = document.getElementById("ruser2").value;
+            var Email2 = document.getElementById("rea2").value;
+            var Domain2 = document.getElementById("domain2").value;
+            var Mobile2 = document.getElementById("rmn2").value;
+            var CityID = document.getElementById("cityval").value;
+            var BranchCode = document.getElementById("branchval").value;
+            var reg_id_ = reg_saved;
+
+            var UserID = "";
+            var UserPWD = "";
+            var Phone1 = "";
+            var Phone2 = "";
+            var BankCode = "";
+            var Updatedate = "";
+            var IsUpdate = "";
+
+            if (CityID == "") {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select the City!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+                return false;
+
+            }
+            if (BranchCode == "") {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select the BranchCode!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+                return false;
+
+            }
+            // if (UserName1 == "") {
+            //     $("#ruser1").css("display", "block");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Mobile1 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "block");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Email1 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "block");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (UserName2 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "block");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Mobile2 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " block");
+            //     $("#rea2").css("display", "none");
+            //     return false;
+
+            // }
+            // if (Email2 == "") {
+            //     $("#ruser1").css("display", "none");
+            //     $("#rmn1").css("display", "none");
+            //     $("#rea1").css("display", "none");
+            //     $("#ruser2").css("display", "none");
+            //     $("#rmn2").css("display", " none");
+            //     $("#rea2").css("display", "block");
+            //     return false;
+
+            // }
+            if (Domain1 == "") {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select the Domain Name!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+                return false;
+            }
+            if (Domain2 == "") {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select the Domain Name!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+                return false;
+            }
+
+            var request = {
+                UserName1: UserName1,
+                Email1: Email1,
+                Domain1: Domain1,
+                Mobile1: Mobile1,
+                UserName2: UserName2,
+                Email2: Email2,
+                Domain2: Domain2,
+                Mobile2: Mobile2,
+                regID: reg_saved
+            }
+            console.log(request);
+            $.ajax({
+                type: 'Post',
+                url: '/Cycleinfo/BankEmail?handler=UpdBankBranchUserEmail',
+                contentType: 'application/json',
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                data: JSON.stringify(request),
+                dataType: 'json',
+                success: function (response) {
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Record Updated Successfully");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+
+                    window.location.reload();
+                    $("#btnedit").css("display", "none");
+                    $("#ajax").css("display", "block");
+                }
+            });
+        });
+    });
+
+    function GetselectedCity() {
+        var sel_city = $('#cityval Option:selected').val();
+        $.ajax({
+            url: '/Cycleinfo/BankEmail?handler=City_ID',
+            data: 'city=' + sel_city,
+            type: 'GET',
+            success: function (resp) {
+                $('#branchval').empty();
+                $.each(resp, function (id, br) {
+                    $('#branchval').append('<option value=' + br.branchID + '>' + br.branchName + '</option>')
+                });
+            }
+        });
+    }
+    function GetSelectdata(){
+        var dttable = $('#user_email').DataTable();
+        var sel_br = $('#branchval Option:selected').val();
+        $.ajax({
+            url: '/Cycleinfo/BankEmail?handler=Br_ID',
+            data: 'br=' + sel_br,
+            type: 'GET',
+            success: function (resp) {
+                //$('#user_email tbody').empty();
+                $("#user_email > tbody").html("");
+                let newrow = '';
+                dttable.clear();
+                $.each(resp, function (id, dt) {
+                    newrow += '<tr><td id="user1" align="center" scope="col">' + dt.userName1 + '</td>' +
+                        '<td id="email1" align="center" scope="col">' + dt.email1 + ' </td>' +
+                        '<td scope="col">&nbsp;</td><td align="center" scope="col">' + dt.domain1 + ' </td>' +
+                        '<td id="mobile1" align="center" scope="col">' + dt.mobile1 + ' </td><td id="user2" align="center" scope="col">' + dt.userName2 + '</td> ' +
+                        '<td id="email2" align="center" scope="col">' + dt.email2 + '</td><td scope="col">&nbsp;</td>' +
+                        '<td align="center" scope="col">' + dt.domain2 + ' </td><td id="mobile2" align="center" scope="col">' + dt.mobile2 + '</td> ' +
+                        '<td align="center" scope="col">' + dt.cityName + '</td><td align="center" scope="col">' + dt.updatedate + ' </td>' +
+                        '<td align="center" scope="col">' + dt.regID + '</td><td class="edit" align="center" scope="col" id="' + dt.regID + '">Edit </td></tr>';
+                    dttable.row.add($(newrow)).draw();
+                });
+            }
+        });
+        dttable.draw();
+    }
+
+    
+
+</script>
+

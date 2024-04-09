@@ -1,0 +1,1004 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Marking.CityboardModel
+@{
+}
+@* <script type="text/javascript">
+    document.onreadystatechange = function () {
+        var state = document.readyState
+        if (state == 'interactive') {
+            document.getElementById('loader_ct').style.visibility = "visible";
+        } else if (state == 'complete') {
+            setTimeout(function () {
+                document.getElementById('loader_ct').style.visibility = "hidden";
+            }, 10);
+        }
+    }
+</script> *@
+ 
+<div class="loader-wrapper" id="loader_ct" style="visibility:hidden">
+    <span class="loader">
+        <img src="~/assets/img/logo/favicon.png" alt="Logo">
+    </span>
+</div>
+				<div class="g-pa-20">
+                    <section class="section1">
+                        <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+                            <ul class="u-list-inline g-color-gray-dark-v6">
+                                <li class="list-inline-item g-mr-10">
+                                <li class="list-inline-item">
+                                    <h4 class="mb-0 text-white">Scoreboard Bank's Clearing Position</h4>
+                                </li>
+                            </ul>
+                        </div>
+					
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-6 g-mb-10">
+                                                <label for="DDL_Bank">Bank:</label>
+                                               <select name="DDL_Bank" id="DDL_Bank" class="form-control">
+                                                    @if (Model.instBanks != null)
+                                                    {
+                                                        @foreach (var bk in Model.instBanks)
+                                                        {
+                                                            <option value="@bk.InstId">@bk.InstName</option>
+                                                        }
+                                                    }
+                                               </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table u-table--v3--bordered g-color-black text-center" id="sbkcp_transfer_1">
+                                        <thead>
+                                            <tr>
+                                                <th>Cycle</th>
+                                                <th>Clearing Type</th>
+                                                <th>Items</th>
+                                                <th>Amount</th>
+                                                <th>Detail</th>
+                                            </tr>
+                                        </thead>
+                        <tbody>
+                                        @if (Model.obj1 != null)
+                                        {
+                                            @foreach (var file in Model.obj1)
+                                            {
+                                       
+                                            <tr>                                                   
+                                             <td>@file.cycle_desc</td>
+                                             <td>@file.ClgType</td>
+                                             <td>@file.Items</td>
+                                        @{
+                                            var c_amt = Math.Round(Convert.ToDecimal(file.Amount), 2);
+                                        }
+                                        <td>@String.Format("{0:#,##0.00;(#,##0.00);0}", c_amt)</td>
+                                             <td>
+                                                <button onclick="return Getcitydata('@file.CycleID','@file.IWOWID','@file.cycle_desc','@file.ClgType')" type="button" class="btn btn-secondary details_btn_1 details_btn">
+                                                    <i class="fa - solid fa - eye"> </i>Detail
+                                                </button>
+                                             </td>
+                                            </tr>
+                                        
+                                            }
+                                        }
+                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+					
+                    <section class="section2">
+                        <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+                            <ul class="u-list-inline g-color-gray-dark-v6">
+                                <li class="list-inline-item g-mr-10">
+                                <li class="list-inline-item">
+                                    <h4 class="mb-0 text-white">Scoreboard City Clearing Position</h4>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-12 col-md-12 text-right">
+                                                <button type="button" class="btn btn-danger back_btn_1"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                             <p class="font-weight-bold mb-0">Bank: <span id="Banklbl1"></span></p>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Cycle: <span id= "Cyclelbl"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Clearing Type: <span id= "Typelbl"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table u-table--v3--bordered g-color-black text-center" id="sbkcp_transfer_2">
+                                        <thead>
+                                            <tr>
+                                                <th>City Name</th>
+                                                <th>Items</th>
+                                                <th>Amount</th>
+                                                <th>Detail</th>
+                                            </tr>
+                                    </thead>
+                                    <tbody> 
+                                        @if (Model.obj2 != null)
+                                        {
+                                            @foreach (var file in Model.obj2)
+                                            {
+                                                    <tr>  
+                                                     <td>@file.cycle_desc</td>     
+                                                     <td>@file.ClgType</td>
+                                        <td>@String.Format("{0:#,##0.00;(#,##0.00);0}", file.Amount)</td>
+                                                        <td><button type="button" class="btn btn-secondary details_btn_2 details_btn"><i class="fa-solid fa-eye"></i> Detail</button></td>
+                                                    </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="section3">
+                        <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+                            <ul class="u-list-inline g-color-gray-dark-v6">
+                                <li class="list-inline-item g-mr-10">
+                                <li class="list-inline-item">
+                                    <h4 class="mb-0 text-white">Scoreboard Branch Clearing Position</h4>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-12 col-md-12 text-right">
+                                                <button type="button" class="btn btn-danger back_btn_2"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                                            </div>
+                                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <p class="font-weight-bold mb-0">Bank: <span id="Banklbl2"></span></p>
+                            </div>
+                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Cycle: <span id= "Cyclelbl1"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Clearing Type: <span id= "Typelbl1"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">City: <span id= "citylbl1"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table u-table--v3--bordered g-color-black text-center" id="sbkcp_transfer_3">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Branch</th>
+                                                <th>Items</th>
+                                                <th>Amount</th>
+                                                <th>Detail</th>
+                                            </tr>
+                                        </thead>
+                                        @if (Model.obj3 != null)
+                                        {
+                                            @foreach (var file in Model.obj3)
+                                            {
+                                              <tbody>
+                                                <tr>   
+                                                    <td></td>
+                                                  <td>@file.BranchName</td>     
+                                                  <td>@file.Items</td>
+                                        <td>@String.Format("{0:#,##0.00;(#,##0.00);0}", file.Amount)</td>
+                                                  <td><button type="button" class="btn btn-secondary details_btn_3 details_btn"><i class="fa-solid fa-eye"></i> Detail</button></td>
+                                                </tr>
+                                             </tbody>
+                                            }
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="section4">
+                        <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+                            <ul class="u-list-inline g-color-gray-dark-v6">
+                                <li class="list-inline-item g-mr-10">
+                                <li class="list-inline-item">
+                                    <h4 class="mb-0 text-white">Scoreboard Branch Clearing Transactions</h4>
+                                </li>
+                            </ul>
+                        </div>
+					
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-12 col-md-12 text-right">
+                                                <button type="button" class="btn btn-danger back_btn_3"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                                            </div>
+                                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <p class="font-weight-bold mb-0">Bank: <span id="Banklbl3"></span></p>
+                            </div>
+                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-12 col-md-6 col-lg-2">
+                                                <p class="font-weight-bold mb-0">Cycle: <span id= "Cyclelbl2"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Clearing Type: <span id= "Typelbl2"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-2">
+                                                <p class="font-weight-bold mb-0">City: <span id= "citylbl2"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-5">
+                                                <p class="font-weight-bold mb-0">Branch: <span id= "branchlbl2"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                   <table class="table table-bordered table-striped bank-transfer text-center" id="sbkcp_transfer_4">
+                                    <thead>
+                                        <tr><th></th></tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                   </table>
+                                </div>
+                            </div>
+                        </div> 
+                    </section>
+
+                    <section class="section5">
+                        <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+                            <ul class="u-list-inline g-color-gray-dark-v6">
+                                <li class="list-inline-item g-mr-10">
+                                <li class="list-inline-item">
+                                    <h4 class="mb-0 text-white">Scoreboard Cheque Details</h4>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            @* <div class="col-12 col-md-6 mt-lg-auto">
+                                                <p class="font-weight-bold mb-0">Bank: <span id= "Banklbl"></span></p>
+                                            </div> *@
+                                            <div class="col-12 col-md-12 text-right">
+                                                <button type="button" class="btn btn-danger back_btn_4"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                                            </div>
+                                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <p class="font-weight-bold mb-0">Bank: <span id="Banklbl4"></span></p>
+                            </div>
+                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Cycle: <span id= "Cyclelbl3"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Clearing Type: <span id= "Typelbl3"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">City: <span id= "citylbl3"></span></p>
+                                            </div>
+                                            <div class="col-12 col-md-6 col-lg-3">
+                                                <p class="font-weight-bold mb-0">Branch: <span id= "branchlbl3"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <table class="table-responsive">
+                                    <table class="table table-bordered table-striped text-center" id="sbrcp_transfer_5">
+                                        <thead>
+                                            <tr>
+                                                <th>Tr Seq No</th>
+                                                <th>OW Bank Name</th>
+                                                <th>OW Br Name</th>
+                                                <th>IW Bank Name</th>
+                                                <th>IW Branch Name</th>
+                                                <th>Tran Code</th>
+                                                <th>Acc No</th>
+                                                <th>Chq No</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                <tbody id="tableBody">
+                                    </tbody>
+                                    </table>
+                                </table>
+                            </div>
+                        </div>
+        <div class="row mt-3"> 
+            <div class="col-12 col-lg-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="bg-danger p-2 text-center text-white font-weight-bold">IQA Result</div>
+                    </div>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <div class="table-responsive">
+                            <table class="table iqa-result-table">
+                                <tbody>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Undersize Instrument</td>
+                                                    <td id="UnderInstrument">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 p-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Folded or Torn Document Corners</td>
+                                                    <td id="FdCorners">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Folded or Torn Document Edges</td>
+                                                    <td id="FdEdges">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Framing Error</td>
+                                                    <td id="FramingError">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 p-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Document Skew</td>
+                                                    <td id="DocumentSkew">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Oversize Instrument</td>
+                                                    <td id="OSInstrument">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Piggy Back</td>
+                                                    <td id="PiggyBack">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 p-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Image Too Light</td>
+                                                    <td id="ImageTooLight">Not Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Image Too Dark</td>
+                                                    <td id="ImageTooDark">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Horizontal Streaks</td>
+                                                    <td id="HorizontalStreaks">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 p-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Below Mimimum Compressed Image Size</td>
+                                                    <td id="BMCISize">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Above Mimimum Compressed Image Size</td>
+                                                    <td id="AMCISize">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Front Rear Dimension Mismatch</td>
+                                                    <td id="FRDMismatch">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 p-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Carbon Strip</td>
+                                                    <td id="CarbonStrip">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Out of Focus</td>
+                                                    <td id="OutofFocus">Ok</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                    </div>
+                </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="box1">
+                    <img src="@ViewData["ImageDataURL"]" id="img1" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(1)"></i>
+                    </div>
+                </div>
+                <div class="box2 mt-3">
+                    <img src="@ViewData["ImageDataURL2"]" id="img2" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(2)"></i>
+                    </div>
+                </div>
+
+                <div class="box3 mt-3">
+                    <img src="@ViewData["ImageDataURL3"]" id="img3" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(3)"></i>
+                    </div>
+                </div>
+            </div>
+            </div>
+            
+                    </section>
+
+                    <div id="myModal" class="modal">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <span class="close cursor" onclick="closeModal()">&times;</span>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL"]" id="img4" class="w-100" alt="Cheque">
+                                    </div>
+                                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL2"]" id="img5" class="w-100" alt="Cheque">
+                                    </div>
+                                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL3"]" id="img6" class="w-100" alt="Cheque">
+                                    </div>
+                                    <a class="prev-btn" onclick="plusSlides(-1)"><i class="fa-solid fa-chevron-left"></i></a>
+                                    <a class="next-btn" onclick="plusSlides(1)"><i class="fa-solid fa-chevron-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+				</div>
+<style>
+    .dt-buttons {
+        display: none;
+    }
+
+    .td_in {
+        font-weight: bold;
+    }
+</style>
+                <script>
+                    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#city_').addClass('active');
+        $('#sc_p').addClass('u-side-nav-opened active');
+        $('#subMenu3').css('display', 'block');
+                        $(".section2").hide();
+                        $(".section3").hide();
+                        $(".section4").hide();
+                        $(".section5").hide();
+
+                        $(".back_btn_1").on("click", function () {
+                            $(".section1").show();
+                            $(".section2").hide();
+                            $(".section3").hide();
+                            $(".section4").hide();
+                            $(".section5").hide();
+                        });
+                        $(".back_btn_2").on("click", function () {
+                            $(".section1").hide();
+                            $(".section2").show();
+                            $(".section3").hide();
+                            $(".section4").hide();
+                            $(".section5").hide();
+                        });
+                        $(".back_btn_3").on("click", function () {
+                            $(".section1").hide();
+                            $(".section2").hide();
+                            $(".section3").show();
+                            $(".section4").hide();
+                            $(".section5").hide();
+                        });
+                        $(".back_btn_4").on("click", function () {
+                            $(".section1").hide();
+                            $(".section2").hide();
+                            $(".section3").hide();
+                            $(".section4").show();
+                            $(".section5").hide();
+                        });
+
+                        $('#sbkcp_bank_1').select2();
+                        $('#sbkcp_bank_2').select2();
+                        $('#sbkcp_bank_3').select2();
+                        $('#sbkcp_ctype').select2();
+                        $('#sbkcp_branch').select2();
+
+                        if (!DataTable.isDataTable('#sbkcp_transfer_1')) {
+                            $('#sbkcp_transfer_1').DataTable({
+                                dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                                    "<'row'<'col-sm-12'tr>>" +
+                                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                            });
+                        }
+
+        
+
+        
+
+        
+                        
+
+                        $("#DDL_Bank").on("change", function () {
+                            document.getElementById('loader_ct').style.visibility = "visible";
+                            var ddlbank = document.querySelector('#DDL_Bank');
+                            $("#Banklbl1").text($('#DDL_Bank').find(":selected").text());
+                            $("#Banklbl2").text($('#DDL_Bank').find(":selected").text());
+                            $("#Banklbl3").text($('#DDL_Bank').find(":selected").text());
+                            $("#Banklbl4").text($('#DDL_Bank').find(":selected").text());
+                            var table1 = $("#sbkcp_transfer_1");
+                            table1.empty();
+                            $.ajax({
+                                type: 'GET',
+                                url: '/Scoreboard/Cityboard?handler=LoadDataFromDB',
+                                dataType: 'json',
+                                data: { "bank": ddlbank.value },
+                                success: function (data) {
+                                    if (data != null) {
+
+                                        table1.append('<thead><tr><th>Cycle</th>' +
+                                            '<th> Clearing Type </th>' + '<th> Items </th>' + '<th>Amount</th>' + '<th> Detail </th></tr></thead><tbody>')
+                                        $.each(data, function (idx, elem) {
+                                            if (elem.cycle_desc != null) {
+                                                var c1 = elem.cycle_desc.toString();
+                                                var c2 = elem.clgType.toString();
+                                                table1.append('<tr><td>' + elem.cycle_desc + '</td><td>' + elem.clgType + '</td><td>' + elem.items + '</td>   <td>' + addComas(elem.amount) + '</td>' +
+                                                    '<td><button type="button" onclick="Getcitydata(' + elem.cycleID + ',' + elem.iwowid + ',\'' + c1 + '\',\'' + c2 + '\')" class="btn btn-secondary details_btn_1 details_btn"><i class="fa-solid fa-eye"></i> Detail</button></td></tr>');
+                                            }
+                                        });
+                                        table1.append('</tbody>');
+                                    }
+                                    setTimeout(function () {
+                                        document.getElementById('loader_ct').style.visibility = "hidden";
+                                    }, 50);
+                                }
+                            });
+
+                        });
+                    });
+                    function addComas(x) {
+                        var parts = x.toString().split(".");
+                        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        return parts.join(".");
+                    }
+        function openModal() {
+            document.getElementById("myModal").style.display = "block";
+        }
+        
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+        var slideIndex = 1;
+        showSlides(slideIndex);
+        
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+        
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+        
+        function showSlides(n) {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            if(n > slides.length) {
+                slideIndex = 1
+            }
+            if(n < 1) {
+                slideIndex = slides.length
+            }
+            for(i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            slides[slideIndex - 1].style.display = "block";
+        }
+
+    function Getcitydata(CycleID, IWOWID, cycle_desc, ClgType) {
+        document.getElementById('loader_ct').style.visibility = "visible";
+        $("#Banklbl1").text($('#DDL_Bank').find(":selected").text());
+        $("#Banklbl2").text($('#DDL_Bank').find(":selected").text());
+        $("#Banklbl3").text($('#DDL_Bank').find(":selected").text());
+        $("#Banklbl4").text($('#DDL_Bank').find(":selected").text());
+        var ddlbank_ = document.querySelector('#DDL_Bank');
+        var table2 = $("#sbkcp_transfer_2");
+        table2.empty();
+        
+        $.ajax({
+            type: 'GET',
+            url: '/Scoreboard/Cityboard?handler=CityData',
+            dataType: 'json',
+            data: { "ddlbank": ddlbank_.value, "CycleID": CycleID, "IWOWID": IWOWID },
+            success: function (data) {
+                if (data != null) {
+                    table2.append('<thead><tr><th>City Name</th>' +
+                        '<th> Items </th>' + '<th> Amount </th>' + '<th> Detail </th></tr></thead><tbody>')
+                    $.each(data, function (idx, elem) {
+                        if (elem.cycle_desc != null) {
+                            table2.append('<tr><td>' + elem.cityName + '</td><td>' + elem.items + '</td><td>' + addComas(elem.amount) + '</td>' +
+                                '<td><button type="button" onclick="Getbranchdata(' + elem.cycleID + ',' + elem.iwowid + ',' + elem.cityCode + ',\'' + cycle_desc + '\',\'' + elem.cityName + '\',\'' + ClgType + '\')" class="btn btn-secondary details_btn_2 details_btn"><i class="fa-solid fa-eye"></i> Detail</button></td></tr>');
+                        }
+                    });
+                    table2.append('</tbody>')
+
+                    if (!DataTable.isDataTable('#sbkcp_transfer_2')) {
+                        $('#sbkcp_transfer_2').DataTable({
+                            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                                "<'row'<'col-sm-12'tr>>" +
+                                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                        });
+                    }
+
+
+                    $("#Cyclelbl").text(cycle_desc);
+                    $("#Typelbl").text(ClgType);
+                    $(".section2").show();
+                    $(".section1").hide();
+                    $(".section3").hide();
+                    $(".section4").hide();
+                    $(".section5").hide();
+                    setTimeout(function () {
+                        document.getElementById('loader_ct').style.visibility = "hidden";
+                    }, 50);
+                }
+                else{
+                    setTimeout(function () {
+                        document.getElementById('loader_ct').style.visibility = "hidden";
+                    }, 50);
+                }
+            }
+        });
+    }
+    function Getbranchdata(CycleID, IWOWID, Cityid, cycle_desc, cityname, ClgType) {
+        document.getElementById('loader_ct').style.visibility = "visible";
+        var ddlbank = document.querySelector('#DDL_Bank');
+        $.ajax({
+            type: 'GET',
+            url: '/Scoreboard/Cityboard?handler=BranchData',
+            dataType: 'json',
+            data: { "ddlbank": ddlbank.value, "CycleID": CycleID, "IWOWID": IWOWID, "Cityid": Cityid },
+            success: function (data) {
+                if (data != null) {
+                    var table3 = $("#sbkcp_transfer_3");
+                    table3.empty();
+
+                     table3.append('<thead><tr><th>Branch</th>' +
+                        '<th>Items</th>' + '<th> Amount </th>' + '<th> Detail </th></tr></thead><tbody>')
+                    $("#Cyclelbl1").text(cycle_desc);
+                    $("#Typelbl1").text(ClgType);
+                    $("#citylbl1").text(cityname);
+                        $.each(data, function (idx, elem) {
+                        if (elem.branchName != null) {
+                            table3.append('<tr><td>' + elem.branchName + '</td><td>' + elem.items + '</td>   <td>' + addComas(elem.amount) + '</td>' +
+                                '<td><button type="button" onclick="GetTrandata(' + elem.cycleID + ',' + elem.iwowid + ',' + elem.cityCode + ', ' + elem.branchID + ',\'' + cycle_desc + '\',\'' + elem.cityName + '\',\'' + ClgType + '\',\'' + elem.branchName + '\')" class="btn btn-secondary details_btn_3 details_btn"><i class="fa-solid fa-eye"></i> Detail</button></td></tr></tbody>');
+                            }
+                        });
+
+                    if (!DataTable.isDataTable('#sbkcp_transfer_3')) {
+                        $('#sbkcp_transfer_3').DataTable({
+                            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                                "<'row'<'col-sm-12'tr>>" +
+                                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                        });
+                    }
+                    $(".section2").hide();
+                    $(".section1").hide();
+                    $(".section3").show();
+                    $(".section4").hide();
+                    $(".section5").hide();
+                    setTimeout(function () {
+                        document.getElementById('loader_ct').style.visibility = "hidden";
+                    }, 50);
+                }
+                else{
+                    setTimeout(function () {
+                        document.getElementById('loader_ct').style.visibility = "hidden";
+                    }, 50);
+                }
+            }
+        });
+        
+    }
+    function GetTrandata(CycleID, IWOWID, Cityid, branchID, cycle_desc, cityName, ClgType, branchName) {
+        document.getElementById('loader_ct').style.visibility = "visible";
+        var ddlbank = document.querySelector('#DDL_Bank');
+        $.ajax({
+            type: 'GET',
+            url: '/Scoreboard/Cityboard?handler=TransactionData',
+            dataType: 'json',
+            data: { "ddlbank": ddlbank.value, "CycleID": CycleID, "IWOWID": IWOWID, "Cityid": Cityid, "branchID": branchID },
+            success: function (data) {
+                if (data != null) {
+                    var table4 = $("#sbkcp_transfer_4");
+                    table4.empty();
+
+                    table4.append('<thead><tr><th></th></tr></thead><tbody>');
+
+                    $("#Cyclelbl2").text(cycle_desc);
+                    $("#Typelbl2").text(ClgType);
+                    $("#citylbl2").text(cityName);
+                    $("#branchlbl2").text(branchName);
+                    $.each(data, function (idx, elem) {
+                        if (elem.rBrId != null) {
+                            table4.append('<tr><td><table border="1"><tbody><tr class="odd-row"><th colspan="2"></th><th colspan = "2"> Tr Seq No </th><th colspan = "3"> OW Bank Name </th>'
+                                + '<th colspan = "3"> OW Br Name </th><th> Tran Code </th><th colspan = "2"> Acc No </th><th> Chq No </th><th> Amount </th><td rowspan = "4">'
+                            +'<button type="button" class="btn btn-secondary details_btn_4 details_btn"'
+                                + ' onclick="return ImageButton1(' + elem.hostid + ',\'' + elem.sBkNm + '\',\'' + elem.sBrNm + '\','
+                                + elem.trCode + ',\'' + elem.accno + '\',\'' + elem.chqNo + '\',\'' + elem.amount + '\',\'' + elem.rBkNm + '\',\'' + elem.rBrNm + '\','
+                                + '\'' + elem.cityName + '\',\'' + elem.cycleDesc + '\',\'' + elem.clgType + '\',\'' + elem.sBkNm + '\',\'' + String('000' + elem.trId).slice(-3) + '\')" <i class= "fa - solid fa - eye" > </i> View</button>'
+                                // + '  <button type="button" class="btn btn-secondary mt-3"><i class="fa-solid fa-print"></i> Print</button></td></tr>'
+
+                                + '  <tr><td class="text-danger td_in" colspan="2">MICR Data</td><td class="td_in" colspan="2">' + elem.trCode + '</td><td class="td_in" colspan="3">' + elem.sBkNm + ' </td>'
+                                + '  <td class="td_in" colspan="3">' + elem.sBrNm + ' </td><td class="td_in">' + String('000' + elem.trId).slice(-3) + ' </td> <td class="td_in" colspan="2"> ' + String('0000000000000000' + elem.accno).slice(-16) + ' </td> <td class="td_in">' + String('00000000' + elem.chqNo).slice(-8) + ' </td> <td class="td_in">' + addComas(parseFloat(elem.amount).toFixed(2)) + ' </td></tr>'
+                                
+                                + '  <tr class="even-row"><th></th><th>IQA</th><th>UV</th><th>UV %</th><th>UV Tmp</th><th>QR Code</th><th>Micr</th><th>Std</th><th>Dup</th>'
+                                + '  <th>Defer</th><th>Fraud History</th><th></th><th>Avg Chq Amt</th><th>Total Chq</th><th>Total Chq Rtn</th></tr><tr>'
+                                + ' <td class="text-danger td_in">IQA Result</td>'
+                                + '   <td class="td_in">' + elem.iqa + ' </td><td class="td_in">' + elem.uv + ' </td> <td class="td_in">' + elem.uvPerc + '</td> <td class="td_in">' + elem.tempID + ' </td> <td class="td_in">' + elem.qr + ' </td> <td class="td_in">' + elem.micr + ' </td> <td class="td_in">' + elem.std + ' </td> <td class="td_in">' + elem.dup + ' </td> <td class="td_in">' + elem.qr + ' </td>'
+                                + '   <td>' + elem.wMark + ' </td>'
+                                + '<td class="text-danger td_in">History</td> <td class="td_in">' + addComas(parseFloat(elem.avgChqSize).toFixed(2)) + ' </td><td class="td_in">' + elem.tChq + '</td> <td class="td_in">' + elem.tChqR + ' </td></tr> </tbody></table> </td></tr> ');
+                        }
+                    });
+                    table4.append('</tbody>');
+                        document.getElementById('loader_ct').style.visibility = "hidden";
+                    if (!DataTable.isDataTable('#sbkcp_transfer_4')) {
+                        $('#sbkcp_transfer_4').DataTable({
+                            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                                "<'row'<'col-sm-12'tr>>" +
+                                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                            "ordering": false
+                        });
+                    }
+                }
+                else
+                {
+                        document.getElementById('loader_ct').style.visibility = "hidden";
+                }
+            }
+        });
+        $(".section2").hide();
+        $(".section1").hide();
+        $(".section3").hide();
+        $(".section4").show();
+        $(".section5").hide();
+    }
+    function ImageButton1(hostId, senderBankName, senderBranchName, trCode, accountNo, chequeNo, amount, rbknm, rbrnm, cityName, cycleDescription, clearingType, sbknm, trId) {
+        document.getElementById('loader_ct').style.visibility = "visible";
+        
+        $.ajax({
+            type: 'GET',
+            url: '/Scoreboard/Cityboard?handler=CheckImages',
+            dataType: 'json',
+            data: {
+                "hostId": hostId
+            },
+            success: function (data) {
+                var resp = data.split("|");
+                $('#tableBody').empty();
+                $('#tableBody').append('<td>' + trCode + '</td>', '<td>' + senderBankName + '</td>', '<td>' + senderBranchName + '</td>',
+                    '<td>' + rbknm + '</td>', '<td>' + rbrnm + '</td>',
+                    '<td>' + trId + '</td>', '<td>' + accountNo + '</td>', '<td>' + chequeNo + '</td>', '<td>' + addComas(parseFloat(amount).toFixed(2)) + '</td>');
+
+                // $("#UnderInstrument").text(underSizeImage);
+                // $("#FdCorners").text(folderOrTornDocumentCorners);
+                // $("#FdEdges").text(foldedOrTornDocumentEdges);
+                // $("#FramingError").text(framingError);
+                // $("#DocumentSkew").text(documentSkew);
+                // $("#OSInstrument").text(overSizeImage);
+                // $("#PiggyBack").text(piggyBack);
+                // $("#ImageTooLight").text(imageTooLight);
+                // $("#ImageTooDark").text(imageTooDark);
+                // $("#HorizontalStreaks").text(horizontalStreaks);
+                // $("#BMCISize").text(belowMinimumCompressedImageSize);
+                // $("#AMCISize").text(aboveMaximumCompressedImageSize);
+                // $("#FRDMismatch").text(frontRearDimensionMismatch);
+                // $("#CarbonStrip").text(carbonStrip);
+                // $("#OutofFocus").text(outOfFocus);
+
+                $("#citylbl3").text(cityName);
+                $("#Cyclelbl3").text(cycleDescription);
+                $("#Typelbl3").text(clearingType);
+                $("#Banklbl3").text(rbknm);
+                $("#branchlbl3").text(rbrnm);
+
+                $("#img1").attr('src', resp[1]);
+                $("#img2").attr('src', resp[2]);
+                $("#img3").attr('src', resp[3]);
+                $("#img4").attr('src', resp[1]);
+                $("#img5").attr('src', resp[2]);
+                $("#img6").attr('src', resp[3]);
+                window.scrollTo(0, 0);
+                $(".section2").hide();
+                $(".section1").hide();
+                $(".section3").hide();
+                $(".section4").hide();
+                $(".section5").show();
+                    document.getElementById('loader_ct').style.visibility = "hidden";
+            },
+            error: function () {
+                    document.getElementById('loader_ct').style.visibility = "hidden";
+            }
+        });
+        
+    }
+
+        // function GetChequedata(CycleID, IWOWID, Cityid, branchID, cycle_desc, cityName, ClgType, branchName) {
+        //     $.ajax({
+        //         type: 'GET',
+        //         url: '/Scoreboard/Cityboard?handler=CheckImages',
+        //         dataType: 'json',
+        //         data: { "CycleID": CycleID, "IWOWID": IWOWID, "Cityid": Cityid, "branchID": branchID },
+        //         success: function (data) {
+        //             if (data != null) {
+        //                 var table4 = $("#sbkcp_transfer_4");
+        //                 table4.empty();
+
+        //                 $("#Cyclelbl2").text(cycle_desc);
+        //                 $("#Typelbl2").text(ClgType);
+        //                 $("#citylbl2").text(cityName);
+        //                 $("#branchlbl2").text(branchName);
+        //                 // $.each(data, function (idx, elem) {
+
+
+        //                 // }
+        //                 //});
+        //             }
+        //         }
+        //     });
+        //     $(".section2").hide();
+        //     $(".section1").hide();
+        //     $(".section3").hide();
+        //     $(".section4").show();
+        //     $(".section5").hide();
+        // }
+
+</script>
+

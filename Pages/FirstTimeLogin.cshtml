@@ -1,0 +1,157 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.FirstTimeLoginModel
+@{
+    Layout = null;
+}
+<head>
+    <title>NIFT Image Based Clearing</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="shortcut icon" href="~/assets/img/logo/favicon.png">
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/vendor/bootstrap-datepicker/datepicker.css" rel="stylesheet">
+    <link href="~/assets/vendor/font-awsome/css/all.min.css" rel="stylesheet" />
+    <link href="~/assets/vendor/toastr/toastr.min.css" rel="stylesheet" />
+    <link href="~/assets/css/proximanova.css" rel="stylesheet" />
+    <link href="~/assets/css/forgot-password.css" rel="stylesheet" />
+</head>
+<style>
+    .hide {
+        display: none;
+    }
+
+</style>
+<div class="loader-wrapper hide" id="loader_it">
+    <span class="loader">
+        <img src="~/assets/img/logo/favicon.png" alt="Logo">
+    </span>
+</div>
+    <div class="container">
+    <div id="div_msg" class="card bg-danger text-white shadow hide">
+        <div class="card-body">
+            <label id="msg"></label>
+        </div>
+    </div>
+        <div class="row no-gutters justify-content-center">
+            <div class="col-lg-6">
+                <div class="card pwd-card">
+                    <img src="assets/img/logo/nift-eclearing-logo-login.png" class="d-block mx-auto login-logo pt-4" />
+                    <h5 class="mb-0 text-center">IBCS Clearing System</h5>
+                    <div class="login-wrap p-4 px-md-5 py-md-3">
+                        <div class="d-flex">
+                            <div class="w-100">
+                                <h3 class="mb-3">First Time Login</h3>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userId">Username</label>
+                            <input type="text" class="form-control" required="required" id="userId" tabindex="1" maxlength="100" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cnic_no">CNIC No</label>
+                            <input id="cnic_no" type="text" required="required" class="form-control" tabindex="2" maxlength="13" onkeypress="return isNumber(event)" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input id="dob" type="button" required="required" class="form-control" style="text-align:left" tabindex="3" data-date-format="dd/mm/yyyy" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="question">Security Question</label>
+                            <select id="question" class="form-control">
+                                <option value="0">Select</option>
+                                <option value="1">First School Name</option>
+                                <option value="2">Favorite Color</option>
+                                <option value="3">Birth City</option>
+                                <option value="4">Pet Name</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="answer">Security Answer</label>
+                            <input id="answer" type="text" required="required" class="form-control" tabindex="3" />
+                        </div>
+
+                        <div class="form-group text-center">
+                            <button type="submit" id="Sign_IN" tabindex="5" class="btn btn-secondary submit px-3"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="mt-4 mb-0 text-center powered">Powered by NIFT</p>
+    </div>
+<script src="~/assets/vendor/jquery/jquery.min.js"></script>
+<script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/assets/vendor/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
+<script>
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    $(function () {
+        $("#dob").datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+        })
+    });
+
+
+        $(document).ready(function () {
+            $("#Sign_IN").click(function () {
+            document.getElementById('loader_it').style.visibility = "visible";
+                var userId = $('#userId').val();
+                var cnic_no = $('#cnic_no').val();
+                var dob = $('#dob').val();
+                var question = $('#question').val();
+                var answer = $('#answer').val();
+
+                if ((userId != "" && userId != null) && (cnic_no != "" && cnic_no != null) && (dob != "" && dob != null) && (question != "" && question != null) && (answer != "" && answer != null)) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/FirstTimeLogin?handler=Senddetails',
+                        dataType: 'JSON',
+                        data: { "userId": userId, "cnic_no": cnic_no, "dob": dob, "question": question, "answer": answer },
+                        success: function (result) {
+                            if (result == "Success") {
+                                window.location.replace('/NewPassword');
+                            }
+                            else {
+                            $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                            $("#msg").text("Inalid User details!");
+                                setTimeout(
+                                    function () {
+                                    $('#div_msg').addClass("hide");
+                                    }, 5000);
+                                return;
+                            }
+                        }
+                    });
+
+                }
+                else {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please enter the required fields!");
+                    setTimeout(
+                        function () {
+                        $('#div_msg').addClass("hide");
+                        }, 5000);
+                    return;
+                }
+            document.getElementById('loader_it').style.visibility = "hidden";
+            });
+        });
+
+</script>

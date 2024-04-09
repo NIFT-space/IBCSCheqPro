@@ -1,0 +1,40 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Cycleinfo.OuttestModel
+@{
+}
+<form method="post">
+<button id="submit_" class="btn btn-danger btn-submit"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+</form>
+<script>
+
+
+    var brd = {
+        bkcode: null,
+        citycode: null,
+        cycle: null,
+        brcode: null,
+        bkType: null
+    }
+    console.log(brd);
+    $.ajax({
+        url: '/Cycleinfo/Outtest?handler=FetchFiles',
+        data: 'data1=26',
+        type: 'POST',
+        headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+        success: function (resp) {
+            //request sent and response received.
+        }
+
+    });
+                // $.ajax({
+                //     url: '/Scoreboard/Branchboard?handler=PassCaptcha',
+                //     data: 'data1=26',
+                //     type: 'POST',
+                //     headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                //     success: function (resp) {
+                //         //request sent and response received.
+                //     }
+                // });
+
+
+</script>

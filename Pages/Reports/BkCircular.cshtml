@@ -1,0 +1,70 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Reports.BkCircularModel
+@using IBCS_Core_Web_Portal.Models
+
+@{
+}
+
+<div class="g-pa-20">
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+                <h4 class="mb-0 text-white">Circular & Notification</h4>
+            </li>
+        </ul>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="table-responsive mt-4">
+                <form method="post">
+                <table class="table table-bordered table-striped text-center" id="dgFile">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>File Name</th>
+                            <th>File Update Date</th>
+                            <th>File Update Time</th>
+                            <th>Size (KB)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.circular != null)
+                        {
+                            @foreach (var file in Model.circular)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>@file.RepDesc</td>
+                                    <td>@file.FileUpdateDate</td>
+                                    <td>@file.FileUpdateTime</td>
+                                    <td>@file.RepSize</td>
+                                    <td><button formmethod="post" asp-page-handler="DownloadFile" asp-route-v301x913="@file.CirId" asp-route-c036x9210="@file.Repname" class="btn btn-secondary"><i class="fa-solid fa-download"></i>Download</button></td>
+                                    @* <td><a href="@Url.Page("BkCircular", "DownloadFile", new { Cirid = file.CirId, Fname = file.Repname })" class="btn btn-secondary btn-download"><i class="fa-solid fa-download"></i>Download</a></td> *@
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+        $(document).ready(function() {
+        $('#home_').removeClass('has-active');
+        $('#circ_').addClass('active');
+        $('#info_').addClass('u-side-nav-opened active');
+        $('#subMenu5').css('display', 'block');
+            $('#dgFile').DataTable( {
+                // dom: 'lBfrtip',
+				dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                // buttons: [ 'csv', 'excel' ],
+				buttons : [ { extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' } ]
+            } );
+        });
+    </script>

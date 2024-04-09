@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - IBCS_Core_Web_Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/IBCS_Core_Web_Portal.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/includes/css/stylenav.css"/>
+
+    <link rel="stylesheet" href="~/assets/css/layout.css" />
+    <link rel="stylesheet" href="~/assets/css/style.css"/>
+    <link rel="stylesheet" href="~/assets/css/stylecms.css" />
+    <link rel="stylesheet" href="~/includes/style.css" />
+    <link rel="stylesheet" href="~/includes/stylenav.css" />
+    <link href="~/assets/css/jquery.datatables.min.css" rel="stylesheet" />
+    <link href="~/assets/css/datatables.min.css" rel="stylesheet" />
+    <script src="~/js/Jquery-3.7.0.js" type="text/javascript"></script>
+    <script src="~/js/Top.js" type="text/javascript"></script>
+@* <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>*@
+    
+
+    <script type="text/javascript">
+        
+
+            //$.each(ddl, function (i, hora) {
+            //    console.log(i);
+            //    console.log(hora.pdate);
+            //        $("#DDL_Date").append(
+            //        $('<option></option>').val(hora.Id).text(hora.pdate));
+            //    });
+            //}
+        //        success: function (response) {
+
+        //            ddlCustomers.empty().append('<option selected="selected" value="0">Please select</option>');
+        //            $.each(response, function (index, value) {
+        //                ddlCustomers.append($("<option>"+JSON.stringify(value.pdate)+"</option>"));
+        //            });
+        //        },
+        //        failure: function (response) {
+        //            alert(response.responseText);
+        //        },
+        //        error: function (response) {
+        //            alert(response.responseText);
+        //        }
+        //    });
+        
+        </script>
+
+
+
+</head>
+<body>
+    @*<%--Red Bar Start--%>*@
+   <div class="redbar">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="lida-14-7">
+                        <img ID="Image1" src="~/assets/img/top/user.png" />
+                        <label ID="Label6"></label>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="timing-label"><span id='ct'></span></div>
+                    <div class="txt-right">
+                        <img ClientIDMode="Static" ID="Image2" onmouseenter="ShowMsg()" onmouseleave="HideMsg()" ImageUrl="assets/img/top/info.png" />
+                            <a ID ="HyperLink2" href="logoff" target="_parent">
+                            <img ID="Image3" src="~/assets/img/top/logout.png" />
+                            </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<%--Red Bar End--%>*@
+
+    @*<%--Container start--%>*@
+    <div class="container">
+        @*<%--Logo Start--%>*@
+        <div class="row">
+            <div class="col-md-2">
+                <div class="logos">
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="~/assets/img/top/nift-logo.png" alt="Version 1.0.0" />
+                                <div class="subheading-red">Image Based Clearing</div>
+                                <label style="color: black; font-size: 11px; font-style: italic; font-weight: bold;">Version 1.0.0.0</label>
+                            </div>
+                            <div class="flip-card-back">
+                                <p style="color: white; font-size: 20px; font-family: Arial Black; font-weight: bold; margin: 0 auto;">
+                                    IMAGE
+                                    <br />
+                                    OF
+                                    <br />
+                                    TRUST</>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<%--Logo End--%>
+            <%-- Layout Start --%>*@
+            <div class="col-md-10">
+                <div class="bar-area">
+                    @*<%-- Date Start --%>*@
+                    <div class="innerdatecycle">
+                        <div class="process-data-lida w40">
+                            <select ID="DDL_Date" ToolTip="Process Date" >
+                            </select>
+                        </div>
+                    </div>
+                    @*<%-- Date End --%>
+                    <%-- Menu Start --%>*@
+                        <nav id="nav">
+                            <ul id="navigation">
+                                <li><a href="~/IBCSMain" class="nav-anchortext" style="border-left: 0px;" target="">Home</a></li>
+                                <li>
+                                    <a href="#" class="nav-anchortext" target="">Reports</a>
+                                    <ul>
+                                        <li><a href="/Reports/BkTrSc" target="">Bank Transfer Scroll</a></li>
+                                        <li><a href="/Reports/BranchTransferScroll" target="">Branch Transfer Scroll</a> </li>
+                                    <li><a href="/Reports/TreasuryScoreboard" target="">Treasury Scoreboard</a></li>
+                                    <li><a href="/Reports/TreasurySubBook" target="">Treasury Sub-Book</a></li>
+                                        <li>
+                                            <a href="#" target="">Intercity</a>
+                                            <ul>
+                                            <li><a href="/Reports/IntercityBankTransferScroll" target="">Bank Transfer Scroll</a></li>
+                                            <li><a href="/Reports/IntercityBranchTransferScroll" target="">Branch Transfer Scroll</a></li>
+                                            <li><a href="/Reports/IntercityTreasurySubBook" target="">Treasury Sub-Book</a></li>
+                                                <li><a href="/Reports/IntercitySBPConsolidatedPosition" target="">SBP Consolidated Position</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#" target="">Return Memo (Outward)</a>
+                                            <ul>
+                                            <li><a href="/Reports/BranchReturnMemo" target="">Branch Return Memo</a>
+                                            <li><a href="/Reports/CPUReturnMemo" target="">CPU Return Memo</a>
+                                            </ul>
+                                        </li>
+                                    <li><a href="/Reports/BankAdvices" target="">Advices</a></li>
+                                        <li>
+                                            <a href="#" target="">MIS</a>
+                                            <ul>
+                                            <li><a href="/Reports/DongleReport" target="">Dongle Report</a></li>
+                                            <li><a href="/Reports/ReturnLogReport" target="">Return Log Report</a></li>
+                                            <li><a href="/Reports/UserLogReport" target="">User Log Report</a></li>
+                                            <li><a href="/Reports/BkHv" target="">Bank High Value Report</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            <li><a href="/Reports/BkCircular" class="nav-anchortext" target="">Circular</a></li>
+                            <li><a href="/Reports/BkHelp" class="nav-anchortext" target="">Help</a></li>
+                                <li><a href="https://nift.pk/" class="nav-anchortext" target="_blank">Contact Us</a></li>
+                                <li><a href="https://nift.pk" class="nav-anchortext" target="_blank">Corporate</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<%-- Snakbar Start --%>*@
+        <div id="snackbar">
+
+            <div style="background-color: white; color: #d7182a !important; height: 30px; text-align: center; vertical-align: middle; font-weight: bold;">
+                <p>NIFT Image Based Cheque Clearing</p>
+            </div>
+            <br />
+            <p id="pInfo" style="color: white">
+            </p>
+        </div>
+        <div class="clearfix"></div>
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - IBCS_Core_Web_Portal - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/jquery.datatables.min.js"></script>
+    <script src="~/js/datatables.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

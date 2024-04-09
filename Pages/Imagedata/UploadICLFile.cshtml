@@ -1,0 +1,143 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Imagedata.UploadICLFileModel
+@{
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#bICL_Upload').addClass('active');
+        $('#imgfl_').addClass('u-side-nav-opened active');
+        $('#subMenu2').css('display', 'block');
+    });
+
+
+    function btn_dnclick(repid_, repname_) {
+        // Get the data from data attributes
+        var value1 = repid_;//$("#btn_dn").data("v301x913");
+        var value2 = repname_;//$("#btn_dn").data("c036x9210");
+
+        $.ajax({
+            type: 'POST',
+            url: '/Imagedata/UploadICLFile?handler=DownloadFile',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: { v301x913: value1, c036x9210: value2 },
+            xhrFields: { responseType: 'blob' },
+            success: function (data) {
+                if (data == "RLimit") {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Download limit is reached!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else {
+                    var blob = new Blob([data]);
+                    var link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = value2;
+                    link.click();
+                }
+            }
+        });
+    }
+</script>
+<style>
+    .hide {
+        display: none;
+    }
+
+</style>
+
+<div class="g-pa-20">
+    <div id="div_msg" class="card bg-danger text-white shadow hide">
+        <div class="card-body">
+            <label id="msg"></label>
+        </div>
+    </div>
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+            <li class="list-inline-item">
+                <h4 class="mb-0 text-white">Upload Inward Return File (Offline)</h4>
+            </li>
+        </ul>
+    </div>
+    <form method="post" enctype="multipart/form-data">
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            
+                            
+
+                            <div class="col-sm-6 col-lg-6 col-xl-3 g-mb-10">
+                                <label for="DDL_Cycle">Upload File:</label>
+                                <input type="file" asp-for="Upload" accept=".zip" />
+                            </div>
+
+                            <div class="col-sm-6 col-lg-6 col-xl-3 g-mb-10 text-right mt-3 mt-xl-auto">
+                                <button id="submit_" formmethod="post" type="submit" class="btn btn-danger btn-submit"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped bank-transfer text-center" id="dgFile">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Bank Name</th>
+                            <th>City</th>
+                            <th>File Update Date</th>
+                            <th>File Update Time</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var item in Model.reports)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>@item.InstName</td>
+                                    <td>@item.CityName</td>
+                                    <td>@item.FileUpdateDate</td>
+                                    <td>@item.FileUpdateTime</td>
+                                    <td>
+                                        <button id="btn_dn" type="button" onclick="btn_dnclick('@item.FileId','@item.FileName')" data-v301x913="@item.FileId" data-c036x9210="@item.FileName" class="btn btn-secondary">
+                                            <i class="fa-solid fa-download"></i>Download
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('#dgFile').DataTable({
+            // dom: 'lBfrtip',
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            // buttons: [ 'csv', 'excel' ],
+            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        });
+    });
+</script>

@@ -1,0 +1,54 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.LogOffModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="assets/vendor/toastr/toastr.min.css" rel="stylesheet" />
+    <link href="assets/css/proximanova.css" rel="stylesheet" />
+    <link href="assets/css/logout.css" rel="stylesheet" />
+    <title>NIFT Image Based Clearing</title>
+</head>
+<body>
+
+    <main class="align-items-center min-vh-100 py-3 py-md-0">
+        <form class="signin-form" id="form1">
+            <div class="container">
+                <div class="row no-gutters justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="card logout-card">
+                            <img src="assets/img/logo/nift-eclearing-logo-login.png" class="d-block mx-auto login-logo pt-4" />
+                            <div class="wrap text-center">
+                                <div class="login-wrap p-4 px-md-5 py-md-4">
+                                    <div class="d-flex">
+                                        <div class="w-100">
+                                            <h3 class="mb-4 font-weight-bold text-danger">System Message</h3>
+                                            <h4>Thank you for using</h4>
+                                            <h4>Image Based Clearing System</h4>
+                                            <h4>Please contact support.ibcs@nift.pk <span class="font-weight-bold text-danger"> <br>or phone number 111 112 222 EXT 247, 276 & 277</span><br>for any support.</h4>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group text-center mt-3">
+                                        <a href="~/login" class="btn btn-secondary btn-lg rounded submit px-3 w-100">Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </main>
+
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/toastr/toastr.min.js"></script>
+</body>
+</html>

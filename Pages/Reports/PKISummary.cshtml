@@ -1,0 +1,230 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Reports.PKISummaryModel
+@{
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#pkisummary').addClass('active');
+        $('#rep_').addClass('u-side-nav-opened active');
+        $('#subMenu1').css('display', 'block');
+        $('#subMenuLevels3').css('display', 'block');
+        if (location.search != '') {
+            try {
+
+                $("#DDL_Bank").val(location.search.split('&')[0].split('=')[1]);
+
+            }
+            catch { }
+        }
+
+    $("#submit_").click(function () {
+
+        var DDL_Bank = $('#DDL_Bank').val();
+        if ((DDL_Bank != "" && DDL_Bank != null) ) {
+                window.location.replace('/Reports/PKISummary' + '?d1=' + DDL_Bank);
+        }
+        else {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select required fields!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+        }
+    });
+   });
+    </script>
+<style>
+    .hide {
+        display: none;
+    }
+</style>
+<form method="post">
+    <div class="g-pa-20">
+        <div id="div_msg" class="card bg-danger text-white shadow hide">
+            <div class="card-body">
+                <label id="msg"></label>
+            </div>
+        </div>
+        <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+            <ul class="u-list-inline g-color-gray-dark-v6">
+                <li class="list-inline-item g-mr-10">
+                    <h4 class="mb-0 text-white">Dongle Status Report</h4>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-6 col-xl-3 g-mb-10">
+                                <label for="DDL_Bank">Bank:</label>
+                                <select class="form-control" name="DDL_Bank" id="DDL_Bank">
+                                    @if (Model.instBanks != null)
+                                    {
+                                        @foreach (var bk in Model.instBanks)
+                                        {
+                                            <option value="@bk.InstId">@bk.InstName</option>
+                                        }
+
+                                    }
+                                </select>
+                                </div>
+                            <div class="col-sm-6 col-lg-6 col-xl-3 g-mb-10 mt-3 mt-xl-auto">
+                                <button id="submit_" type="button" class="btn btn-danger btn-submit"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <ul class="nav nav-pills mb-3 dsr-tabs" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="dr-all-tab" data-toggle="pill" data-target="#dr-all" type="button" role="tab" aria-controls="dr-all" aria-selected="false">All</button>
+                    </li>
+                   @*  <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="dr-active-tab" data-toggle="pill" data-target="#dr-active" type="button" role="tab" aria-controls="dr-active" aria-selected="true">Active</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="dr-inactive-tab" data-toggle="pill" data-target="#dr-inactive" type="button" role="tab" aria-controls="dr-inactive" aria-selected="false">InActive</button>
+                    </li> *@
+                </ul>
+                <div class="tab-content mt-4" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="dr-all" role="tabpanel" aria-labelledby="dr-all-tab">
+                        <div class="table-responsive-md">
+                            <table class="table table-bordered table-striped bank-transfer text-center" id="dr_transfer_1">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Username</th>
+                                        <th>Email Address</th>
+                                        <th>Branch Name</th>
+                                        <th>City Name</th>
+                                        <th>Status</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.reports != null)
+                                    {
+                                        @foreach (var file in Model.reports)
+                                        {
+                                            <tr>
+                                                <td>@file.FirstName</td>
+                                                <td>@file.LastName</td>
+                                                <td>@file.UserName</td>
+                                                <td>@file.EmailAddress</td>
+                                                <td>@file.BranchName</td>
+                                                <td>@file.Locality</td>
+                                                <td>@file.IsActive</td>
+                                                <td>@file.TelNo3</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                   @*  <div class="tab-pane fade" id="dr-active" role="tabpanel" aria-labelledby="dr-active-tab">
+                        <div class="table-responsive-md">
+                            <table class="table table-bordered table-striped bank-transfer text-center" id="dr_transfer_2">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Username</th>
+                                        <th>Email Address</th>
+                                        <th>Branch Name</th>
+                                        <th>Status</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Hasan</td>
+                                        <td>Haider</td>
+                                        <td>Hasan Haider</td>
+                                        <td>haisan.haider@nift.pk</td>
+                                        <td>Karachi</td>
+                                        <td><i class="fa-solid fa-check"></i></td>
+                                        <td>20/08/2023</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="dr-inactive" role="tabpanel" aria-labelledby="dr-inactive-tab">
+                        <div class="table-responsive-md">
+                            <table class="table table-bordered table-striped bank-transfer text-center" id="dr_transfer_3">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Username</th>
+                                        <th>Email Address</th>
+                                        <th>Branch Name</th>
+                                        <th>Status</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Hasan</td>
+                                        <td>Haider</td>
+                                        <td>Hasan Haider</td>
+                                        <td>haisan.haider@nift.pk</td>
+                                        <td>Karachi</td>
+                                        <td><i class="fa-solid fa-xmark"></i></td>
+                                        <td>20/08/2023</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> *@
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+
+        $('#dr_transfer_1').DataTable({
+            // dom: 'lBfrtip',
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            // buttons: [ 'csv', 'excel' ],
+            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        });
+
+        // $('#dr_transfer_2').DataTable({
+        //     // dom: 'lBfrtip',
+        //     dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //         "<'row'<'col-sm-12'tr>>" +
+        //         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //     // buttons: [ 'csv', 'excel' ],
+        //     buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        // });
+
+        // $('#dr_transfer_3').DataTable({
+        //     // dom: 'lBfrtip',
+        //     dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //         "<'row'<'col-sm-12'tr>>" +
+        //         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //     // buttons: [ 'csv', 'excel' ],
+        //     buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        // });
+    });
+</script>

@@ -1,0 +1,1914 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Marking.InwardmarkingModel
+@{
+}
+<style>
+    .hide {
+        display: none;
+    }
+</style>
+<div class="loader-wrapper" id="loader_ct" style="visibility:hidden">
+    <span class="loader">
+        <img src="~/assets/img/logo/favicon.png" alt="Logo">
+    </span>
+</div>
+<div class="g-pa-20">
+    <div id="div_msg" class="card bg-danger text-white shadow hide">
+        <div class="card-body">
+            <label id="msg"></label>
+        </div>
+    </div>
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+            <li class="list-inline-item">
+                <h4 class="mb-0 text-white">Online Inward Return Marking</h4>
+            </li>
+        </ul>
+    </div>
+
+    <section class="section1">
+        <div class="row mt-3">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <form method="post">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-6 g-mb-10">
+                                <label for="oirm_bank">Bank:</label>
+                                <select name="DDL_Bank" id="DDL_Bank" class="form-control">
+                                    @if (Model.instBanks != null)
+                                    {
+                                        @foreach (var bk in Model.instBanks)
+                                        {
+                                            <option value="@bk.InstId">@bk.InstName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-lg-6 g-mb-10">
+                                <label for="oirm_cycle">Cycle:</label>
+                                <select name="DDL_Cycle" id="DDL_Cycle" class="form-control">
+                                    @if (Model.cycle != null)
+                                    {
+                                        @foreach (var cyc in Model.cycle)
+                                        {
+                                            <option value="@cyc.CycleNo">@cyc.CycleDesc</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-lg-6 g-mb-10">
+                                <label for="oirm_city">City:</label>
+                                <select name="DDL_City" id="DDL_City" class="form-control">
+                                    @if (Model.cities != null)
+                                    {
+                                        @foreach (var ct in Model.cities)
+                                        {
+                                            <option value="@ct.cityid">@ct.cityname</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-lg-6 g-mb-10">
+                                <label for="oirm_branch">Branch:</label>
+                                <select name="DDL_Branch" id="DDL_Branch" class="form-control">
+                                    @* @if (Model.branches != null)
+                                    {
+                                        @foreach (var Bra in Model.branches)
+                                        {
+                                            <option value="@Bra.branchID">@Bra.branchName</option>
+                                        }
+                                    } *@
+                                </select>
+                            </div>
+                            <div class="col-sm-12 g-mb-10 text-right mt-3">
+                                <button type="button" id="submit_" class="btn btn-danger btn-submit"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="table-responsive h-100">
+                    <table class="table u-table--v3--bordered g-color-black text-center table-striped h-100" id="Summ_">
+                        <thead>
+                            <tr>
+                                <th>Summary</th>
+                                <th>Count</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                    <tr>
+                                        <td class="text-danger">Pay</td>
+                                        <td>0</td>
+                                        <td>0</td>
+                                    </tr>
+                                
+                                    <tr>
+                                        <td class="text-danger">Return</td>
+                                        <td>0</td>
+                                        <td>0</td> 
+                                        
+                                    </tr>
+                                
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-right">
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#filter"><i class="fa-solid fa-filter"></i> Show Filter</button>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped bank-transfer text-center" id="oirm_transfer">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Status</th>
+                                <th>Return</th>
+                                <th>Rejected/Authorized</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @* @if (Model.objtwise != null)
+                            {
+                                @foreach (var file in Model.objtwise)
+                                {
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr class="odd-row">
+                                                        <th></th>
+                                                        <th colspan="2">Tr Seq No</th>
+                                                        <th colspan="3">OW Bank Name</th>
+                                                        <th colspan="4">OW Br Name</th>
+                                                        <th>Tran Code</th>
+                                                        <th colspan="2">Acc No</th>
+                                                        <th>Chq No</th>
+                                                        <th>Amount</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-danger">MICR Data</td>
+                                                        <td colspan="2">@file.TrCode</td>
+                                                        <td colspan="3">@file.SBkNm</td>
+                                                        <td colspan="4">@file.SBrNm</td>
+                                                        <td>@String.Format("{0:000}", file.TrId)</td>
+                                                        <td colspan="2">@file.AccNo</td>
+                                                        <td>@file.ChqNo</td>
+                                                        @{
+                                                            var c_amt = Math.Round(Convert.ToDecimal(file.Amount), 2);
+                                                        }
+                                                        @* <td>@c_amt</td> 
+                                                        <td>@String.Format("{0:#,##0.00;(#,##0.00);0}",c_amt)</td>
+                                                    </tr>
+                                                    <tr class="even-row">
+                                                        <th></th>
+                                                        <th>IQA</th>
+                                                        <th>UV</th>
+                                                        <th>UV %</th>
+                                                        <th>UV Tmp</th>
+                                                        <th>QR Code</th>
+                                                        <th>Micr</th>
+                                                        <th>Std</th>
+                                                        <th>Dup</th>
+                                                        <th>Defer</th>
+                                                        <th>Fraud History</th>
+                                                        <th></th>
+                                                        <th>Avg Chq Amt</th>
+                                                        <th>Total Chq</th>
+                                                        <th>Total Chq Rtn</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-danger">IQA Result</td>
+                                                        <td>@file.IQA</td>
+                                                        <td>@file.UV</td>
+                                                        <td>@file.Uvperc</td>
+                                                        <td>@file.Tempid</td>
+                                                        <td>@file.Bar</td>
+                                                        <td>@file.MICR</td>
+                                                        <td>@file.Std</td>
+                                                        <td>@file.Dup</td>
+                                                        <td>@file.isDeffer</td>
+                                                        <td>@file.WMark</td>
+                                                        <td class="text-danger">History</td>
+                                                        <td>@file.AvgChqSize</td>
+                                                        <td>@file.TChq</td>
+                                                        <td>@file.TChqR</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td rowspan="1">@file.Reason</td>
+                                        <td>
+                                            <button onclick="return ImageButton1('@file.hostID','@file.TrCode','@file.SBkNm','@file.SBrNm','@file.RBkNm','@file.RBrNm','@file.TrId','@file.SBkId','@file.SBrId',
+                                                       '@file.AccNo','@file.ChqNo','@file.Amount','@file.RBrId','@file.Undersize_Image',
+                                                      '@file.Folded_or_Torn_Document_Corners','@file.Folded_or_Torn_Document_Edges','@file.Framing_Error','@file.Document_Skew','@file.Oversize_image',
+                                                       '@file.Piggy_Back','@file.Image_Too_Light','@file.Image_Too_Dark','@file.Horizontal_Streaks','@file.Below_Minimum_Compressed_Image_Size',
+                                                        '@file.Above_Maximum_Compressed_Image_Size','@file.Front_Rear_Dimension_Mismatch','@file.Carbon_Strip','@file.Out_of_Focus','@file.CycleDesc','@file.ClgType','@file.CityName')"
+                                                    type="button" class="btn btn-secondary view_btn">
+                                                <i class="fa-solid fa-eye"></i> View
+                                            </button>
+                                        </td>
+                                        @{
+                                            var class_ = "";
+                                            var class_2 = "";
+                                            if (file.isAuth == 1)
+                                            {
+                                                class_ = "far fa-square-check check fa-2x fas";
+                                            }
+                                            else
+                                            {
+                                                //class_ = "far fa-square-check check fa-2x fas";
+                                                class_ = "";
+                                            }
+                                            if (file.Settled == 1)
+                                            {
+                                                class_2 = "far fa-square-xmark xmark fa-2x fas";
+                                            }
+                                            else
+                                            {
+                                                //class_2 = "far fa-square-xmark xmark fa-2x fas";
+                                                class_2 = "";
+                                            }
+                                        }
+                                        <td rowspan="1"><i class="@class_" id="xmark"></i><i class="@class_2" id="tmark" ></i></td>
+                                        <td rowspan="1">
+                                            <button type="button" class="btn btn-danger" id="edit_btn_@file.hostID" onclick="Click_Edit(@file.hostID)"><i class="fa-solid fa-pen"></i> Edit</button>
+                                            <p class="mb-0 pt-3">Maker</p>
+                                            <input type="text" class="form-control" style="display:none;" id="maker_@file.hostID">
+                                            <label>@file.Comment1</label>
+                                            <p class="mb-0">Authorizer</p>
+                                            <input type="text" class="form-control" style="display:none;" id="authorizer">
+                                            <label>@file.Comment2</label>
+                                            <button type="button" class="btn btn-danger" id="upd_btn_@file.hostID" onclick="Update_Comment('@file.hostID')" style="display:none;">Update</button>
+                                            <button type="button" class="btn btn-danger" id="canc_btn_@file.hostID" onclick="Click_Canc('@file.hostID')" style="display:none;">Cancel</button>
+                                        </td>
+                                    </tr>
+                                }
+                            } *@
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section2">
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <p class="font-weight-bold mb-0">Time Elapsed</p>
+                                <div id="timer"></div>
+                            </div>
+                            <div class="col-12 col-md-6 text-right">
+                                <button type="button" class="btn btn-danger back_btn"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table-responsive">
+                    <table class="table table-bordered table-striped text-center" id="oirm_transfer2">
+                        <thead>
+                            <tr>
+                                <th>Tr Seq No</th>
+                                <th>OW Bank Name</th>
+                                <th>OW Branch Name</th>
+                                <th>IW Bank Name</th>
+                                <th>IW Branch Name</th>
+                                <th>Tran Code</th>
+                                <th>Acc No</th>
+                                <th>Chq No</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 col-lg-6">
+
+                <div class="row">
+                    <div class="col-12">
+                        <label for="reason">Reason</label>
+                        <select name="ReturnBanks" id="ReturnBanks" class="form-control">
+                            @*<option selected value="1">Pay</option>
+                             @if (Model.ReturnBanks != null)
+                            {
+                                @foreach (var bk in Model.ReturnBanks)
+                                {
+                                    <option value="@bk.ResonID">@bk.ResonID - @bk.ReasonDesc</option>
+                                }
+                            } *@
+                        </select>
+                        
+                        <div class="form-group mt-3">
+                            <label for="other_reason">Please Enter Other Return Reason</label>
+                            <input type="text" class="form-control" id="textreturnReason" disabled="disabled" name="textreturnReason">
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="MarkReturn()" class="btn btn-secondary"><i class="fa-solid fa-check"></i> Mark</button>
+                            @* <button type="button" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Cancel</button> *@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="bg-danger p-2 text-center text-white font-weight-bold">IQA Result</div>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <table class="table iqa-result-table">
+                            <tbody>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Undersize Instrument</td>
+                                                    <td><span id="UnderInstrument"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Folded or Torn Document Corners</td>
+                                                    <td><span id="FdCorners"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Folded or Torn Document Edges</td>
+                                                    <td><span id="FdEdges"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Framing Error</td>
+                                                    <td><span id="FramingError"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Document Skew</td>
+                                                    <td><span id="DocumentSkew"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Oversize Instrument</td>
+                                                    <td><span id="OSInstrument"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Piggy Back</td>
+                                                    <td><span id="PiggyBack"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Image Too Light</td>
+                                                    <td><span id="ImageTooLight"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Image Too Dark</td>
+                                                    <td><span id="ImageTooDark"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Horizontal Streaks</td>
+                                                    <td><span id="HorizontalStreaks"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Below Mimimum Compressed Image Size</td>
+                                                    <td><span id="BMCISize"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Above Mimimum Compressed Image Size</td>
+                                                    <td><span id="AMCISize"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0 pl-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Front Rear Dimension Mismatch</td>
+                                                    <td><span id="FRDMismatch"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Carbon Strip</td>
+                                                    <td><span id="CarbonStrip"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="border-0 pr-0 pt-0">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Out of Focus</td>
+                                                    <td><span id="OutofFocus"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="box1">
+                    <img src="@ViewData["ImageDataURL"]" id="img1" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(1)"></i>
+                    </div>
+                </div>
+
+                <div class="box2 mt-3">
+                    <img src="@ViewData["ImageDataURL2"]" id="img2" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(2)"></i>
+                    </div>
+                </div>
+
+                <div class="box3 mt-3">
+                    <img src="@ViewData["ImageDataURL3"]" id="img3" alt="Cheque" class="image hover-shadow cursor">
+                    <div class="middle">
+                        <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(3)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="myModal" class="modal img-modal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- <span class="rotate cursor" onclick="rotateImg()"><i class="fa-solid fa-rotate fa-1x"></i></span> -->
+                    <span class="close cursor" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
+                </div>
+                <div class="modal-body">
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL"]" id="img4" class="w-100" alt="Cheque">
+                    </div>
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL2"]" id="img5" class="w-100" alt="Cheque">
+                    </div>
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL2"]" id="img6" class="w-100" alt="Cheque">
+                    </div>
+                    <a class="prev-btn" onclick="plusSlides(-1)"><i class="fa-solid fa-chevron-left"></i></a>
+                    <a class="next-btn" onclick="plusSlides(1)"><i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="filter">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Filter By</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5>IQA</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_1" value="Pass" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Pass
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_1" value="Fail" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Fail
+                            </label>
+                        </div>
+
+                        <div class="col-lg-6 mt-2 mt-lg-0">
+                            <h5>MICR</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_2" value="Pass" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Pass
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_2" value="Fail" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Fail
+                            </label>
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <h5>Standard</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_3" value="Yes" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Yes
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_3" value="No" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> No
+                            </label>
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <h5>Defer</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_4" value="Yes" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Yes
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_4" value="No" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> No
+                            </label>
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <h5>Fraud History</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_5" value="Yes" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Yes
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_5" value="No" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> No
+                            </label>
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <h5>QR Code</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_6" value="N/A" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> N/A
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_6" value="UVB.Avg" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Not OK
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_6" value="UVA.Avg" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> OK
+                            </label>
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <h5>UV</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_7" value="N/A" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> N/A
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_7" value="UVB.Avg" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> UV Present (B.Avg/Chk%)
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_7" value="UVA.Avg" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> UV Present (A.Avg/Chk%)
+                            </label>
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <h5>Duplicate</h5>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_8" value="Not Dup" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Not Dup
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_8" value="Dup Check" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Dup Check
+                            </label>
+                            <label class="form-check-inline u-check g-pl-25 ml-0 g-mr-25">
+                                <input class="g-hidden-xs-up g-pos-abs g-top-0 g-left-0" name="radInline1_8" value="Represent Again" type="radio">
+                                <div class="u-check-icon-radio-v4 g-absolute-centered--y g-left-0 g-width-18 g-height-18">
+                                    <i class="g-absolute-centered d-block g-width-10 g-height-10 g-bg-primary--checked"></i>
+                                </div> Represent Again
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-lg-6">
+                            <label for="account_from">Amount (Min)</label>
+                            <input type="text" class="form-control" placeholder="Amount From" id="account_form" name="account_from" onkeypress="return isNumber(event)">
+                        </div>
+
+                        <div class="col-lg-6 mt-2 mt-lg-0">
+                            <label for="account_to">Amount (Max)</label>
+                            <input type="text" class="form-control" placeholder="Amount To" id="account_to" name="account_to" onkeypress="return isNumber(event)">
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <label for="cheque_no">Cheque No</label>
+                            <input type="text" class="form-control" placeholder="Cheque No" id="cheque_no" name="cheque_no" onkeypress="return isNumber(event)">
+                        </div>
+
+                        <div class="col-lg-6 mt-2">
+                            <label for="account_no">Account No</label>
+                            <input type="text" class="form-control" placeholder="Account No" id="account_no" name="account_no" onkeypress="return isNumber(event)">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-secondary btn-apply" id="btnSave"><i class="fa-solid fa-check"></i> Apply</button>
+                    <button type="button" class="btn btn-danger btn-clear" id="btnClear"><i class="fa-solid fa-eraser"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        ////GET PROCESS DATE//////
+        var ddlbank = document.querySelector('#input_date');
+        var option1 = ddlbank.value;
+        $.ajax({
+            type: 'GET',
+            url: '/Marking/Inwardmarking?handler=SelectedDt',
+            dataType: 'json',
+            data: { "dt": option1 }
+        });
+
+
+        if (location.search != '') {
+            try {
+
+                var ate= $("#DDL_Bank").val(location.search.split('&')[0].split('=')[1]);
+                var zyx= $("#DDL_City").val(location.search.split('&')[1].split('=')[1]);
+                var xyz = $("#DDL_Cycle").val(location.search.split('&')[2].split('=')[1]);
+                var sel_branch = $("#DDL_Branch").val(location.search.split('&')[3].split('=')[1]);
+            }
+            catch { }
+        }
+        
+            var DDLbank = document.querySelector('#DDL_Bank');
+            var ddlcity = document.querySelector('#DDL_City');
+            /*selected bank*/
+            $.ajax({
+                type: 'GET',
+                url: '/Marking/Inwardmarking?handler=Selectedbank',
+                dataType: 'json',
+                data: { "bank": DDLbank.value, "city": ddlcity.value },
+                success: function (result) {
+                    $('#DDL_Branch').empty();
+                    $.each(result, function (id, br) {
+                        $('#DDL_Branch').append('<option value=' + br.branchID + '>' + br.branchName + '</option>')
+                    });
+                    if (location.search != '') {
+                        $("#DDL_Branch").val(location.search.split('&')[3].split('=')[1]);
+                    }
+                }
+            });
+        
+        $("#DDL_Bank").on("change", function () {
+            $.ajax({
+                type: 'GET',
+                url: '/Marking/Inwardmarking?handler=Selectedbank',
+                dataType: 'json',
+                data: { "bank": DDLbank.value, "city": ddlcity.value },
+                success: function (result) {
+                    $('#DDL_Branch').empty();
+                    $.each(result, function (id, br) {
+                        $('#DDL_Branch').append('<option value=' + br.branchID + '>' + br.branchName + '</option>')
+                    });
+                }
+            });
+        });
+
+
+        /*selected City*/
+        $.ajax({
+            type: 'GET',
+            url: '/Marking/Inwardmarking?handler=Selectedcity',
+            dataType: 'json',
+            data: { "bank": DDLbank.value, "city": ddlcity.value },
+            success: function (result) {
+                $('#DDL_Branch').empty();
+                $.each(result, function (id, br) {
+                    $('#DDL_Branch').append('<option value=' + br.branchID + '>' + br.branchName + '</option>')
+                });
+                if (location.search != '') {
+                    $("#DDL_Branch").val(location.search.split('&')[3].split('=')[1]);
+                }
+            }
+        });
+
+        $("#DDL_City").on("change", function () {
+            $.ajax({
+                type: 'GET',
+                url: '/Marking/Inwardmarking?handler=Selectedcity',
+                dataType: 'json',
+                data: { "bank": DDLbank.value, "city": ddlcity.value },
+                success: function (result) {
+                    $('#DDL_Branch').empty();
+                    $.each(result, function (id, br) {
+                        $('#DDL_Branch').append('<option value=' + br.branchID + '>' + br.branchName + '</option>')
+                    });
+                    
+                }
+            });
+        }); 
+
+        $("#ReturnBanks").on("change", function () {
+
+            var retval = $("#ReturnBanks").val();
+            if (retval == "801") {
+                document.getElementById("textreturnReason").disabled = false;
+            }
+            else
+            {
+                document.getElementById("textreturnReason").disabled = true;
+            }
+        });
+
+
+        $("#submit_").click(function () {
+            
+            document.getElementById('loader_ct').style.visibility = "visible";
+            var dttable = $('#oirm_transfer').DataTable();
+            var DDL_Bank = $('#DDL_Bank').val();
+            var DDL_City = $('#DDL_City').val();
+            var DDL_Cycle = $('#DDL_Cycle').val();
+            var DDL_Branch = $('#DDL_Branch').val();
+            var brd = {
+                bkcode: DDL_Bank,
+                citycode: DDL_City,
+                cycle: DDL_Cycle,
+                brcode: DDL_Branch
+            }
+            if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null) && (DDL_Branch != "" && DDL_Branch != null)) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Marking/Inwardmarking?handler=MarkingFiles',
+                    contentType: "application/json",
+                    headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    },
+                    data: JSON.stringify(brd),
+                    dataType: "json",
+                    success: function (result) {
+                        if(result == "Failed")
+                        {
+                            window.scrollTo(0, 0);
+                            $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                            $("#msg").text("Please select the required fields!");
+                            setTimeout(
+                                function () {
+                                    $('#div_msg').addClass("hide");
+                                }, 5000);
+                                return;
+                        }
+
+
+                        //////ADD RETURN REASONS//////
+                        $('#ReturnBanks').empty();
+                        $('#ReturnBanks').append('<option value=0>Pay</option>');
+                        $.each(result.returnBanks, function (id, br) {
+                            $('#ReturnBanks').append('<option value=' + br.resonID + '>'+br.resonID+ '-' + br.reasonDesc + '</option>');
+                        });
+                        
+                        ///////////////
+                        $('#Summ_').empty();
+                        $('#Summ_').append('<thead><tr><th>Summary</th><th>Count</th><th>Amount</th></tr></thead>');
+                        if(result.dts1 == null)
+                        {
+                            $('#Summ_').append('<tr><td class= "text-danger"> Pay </td><td> 0</td>'
+                                + '<td>0</td></tr>');
+                        }
+                        if (result.dts2 == null) {
+                            $('#Summ_').append('<tr><td class= "text-danger"> Return </td><td> 0</td>'
+                                + '<td>0</td></tr>');
+                        }
+                        //////ADD SUMMARY///////
+                        $.each(result.dts1, function(idx, elema)
+                        {
+                            $('#Summ_').append('<tr><td class= "text-danger"> Pay </td><td> ' + elema.aCount + '</td>'
+                            +'<td>'+addComas(parseFloat(elema.aAmount).toFixed(2))+'</td></tr>');
+                        });
+                        $.each(result.dts2, function(idx, elemb)
+                        {
+                            $('#Summ_').append('<tr><td class="text-danger">Return</td><td>' + elemb.sCount+'</td>'
+                            +'<td>' + addComas(parseFloat(elemb.sAmount).toFixed(2))+'</td></tr>');
+                        });
+                        ////////////////////////
+
+                        $("#oirm_transfer > tbody").html("");
+                        dttable.clear();
+                        // table.append('<thead><tr><th></th><th> Status </th><th> Return </th>' +
+                        //     '<th> Rejected / Authorized </th><th> Comments </th></tr> </thead><tbody>');
+
+                        $.each(result.objtwise, function (id, elem) {
+                            if (elem.isAuth == "1") {
+                                class_ = "far fa-square-check check fa-2x fas";
+                            }
+                            else {
+                                class_ = "";
+                            }
+
+                            if (elem.settled == 1) {
+                                class_2 = "far fa-square-xmark xmark fa-2x fas";
+                            }
+                            else {
+                                class_2 = "";
+                            }
+                            let newrow = '<tr><td>'
+                                + '<table><tbody><tr class="odd-row"><th></th><th colspan="2"> Tr Seq No </th><th colspan="3"> OW Bank Name </th>'
+                                + '<th colspan="4"> OW Br Name </th><th> Tran Code </th><th colspan="2"> Acc No </th><th> Chq No </th><th> Amount </th></tr>'
+
+                                + '  <tr><td class="text-danger td_in">MICR Data</td><td colspan="2" class="td_in">' + elem.trCode + '</td><td class="td_in" colspan="3">' + elem.sBkNm + ' </td>'
+                                + '  <td class="td_in" colspan="4">' + elem.sBrNm + ' </td><td class="td_in">' + String('000' + elem.trId).slice(-3) + ' </td> <td class="td_in" colspan="2"> ' + String('0000000000000000' + elem.accNo).slice(-16) + ' </td> '
+                                + '  <td class="td_in">' + String('00000000' + elem.chqNo).slice(-8) + ' </td> <td class="td_in">' + addComas(parseFloat(elem.amount).toFixed(2)) + ' </td></tr>'
+
+
+                                + '  <tr class="even-row"><th></th><th>IQA</th><th>UV</th><th>UV %</th><th>UV Tmp</th><th>QR Code</th><th>Micr</th><th>Std</th><th>Dup</th>'
+                                + '  <th>Defer</th><th>Fraud History</th><th></th><th>Avg Chq Amt</th><th>Total Chq</th><th>Total Chq Rtn</th></tr><tr>'
+                                + ' <td class="text-danger td_in">IQA Result</td>'
+                                + '   <td class="td_in">' + elem.iqa + ' </td><td class="td_in">' + elem.uv + ' </td> <td class="td_in">' + elem.uvperc + '</td> <td class="td_in">' + elem.tempid + ' </td> <td class="td_in">' + elem.bar + ' </td>'
+                                + '<td class="td_in">' + elem.micr + ' </td> <td class="td_in">' + elem.std + ' </td> <td class="td_in">' + elem.dup + ' </td> <td class="td_in">' + elem.isDeffer + ' </td>'
+                                + '   <td>' + elem.wMark + ' </td>'
+                                + '<td class="text-danger td_in">History</td> <td class="td_in">' + addComas(parseFloat(elem.avgChqSize).toFixed(2)) + ' </td><td class="td_in">' + elem.tChq + '</td> <td class="td_in">' + elem.tChqR + ' </td></tr> </tbody></table> </td>'
+
+                                + '<td rowspan="1">' + elem.reason + '</td>'
+
+                                + '<td><button onclick="return ImageButton1(' + elem.hostID + ',\'' + elem.trCode + '\',\'' + elem.sBkNm + '\',\'' + elem.sBrNm + '\','
+                                + '\'' + elem.rBkNm + '\',\'' + elem.rBrNm + '\',\'' + elem.trId + '\',\'' + elem.sBkId + '\',\'' + elem.sBrId + '\',\'' + elem.accNo + '\',\'' + elem.chqNo + '\',\'' + elem.amount + '\',\'' + elem.rBrId + '\','
+                                + '\'' + elem.undersize_Image + '\',\'' + elem.folded_or_Torn_Document_Corners + '\',\'' + elem.folded_or_Torn_Document_Edges + '\',\'' + elem.framing_Error + '\',\'' + elem.document_Skew + '\',\'' + elem.oversize_image + '\','
+                                + '\'' + elem.piggy_Back + '\',\'' + elem.image_Too_Light + '\',\'' + elem.image_Too_Dark + '\',\'' + elem.horizontal_Streaks + '\',\'' + elem.below_Minimum_Compressed_Image_Size + '\','
+                                + '\'' + elem.above_Maximum_Compressed_Image_Size + '\',\'' + elem.front_Rear_Dimension_Mismatch + '\',\'' + elem.carbon_Strip + '\',\'' + elem.out_of_Focus + '\','
+                                + '\'' + elem.cycleDesc + '\',\'' + elem.clgType + '\',\'' + elem.cityName + '\',\'' + elem.reasonID + '\',\'' + elem.reason + '\')" type = "button" class= "btn btn-secondary view_btn"> <i class= "fa-solid fa-eye"> </i> View</button></td>'
+
+
+                                + '<td rowspan = "1" > <i class="' + class_ + '" id = "xmark" > </i><i class="' + class_2 + '" id="tmark" ></i > </td>'
+                                + '<td rowspan = "1" ><button type="button" class= "btn btn-danger" id = "edit_btn_' + elem.hostID + '" onclick = "Click_Edit(' + elem.hostID + ')" > <i class="fa - solid fa - pen" > </i> Edit</button>'
+                                + '<p class="mb-0 pt-3" > Maker </p>'
+                                + '<input type = "text" class= "form-control" style = "display:none;" id = "maker_' + elem.hostID + '">'
+                                + '<label>' + elem.comment1 + ' </label>'
+                                + '<p class= "mb-0" > Authorizer </p>'
+                                + ' <input type = "text" class= "form-control" style = "display:none;" id = "authorizer">'
+                                + ' <label>' + elem.comment2 + ' </label>'
+                                + '<button type = "button" class= "btn btn-danger" id = "upd_btn_' + elem.hostID + '" onclick = "Update_Comment(' + elem.hostID + ')" style = "display:none;"> Update </button>'
+                                + '<button type = "button" class= "btn btn-danger" id = "canc_btn_' + elem.hostID + '" onclick = "Click_Canc(' + elem.hostID + ')" style = "display:none;"> Cancel </button>'
+                                + '</td></tr>';
+                            dttable.row.add($(newrow)).draw();
+
+                            
+                        });
+                        if (!DataTable.isDataTable('#oirm_transfer')) {
+                            $('#oirm_transfer').DataTable({
+                                dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                                    "<'row'<'col-sm-12'tr>>" +
+                                    "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                                "ordering": false
+                            });
+                        }
+
+                        dttable.draw();
+                    }
+                });
+            }
+            else {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select the required fields!");
+                window.scrollTo(0, 0);
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+            setTimeout(
+                function () {
+                    document.getElementById('loader_ct').style.visibility = "hidden";
+                }, 1000);
+            
+        });
+    });
+</script>
+<style>
+    .dt-buttons {
+        display: none;
+    }
+
+    .td_in{
+        font-weight:bold;
+    }
+    .bold_ {
+        font-weight: bold;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#mark_').addClass('active');
+        $('#rtn_').addClass('u-side-nav-opened active');
+        $('#subMenu4').css('display', 'block');
+
+        var dttable = $('#oirm_transfer').DataTable();
+        $('#oirm_bank').select2();
+        $('#oirm_city').select2();
+        $('#oirm_cycle').select2();
+        $('#oirm_ctype').select2();
+        $('#oirm_branch').select2();
+
+        // $('#oirm_transfer').DataTable({
+        //     // dom: 'lBfrtip',
+        //     dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //         "<'row'<'col-sm-12'tr>>" +
+        //         "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //     buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+        //     // pageLength: 5,
+        // });
+        
+        $(".section2").hide();
+        $(".view_btn").on("click", function () {
+            $(".section2").show();
+            $(".section1").hide();
+        });
+        
+    });
+    function MarkReturn() {
+        var dttable = $('#oirm_transfer').DataTable();
+        var reasonid = $('#ReturnBanks').val();
+        var reasondesc = $('#ReturnBanks Option:selected').text();
+        var otherreason = $("#textreturnReason").val();
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        var DDL_Branch = $('#DDL_Branch').val();
+        $.ajax({
+            type: 'POST',
+            url: '/marking/Inwardmarking?handler=MarkReturnClick',
+            dataType: 'json',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: {
+                "reasonid": reasonid,
+                "reasondesc":reasondesc,
+                "otherreason":otherreason,
+                "DDL_Bank": DDL_Bank,
+                "DDL_Branch":DDL_Branch,
+                "DDL_City": DDL_City,
+                "DDL_Cycle": DDL_Cycle
+            },
+            success: function (data) {
+                var brd = {
+                    bkcode: DDL_Bank,
+                    citycode: DDL_City,
+                    cycle: DDL_Cycle,
+                    brcode: DDL_Branch
+                }
+                if (data == "Success") {
+                    document.getElementById('loader_ct').style.visibility = "hidden";
+
+                    if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null) && (DDL_Branch != "" && DDL_Branch != null)) {
+                        $(".section1").show();
+                        $(".section2").hide();
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Marking/Inwardmarking?handler=MarkingFiles',
+                            contentType: "application/json",
+                            headers: {
+                                RequestVerificationToken:
+                                    $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            data: JSON.stringify(brd),
+                            dataType: "json",
+                            success: function (result) {
+                                if (result == "Failed") {
+                                    window.scrollTo(0, 0);
+                                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                                    $("#msg").text("Please select the required fields!");
+                                    setTimeout(
+                                        function () {
+                                            $('#div_msg').addClass("hide");
+                                        }, 5000);
+                                    return;
+                                }
+
+
+                                //////ADD RETURN REASONS//////
+                                $('#ReturnBanks').empty();
+                                $('#ReturnBanks').append('<option value=1>Pay</option>');
+                                $.each(result.returnBanks, function (id, br) {
+                                    $('#ReturnBanks').append('<option value=' + br.resonID + '>' + br.resonID + '-' + br.reasonDesc + '</option>');
+                                });
+
+                                ///////////////
+
+                                //////ADD SUMMARY///////
+                                $.each(result.dts1, function (idx, elema) {
+                                    $('#Summ_').empty();
+                                    $('#Summ_').append('<thead><tr><th>Summary</th><th>Count</th><th>Amount</th></tr></thead>');
+
+                                    $('#Summ_').append('<tr><td class= "text-danger"> Pay </td><td> ' + elema.aCount + '</td>'
+                                        + '<td>' + addComas(parseFloat(elema.aAmount).toFixed(2)) + '</td></tr>');
+                                });
+                                $.each(result.dts2, function (idx, elemb) {
+                                    $('#Summ_').append('<tr><td class="text-danger">Return</td><td>' + elemb.sCount + '</td>'
+                                        + '<td>' + addComas(parseFloat(elemb.sAmount).toFixed(2)) + '</td></tr>');
+                                });
+                                ////////////////////////
+
+                                var table = $('#oirm_transfer');
+                                $("#oirm_transfer > tbody").html("");
+                                dttable.clear();
+                                // table.append('<thead><tr><th></th><th> Status </th><th> Return </th>' +
+                                //     '<th> Rejected / Authorized </th><th> Comments </th></tr> </thead><tbody>');
+
+                                $.each(result.objtwise, function (id, elem) {
+                                    if (elem.isAuth == "1") {
+                                        class_ = "far fa-square-check check fa-2x fas";
+                                    }
+                                    else {
+                                        class_ = "";
+                                    }
+
+                                    if (elem.settled == 1) {
+                                        class_2 = "far fa-square-xmark xmark fa-2x fas";
+                                    }
+                                    else {
+                                        class_2 = "";
+                                    }
+                                    let newrow = '<tr><td>'
+                                        + '<table><tbody><tr class="odd-row"><th></th><th colspan="2"> Tr Seq No </th><th colspan="3"> OW Bank Name </th>'
+                                        + '<th colspan="4"> OW Br Name </th><th> Tran Code </th><th colspan="2"> Acc No </th><th> Chq No </th><th> Amount </th></tr>'
+
+                                        + '  <tr><td class="text-danger">MICR Data</td><td colspan="2">' + elem.trCode + '</td><td colspan="3">' + elem.sBkNm + ' </td>'
+                                        + '  <td colspan="4">' + elem.sBrNm + ' </td><td>' + String('000' + elem.trId).slice(-3) + ' </td> <td colspan="2"> ' + String('0000000000000000' + elem.accNo).slice(-16) + ' </td> '
+                                        + '  <td>' + String('00000000' + elem.chqNo).slice(-8) + ' </td> <td>' + addComas(parseFloat(elem.amount).toFixed(2)) + ' </td></tr>'
+
+
+                                        + '  <tr class="even-row"><th></th><th>IQA</th><th>UV</th><th>UV %</th><th>UV Tmp</th><th>QR Code</th><th>Micr</th><th>Std</th><th>Dup</th>'
+                                        + '  <th>Defer</th><th>Fraud History</th><th></th><th>Avg Chq Amt</th><th>Total Chq</th><th>Total Chq Rtn</th></tr><tr>'
+                                        + ' <td class="text-danger">IQA Result</td>'
+                                        + '   <td>' + elem.iqa + ' </td><td>' + elem.uv + ' </td> <td>' + elem.uvperc + '</td> <td>' + elem.tempid + ' </td> <td>' + elem.bar + ' </td>'
+                                        + '<td>' + elem.micr + ' </td> <td>' + elem.std + ' </td> <td>' + elem.dup + ' </td> <td>' + elem.isDeffer + ' </td>'
+                                        + '   <td>' + elem.wMark + ' </td>'
+                                        + '<td class="text-danger">History</td> <td>' + addComas(parseFloat(elem.avgChqSize).toFixed(2)) + ' </td><td>' + elem.tChq + '</td> <td>' + elem.tChqR + ' </td></tr> </tbody></table> </td>'
+
+                                        + '<td rowspan="1">' + elem.reason + '</td>'
+
+                                        + '<td><button onclick="return ImageButton1(' + elem.hostID + ',\'' + elem.trCode + '\',\'' + elem.sBkNm + '\',\'' + elem.sBrNm + '\','
+                                        + '\'' + elem.rBkNm + '\',\'' + elem.rBrNm + '\',\'' + elem.trId + '\',\'' + elem.sBkId + '\',\'' + elem.sBrId + '\',\'' + elem.accNo + '\',\'' + elem.chqNo + '\',\'' + elem.amount + '\',\'' + elem.rBrId + '\','
+                                        + '\'' + elem.undersize_Image + '\',\'' + elem.folded_or_Torn_Document_Corners + '\',\'' + elem.folded_or_Torn_Document_Edges + '\',\'' + elem.framing_Error + '\',\'' + elem.document_Skew + '\',\'' + elem.oversize_image + '\','
+                                        + '\'' + elem.piggy_Back + '\',\'' + elem.image_Too_Light + '\',\'' + elem.image_Too_Dark + '\',\'' + elem.horizontal_Streaks + '\',\'' + elem.below_Minimum_Compressed_Image_Size + '\','
+                                        + '\'' + elem.above_Maximum_Compressed_Image_Size + '\',\'' + elem.front_Rear_Dimension_Mismatch + '\',\'' + elem.carbon_Strip + '\',\'' + elem.out_of_Focus + '\','
+                                        + '\'' + elem.cycleDesc + '\',\'' + elem.clgType + '\',\'' + elem.cityName + '\',\'' + elem.reasonID + '\',\'' + elem.reason + '\')" type = "button" class= "btn btn-secondary view_btn"> <i class= "fa-solid fa-eye"> </i> View</button></td>'
+
+
+                                        + '<td rowspan = "1" > <i class="' + class_ + '" id = "xmark" > </i><i class="' + class_2 + '" id="tmark" ></i > </td>'
+                                        + '<td rowspan = "1" ><button type="button" class= "btn btn-danger" id = "edit_btn_' + elem.hostID + '" onclick = "Click_Edit(' + elem.hostID + ')" > <i class="fa - solid fa - pen" > </i> Edit</button>'
+                                        + '<p class="mb-0 pt-3" > Maker </p>'
+                                        + '<input type = "text" class= "form-control" style = "display:none;" id = "maker_' + elem.hostID + '">'
+                                        + '<label>' + elem.comment1 + ' </label>'
+                                        + '<p class= "mb-0" > Authorizer </p>'
+                                        + ' <input type = "text" class= "form-control" style = "display:none;" id = "authorizer">'
+                                        + ' <label>' + elem.comment2 + ' </label>'
+                                        + '<button type = "button" class= "btn btn-danger" id = "upd_btn_' + elem.hostID + '" onclick = "Update_Comment(' + elem.hostID + ')" style = "display:none;"> Update </button>'
+                                        + '<button type = "button" class= "btn btn-danger" id = "canc_btn_' + elem.hostID + '" onclick = "Click_Canc(' + elem.hostID + ')" style = "display:none;"> Cancel </button>'
+                                        + '</td></tr>';
+                                    $("td").addClass("bold_");
+                                    dttable.row.add($(newrow)).draw();
+                                });
+                                //table.append('</tbody>');
+                                if (!DataTable.isDataTable('#oirm_transfer')) {
+                                    $('#oirm_transfer').DataTable({
+                                        dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                                            "<'row'<'col-sm-12'tr>>" +
+                                            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                        buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                                        "ordering": false
+                                    });
+                                }
+                            }
+                        });
+                        document.getElementById('loader_ct').style.visibility = "hidden";
+                        $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                        $("#msg").text("Return Marked Successfully");
+                        window.scrollTo(0, 0);
+                        setTimeout(
+                            function () {
+                                $('#div_msg').addClass("hide");
+                            }, 8000);
+                        $("#textreturnReason").val("");
+                        
+                        
+                        //window.location.replace('/Marking/Inwardmarking' + '?d1=' + DDL_Bank + '&d2=' + DDL_City + '&d3=' + DDL_Cycle + '&d4=' + DDL_Branch);
+                    }
+                    else {
+
+                    }
+                }
+                else if (data == "DFailed") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Defer is Closed, You can only View Data");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else if (data == "CFailed") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle is Closed, You can not Save Data");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else if (data == "AuthFailed") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Return is Already Authorize");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else if (data == "Rfailed") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Please enter other reason!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+            },
+            error: function () {
+                window.scrollTo(0, 0);
+                setTimeout(
+                    function () {
+                        $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                        $("#msg").text("Unable to Mark return Please try again!");
+                    }, 5000);
+            }
+        });
+    }
+</script>
+
+<script type="text/javascript">
+    var x =null;
+    $(".back_btn").on("click", function () {
+        clearInterval(x);
+        countDownDate = new Date(new Date().getTime() + 5 * 60000);
+        $(".section1").show();
+        $(".section2").hide();
+    });
+    function ImageButton1(hostID, TrCode, SBkNm, SBrNm,rbknm,rbrnm,TrId,SBkId, SBrId,
+        AccNo, ChqNo, Amount, RBrId, Undersize_Image,
+        Folded_or_Torn_Document_Corners, Folded_or_Torn_Document_Edges, Framing_Error, Document_Skew, Oversize_image,
+        Piggy_Back, Image_Too_Light, Image_Too_Dark, Horizontal_Streaks, Below_Minimum_Compressed_Image_Size,
+        Above_Maximum_Compressed_Image_Size, Front_Rear_Dimension_Mismatch, Carbon_Strip, Out_of_Focus, cycledesc, clgtype, cityname, reasonID,reason) {
+        
+        $("#ReturnBanks").val(reasonID);
+        if(reasonID == "801")
+        {
+            document.getElementById("textreturnReason").disabled = false;
+            $("#textreturnReason").val(reason);
+        }
+        else{
+            document.getElementById("textreturnReason").disabled = true;
+            $("#textreturnReason").val("");
+        }
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        document.getElementById('loader_ct').style.visibility = "visible";
+        $(".section2").show();
+        $(".section1").hide();
+
+        x = setInterval(function () {
+
+            var now = new Date().getTime();
+
+            var distance = countDownDate - now;
+
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById("timer")
+                .innerHTML =
+                '<div>' + minutes + '<span>Minutes</span></div>' +
+                '<div>' + seconds + '<span>Seconds</span></div>';
+
+            // document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+
+            if (distance < 0) {
+                clearInterval(x);
+                //    document.getElementById("timer").innerHTML = "EXPIRED";
+                window.location.replace('/Marking/Inwardmarking');
+            }
+        }, 1000);
+
+        $.ajax({
+            type: 'GET',
+            url: '/marking/Inwardmarking?handler=CheckImages',
+            dataType: 'json',
+            data: {
+                "hostId": hostID, "DDL_Bank": DDL_Bank, "DDL_City": DDL_City, "DDL_Cycle": DDL_Cycle
+            },
+            success: function (data) {
+                var resp = data.split("|");
+                $('#tableBody').empty();
+                $('#tableBody').append('<td>' + TrCode + '</td>', '<td>' + SBkNm + '</td>', '<td>' + SBrNm + '</td>', '<td>' + rbknm + '</td>', '<td>' + rbrnm + '</td>',
+                    '<td>' + String('000' + TrId).slice(-3) + '</td>', '<td>' + String('0000000000000000' + AccNo).slice(-16) + '</td>', '<td>' + String('00000000' + ChqNo).slice(-8) + '</td>', '<td>' + addComas(parseFloat(Amount).toFixed(2)) + '</td>');
+
+                if (Undersize_Image == "Not OK") { 
+                    $('#UnderInstrument').css('color', '#d61f2a');
+                    $('#UnderInstrument').css('font-weight', 'bold');
+                }
+                if (Folded_or_Torn_Document_Corners == "Not OK") {
+                    $('#FdCorners').css('color', '#d61f2a');
+                    $('#FdCorners').css('font-weight', 'bold');
+                }
+                if (Folded_or_Torn_Document_Edges == "Not OK") {
+                    $('#FdEdges').css('color', '#d61f2a');
+                    $('#FdEdges').css('font-weight', 'bold');
+                }
+                if (Framing_Error == "Not OK") {
+                    $('#FramingError').css('color', '#d61f2a');
+                    $('#FramingError').css('font-weight', 'bold');
+                }
+                if (Document_Skew == "Not OK") {
+                    $('#DocumentSkew').css('color', '#d61f2a');
+                    $('#DocumentSkew').css('font-weight', 'bold');
+                }
+                if (Oversize_image == "Not OK") {
+                    $('#OSInstrument').css('color', '#d61f2a');
+                    $('#OSInstrument').css('font-weight', 'bold');
+                }
+                if (Piggy_Back == "Not OK") {
+                    $('#PiggyBack').css('color', '#d61f2a');
+                    $('#PiggyBack').css('font-weight', 'bold');
+                }
+                if (Image_Too_Light == "Not OK") {
+                    $('#ImageTooLight').css('color', '#d61f2a');
+                    $('#ImageTooLight').css('font-weight', 'bold');
+                }
+                if (Image_Too_Dark == "Not OK") {
+                    $('#ImageTooDark').css('color', '#d61f2a');
+                    $('#ImageTooDark').css('font-weight', 'bold');
+                }
+                if (Horizontal_Streaks == "Not OK") {
+                    $('#HorizontalStreaks').css('color', '#d61f2a');
+                    $('#HorizontalStreaks').css('font-weight', 'bold');
+                }
+                if (Below_Minimum_Compressed_Image_Size == "Not OK") {
+                    $('#BMCISize').css('color', '#d61f2a');
+                    $('#BMCISize').css('font-weight', 'bold');
+                }
+                if (Above_Maximum_Compressed_Image_Size == "Not OK") {
+                    $('#AMCISize').css('color', '#d61f2a');
+                    $('#AMCISize').css('font-weight', 'bold');
+                }
+                if (Front_Rear_Dimension_Mismatch == "Not OK") { 
+                    $('#FRDMismatch').css('color', '#d61f2a');
+                    $('#FRDMismatch').css('font-weight', 'bold');
+                }
+                if (Carbon_Strip == "Not OK") { 
+                    $('#CarbonStrip').css('color', '#d61f2a');
+                    $('#CarbonStrip').css('font-weight', 'bold');
+                }
+                if (Out_of_Focus == "Not OK") {
+                    $('#OutofFocus').css('color', '#d61f2a');
+                    $('#OutofFocus').css('font-weight', 'bold');
+                }
+
+
+                $("#UnderInstrument").text(Undersize_Image);
+                $("#FdCorners").text(Folded_or_Torn_Document_Corners);
+                $("#FdEdges").text(Folded_or_Torn_Document_Edges);
+                $("#FramingError").text(Framing_Error);
+                $("#DocumentSkew").text(Document_Skew);
+                $("#OSInstrument").text(Oversize_image);
+                $("#PiggyBack").text(Piggy_Back);
+                $("#ImageTooLight").text(Image_Too_Light);
+                $("#ImageTooDark").text(Image_Too_Dark);
+                $("#HorizontalStreaks").text(Horizontal_Streaks);
+                $("#BMCISize").text(Below_Minimum_Compressed_Image_Size);
+                $("#AMCISize").text(Above_Maximum_Compressed_Image_Size);
+                $("#FRDMismatch").text(Front_Rear_Dimension_Mismatch);
+                $("#CarbonStrip").text(Carbon_Strip);
+                $("#OutofFocus").text(Out_of_Focus);
+
+                //$("#citylbl").text(cityname);
+                //$("#Cyclelbl").text(cycledesc);
+                //$("#Typelbl").text(clgtype);
+                $("#Banklbl").text(rbknm);
+                $("#branchlbl").text(rbrnm);
+
+                $("#img1").attr('src', resp[1]);
+                $("#img2").attr('src', resp[2]);
+                $("#img3").attr('src', resp[3]);
+                $("#img4").attr('src', resp[1]);
+                $("#img5").attr('src', resp[2]);
+                $("#img6").attr('src', resp[3]);
+                document.getElementById('loader_ct').style.visibility = "hidden";
+            },
+            error: function () {
+                document.getElementById('loader_ct').style.visibility = "hidden";
+            }
+        });
+        window.scrollTo(0, 0);
+    }
+
+    function addComas(x) {
+        var parts = x.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    }
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        if (n > slides.length) {
+            slideIndex = 1
+        }
+        if (n < 1) {
+            slideIndex = slides.length
+        }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slides[slideIndex - 1].style.display = "block";
+    }
+
+    // const rotated = document.getElementsByClassName("mySlides");
+    // let rotation = 0;
+    // const angle = 90;
+    // function rotateImg() {
+    //     rotation = (rotation + angle) % 360;
+    //     rotated.style.transform = 'rotate(${rotation}deg)';
+    //     rotated.innerText = rotation;
+    // }
+    function Click_Edit(hostID) {
+        var upd = "#upd_btn_" + hostID;
+        var canc = "#canc_btn_" + hostID;
+        var maker_ = "#maker_" + hostID;
+        $(maker_).show();
+        $(upd).show();
+        $(canc).show();
+    }
+    function Click_Canc(hostID) {
+        var upd = "#upd_btn_" + hostID;
+        var canc = "#canc_btn_" + hostID;
+        var maker_ = "#maker_" + hostID;
+        $(maker_).hide();
+        $(upd).hide();
+        $(canc).hide();
+    }
+    // $(".btn").click(function () {
+    //     $("#maker").show();
+    //     $("#upd_btn").show();
+    //     $("#canc_btn").show();
+    // });
+    // $("#canc_btn").click(function () {
+    //     $("#maker").hide();
+    //     $("#upd_btn").hide();
+    //     $("#canc_btn").hide();
+    // });
+    function Update_Comment(hostid) {
+        var dttable = $('#oirm_transfer').DataTable();
+        var mkr_orig = '#maker_' + hostid;
+        var mkr_comment = $(mkr_orig).val();
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        var DDL_Branch = $('#DDL_Branch').val();
+        var upd = "#upd_btn_" + hostid;
+        var canc = "#canc_btn_" + hostid;
+        var maker_ = "#maker_" + hostid;
+        if(mkr_comment == "" && mkr_comment ==null)
+        {
+            window.scrollTo(0, 0);
+            setTimeout(
+                function () {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Please enter comments!");
+                }, 500);
+            return;
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: '/marking/Inwardmarking?handler=UpdateComment',
+            dataType: 'json',
+            data: {
+                "comments": mkr_comment, "DDL_Bank": DDL_Bank, "DDL_City": DDL_City, "DDL_Cycle": DDL_Cycle, "hostid": hostid
+            },
+            success: function (data) {
+                if (data == "Success") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-danger").addClass("show").addClass("bg-success");
+                    $("#msg").text("Comment successfully updated");
+                    setTimeout(
+                        function () {
+                            $("#div_msg").addClass("hide")
+                        }, 10000);
+                    if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Cycle != "" && DDL_Cycle != null) && (DDL_Branch != "" && DDL_Branch != null)) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Marking/Inwardmarking?handler=MarkingFiles',
+                            contentType: "application/json",
+                            headers: {
+                                RequestVerificationToken:
+                                    $('input:hidden[name="__RequestVerificationToken"]').val()
+                            },
+                            data: JSON.stringify(brd),
+                            dataType: "json",
+                            success: function (result) {
+                                if (result == "Failed") {
+                                    return;
+                                }
+
+                                //////ADD RETURN REASONS//////
+                                $('#ReturnBanks').empty();
+                                $('#ReturnBanks').append('<option value=1>Pay</option>');
+                                $.each(result.returnBanks, function (id, br) {
+                                    $('#ReturnBanks').append('<option value=' + br.resonID + '>' + br.resonID + '-' + br.reasonDesc + '</option>');
+                                });
+
+                                ///////////////
+
+                                //////ADD SUMMARY///////
+                                $.each(result.dts1, function (idx, elema) {
+                                    $('#Summ_').empty();
+                                    $('#Summ_').append('<thead><tr><th>Summary</th><th>Count</th><th>Amount</th></tr></thead>');
+
+                                    $('#Summ_').append('<tr><td class= "text-danger"> Pay </td><td> ' + elema.aCount + '</td>'
+                                        + '<td>' + addComas(parseFloat(elema.aAmount).toFixed(2)) + '</td></tr>');
+                                });
+                                $.each(result.dts2, function (idx, elemb) {
+                                    $('#Summ_').append('<tr><td class="text-danger">Return</td><td>' + elemb.sCount + '</td>'
+                                        + '<td>' + addComas(parseFloat(elemb.sAmount).toFixed(2)) + '</td></tr>');
+                                });
+                                ////////////////////////
+
+                                var table = $('#oirm_transfer');
+                                var table = $('#oirm_transfer');
+                                $("#oirm_transfer > tbody").html("");
+                                dttable.clear();
+                                // table.append('<thead><tr><th></th><th> Status </th><th> Return </th>' +
+                                //     '<th> Rejected / Authorized </th><th> Comments </th></tr> </thead><tbody>');
+
+                                $.each(result.objtwise, function (id, elem) {
+                                    if (elem.isAuth == "1") {
+                                        class_ = "far fa-square-check check fa-2x fas";
+                                    }
+                                    else {
+                                        class_ = "";
+                                    }
+
+                                    if (elem.settled == 1) {
+                                        class_2 = "far fa-square-xmark xmark fa-2x fas";
+                                    }
+                                    else {
+                                        class_2 = "";
+                                    }
+                                    let newrow = '<tr><td>'
+                                        + '<table><tbody><tr class="odd-row"><th></th><th colspan="2"> Tr Seq No </th><th colspan="3"> OW Bank Name </th>'
+                                        + '<th colspan="4"> OW Br Name </th><th> Tran Code </th><th colspan="2"> Acc No </th><th> Chq No </th><th> Amount </th></tr>'
+
+                                        + '  <tr><td class="text-danger">MICR Data</td><td colspan="2">' + elem.trCode + '</td><td colspan="3">' + elem.sBkNm + ' </td>'
+                                        + '  <td colspan="4">' + elem.sBrNm + ' </td><td>' + String('000' + elem.trId).slice(-3) + ' </td> <td colspan="2"> ' + String('0000000000000000' + elem.accNo).slice(-16) + ' </td> '
+                                        + '  <td>' + elem.chqNo + ' </td> <td>' + addComas(parseFloat(elem.amount).toFixed(2)) + ' </td></tr>'
+
+
+                                        + '  <tr class="even-row"><th></th><th>IQA</th><th>UV</th><th>UV %</th><th>UV Tmp</th><th>QR Code</th><th>Micr</th><th>Std</th><th>Dup</th>'
+                                        + '  <th>Defer</th><th>Fraud History</th><th></th><th>Avg Chq Amt</th><th>Total Chq</th><th>Total Chq Rtn</th></tr><tr>'
+                                        + ' <td class="text-danger">IQA Result</td>'
+                                        + '   <td>' + elem.iqa + ' </td><td>' + elem.uv + ' </td> <td>' + elem.uvperc + '</td> <td>' + elem.tempid + ' </td> <td>' + elem.bar + ' </td>'
+                                        + '<td>' + elem.micr + ' </td> <td>' + elem.std + ' </td> <td>' + elem.dup + ' </td> <td>' + elem.isDeffer + ' </td>'
+                                        + '   <td>' + elem.wMark + ' </td>'
+                                        + '<td class="text-danger">History</td> <td>' + addComas(parseFloat(elem.avgChqSize).toFixed(2)) + ' </td><td>' + elem.tChq + '</td> <td>' + elem.tChqR + ' </td></tr> </tbody></table> </td>'
+
+                                        + '<td rowspan="1">' + elem.reason + '</td>'
+
+                                        + '<td><button onclick="return ImageButton1(' + elem.hostID + ',\'' + elem.trCode + '\',\'' + elem.sBkNm + '\',\'' + elem.sBrNm + '\','
+                                        + '\'' + elem.rBkNm + '\',\'' + elem.rBrNm + '\',\'' + elem.trId + '\',\'' + elem.sBkId + '\',\'' + elem.sBrId + '\',\'' + elem.accNo + '\',\'' + String('00000000' + elem.chqNo).slice(-8) + '\',\'' + elem.amount + '\',\'' + elem.rBrId + '\','
+                                        + '\'' + elem.undersize_Image + '\',\'' + elem.folded_or_Torn_Document_Corners + '\',\'' + elem.folded_or_Torn_Document_Edges + '\',\'' + elem.framing_Error + '\',\'' + elem.document_Skew + '\',\'' + elem.oversize_image + '\','
+                                        + '\'' + elem.piggy_Back + '\',\'' + elem.image_Too_Light + '\',\'' + elem.image_Too_Dark + '\',\'' + elem.horizontal_Streaks + '\',\'' + elem.below_Minimum_Compressed_Image_Size + '\','
+                                        + '\'' + elem.above_Maximum_Compressed_Image_Size + '\',\'' + elem.front_Rear_Dimension_Mismatch + '\',\'' + elem.carbon_Strip + '\',\'' + elem.out_of_Focus + '\','
+                                        + '\'' + elem.cycleDesc + '\',\'' + elem.clgType + '\',\'' + elem.cityName + '\',\'' + elem.reasonID + '\',\'' + elem.reason + '\')" type = "button" class= "btn btn-secondary view_btn"> <i class= "fa-solid fa-eye"> </i> View</button></td>'
+
+
+                                        + '<td rowspan = "1" > <i class="' + class_ + '" id = "xmark" > </i><i class="' + class_2 + '" id="tmark" ></i > </td>'
+                                        + '<td rowspan = "1" ><button type="button" class= "btn btn-danger" id = "edit_btn_' + elem.hostID + '" onclick = "Click_Edit(' + elem.hostID + ')" > <i class="fa - solid fa - pen" > </i> Edit</button>'
+                                        + '<p class="mb-0 pt-3" > Maker </p>'
+                                        + '<input type = "text" class= "form-control" style = "display:none;" id = "maker_' + elem.hostID + '">'
+                                        + '<label>' + elem.comment1 + ' </label>'
+                                        + '<p class= "mb-0" > Authorizer </p>'
+                                        + ' <input type = "text" class= "form-control" style = "display:none;" id = "authorizer">'
+                                        + ' <label>' + elem.comment2 + ' </label>'
+                                        + '<button type = "button" class= "btn btn-danger" id = "upd_btn_' + elem.hostID + '" onclick = "Update_Comment(' + elem.hostID + ')" style = "display:none;"> Update </button>'
+                                        + '<button type = "button" class= "btn btn-danger" id = "canc_btn_' + elem.hostID + '" onclick = "Click_Canc(' + elem.hostID + ')" style = "display:none;"> Cancel </button>'
+                                        + '</td></tr>';
+                                    $("td").addClass("bold_");
+                                    dttable.row.add($(newrow)).draw();
+                                });
+                                if (!DataTable.isDataTable('#oirm_transfer')) {
+                                    $('#oirm_transfer').DataTable({
+                                        dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                                            "<'row'<'col-sm-12'tr>>" +
+                                            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                                        buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                                        "ordering": false
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+                else if (data == "NFailed") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Please enter comments!");
+                    setTimeout(
+                        function () {
+                            $("#div_msg").addClass("hide")
+                        }, 5000);
+                }
+                else if (data == "CFailed") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Cycle is closed you cannot update comments!");
+                    $(maker_).hide();
+                    $(upd).hide();
+                    $(canc).hide();
+                    setTimeout(
+                        function () {
+                            $("#div_msg").addClass("hide")
+                        }, 5000);
+                }
+                else if (data == "Failed") {
+                    window.scrollTo(0, 0);
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Unable to update comments! Please try again!");
+                    setTimeout(
+                        function () {
+                            $("#div_msg").addClass("hide")
+                        }, 5000);
+                }
+            },
+            error: function () {
+                window.scrollTo(0, 0);
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Unable to update comments! Please try again!");
+                setTimeout(
+                    function () {
+                        $("#div_msg").addClass("hide")
+                    }, 5000);
+            }
+        });
+        
+        $(maker_).hide();
+        $(upd).hide();
+        $(canc).hide();
+    }
+
+    
+
+
+</script>
+<script>
+    //////CLEAR FILTER BUTTON////
+    $('#btnClear').click(function () {
+        $('#oirm_transfer').empty();
+        $('#filter').modal('hide');
+        var class_; var class_2;
+        $.ajax({
+            type: 'GET',
+            url: '/Marking/Inwardmarking?handler=ClearOut',
+            success: function (result) {
+                var table = $('#oirm_transfer');
+                table.append('<thead><tr><th></th><th> Status </th><th> Return </th>'+
+                    '<th> Rejected / Authorized </th><th> Comments </th></tr> </thead><tbody>');
+    
+                $.each(result, function (id, elem) {
+                    if (elem.isAuth == "1") {
+                        class_ = "far fa-square-check check fa-2x fas";
+                    }
+                    else {
+                        class_ = "";
+                    }
+
+                    if (elem.settled == 1) {
+                        class_2 = "far fa-square-xmark xmark fa-2x fas";
+                    }
+                    else {
+                        class_2 = "";
+                    }
+                    table.append('<tr><td>'
+                        + '<table><tbody><tr class="odd-row"><th></th><th colspan="2"> Tr Seq No </th><th colspan="3"> OW Bank Name </th>'
+                        + '<th colspan="4"> OW Br Name </th><th> Tran Code </th><th colspan="2"> Acc No </th><th> Chq No </th><th> Amount </th></tr>'
+                       
+                        + '  <tr><td class="text-danger">MICR Data</td><td colspan="2">' + elem.trCode + '</td><td colspan="3">' + elem.sBkNm + ' </td>'
+                        + '  <td colspan="4">' + elem.sBrNm + ' </td><td>' + String('000' + elem.trId).slice(-3) + ' </td> <td colspan="2"> ' + elem.accNo + ' </td> '
+                        + '  <td>' + elem.chqNo + ' </td> <td>' + addComas(parseFloat(elem.amount).toFixed(2)) + ' </td></tr>'
+                        
+
+                        + '  <tr class="even-row"><th></th><th>IQA</th><th>UV</th><th>UV %</th><th>UV Tmp</th><th>QR Code</th><th>Micr</th><th>Std</th><th>Dup</th>'
+                        + '  <th>Defer</th><th>Fraud History</th><th></th><th>Avg Chq Amt</th><th>Total Chq</th><th>Total Chq Rtn</th></tr><tr>'
+                        + ' <td class="text-danger">IQA Result</td>'
+                        + '   <td>' + elem.iqa + ' </td><td>' + elem.uv + ' </td> <td>' + elem.uvperc + '</td> <td>' + elem.tempid + ' </td> <td>' + elem.bar + ' </td>'
+                        + '<td>' + elem.micr + ' </td> <td>' + elem.std + ' </td> <td>' + elem.dup + ' </td> <td>' + elem.isDeffer + ' </td>'
+                        + '   <td>' + elem.wMark + ' </td>'
+                        + '<td class="text-danger">History</td> <td>' + addComas(parseFloat(elem.avgChqSize).toFixed(2)) + ' </td><td>' + elem.tChq + '</td> <td>' + elem.tChqR + ' </td></tr> </tbody></table> </td>'
+
+                + '<td rowspan="1">' + elem.reason + '</td>'
+
+                        + '<td><button onclick="return ImageButton1(' + elem.hostID + ',\'' + elem.trCode + '\',\'' + elem.sBkNm + '\',\'' + elem.sBrNm + '\','
+                        + '\'' + elem.rBkNm + '\',\'' + elem.rBrNm + '\',\'' + elem.trId + '\',\'' + elem.sBkId + '\',\'' + elem.sBrId + '\',\'' + elem.accNo + '\',\'' + elem.chqNo + '\',\'' + elem.amount + '\',\'' + elem.rBrId + '\','
+                        + '\'' + elem.undersize_Image + '\',\'' + elem.folded_or_Torn_Document_Corners + '\',\'' + elem.folded_or_Torn_Document_Edges + '\',\'' + elem.framing_Error + '\',\'' + elem.document_Skew + '\',\'' + elem.oversize_image + '\','
+                        + '\'' + elem.piggy_Back + '\',\'' + elem.image_Too_Light + '\',\'' + elem.image_Too_Dark + '\',\'' + elem.horizontal_Streaks + '\',\'' + elem.below_Minimum_Compressed_Image_Size + '\','
+                        + '\'' + elem.above_Maximum_Compressed_Image_Size + '\',\'' + elem.front_Rear_Dimension_Mismatch + '\',\'' + elem.carbon_Strip + '\',\'' + elem.out_of_Focus + '\','
+                        + '\'' + elem.cycleDesc + '\',\'' + elem.clgType + '\',\'' + elem.cityName + '\',\'' + elem.reasonID + '\',\'' + elem.reason + '\')" type = "button" class= "btn btn-secondary view_btn"> <i class= "fa-solid fa-eye"> </i> View</button></td>'
+                        
+                               
+                    +'<td rowspan = "1" > <i class="' + class_ + '" id = "xmark" > </i><i class="' + class_2+ '" id="tmark" ></i > </td>'
+                        + '<td rowspan = "1" ><button type="button" class= "btn btn-danger" id = "edit_btn_' + elem.hostID + '" onclick = "Click_Edit(' + elem.hostID + ')" > <i class="fa - solid fa - pen" > </i> Edit</button>'
+                +'<p class="mb-0 pt-3" > Maker </p>'
+                +'<input type = "text" class= "form-control" style = "display:none;" id = "maker_'+ elem.hostID +'">'
+                +'<label>'+elem.comment1+' </label>'
+                +'<p class= "mb-0" > Authorizer </p>'
+               +' <input type = "text" class= "form-control" style = "display:none;" id = "authorizer">'
+               +' <label>'+elem.comment2+' </label>'
+                        + '<button type = "button" class= "btn btn-danger" id = "upd_btn_' + elem.hostID + '" onclick = "Update_Comment(' + elem.hostID + ')" style = "display:none;"> Update </button>'
+                        + '<button type = "button" class= "btn btn-danger" id = "canc_btn_' + elem.hostID + '" onclick = "Click_Canc('+ elem.hostID +')" style = "display:none;"> Cancel </button>'
+                +'</td></tr>');
+                    $("td").addClass("bold_");
+                });
+                table.append('</tbody>');
+                if (!DataTable.isDataTable('#oirm_transfer')) {
+                    $('#oirm_transfer').DataTable({
+                        dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                        buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                        "ordering": false
+                    });
+                }
+            }
+        });
+    });
+    //////APPLY FILTER BUTTON////////
+    $('#btnSave').click(function () {
+        $('#filter').modal('hide');
+        var IQA = $('input[name="radInline1_1"]:checked').val();
+        var MICR = $('input[name="radInline1_2"]:checked').val();
+        var STD = $('input[name="radInline1_3"]:checked').val();
+        var Defer = $('input[name="radInline1_4"]:checked').val();
+        var FRH = $('input[name="radInline1_5"]:checked').val();
+        var QR = $('input[name="radInline1_6"]:checked').val();
+        var UV = $('input[name="radInline1_7"]:checked').val();
+        var Dup = $('input[name="radInline1_8"]:checked').val();
+        var amt_min = $('#account_form').val();
+        var amt_max = $('#account_to').val();
+        var chq = $('#cheque_no').val();
+        var acc = $('#account_no').val();
+        var DDL_Bank = $('#DDL_Bank').val();
+        var DDL_City = $('#DDL_City').val();
+        var DDL_Cycle = $('#DDL_Cycle').val();
+        var DDL_Branch = $('#DDL_Branch').val();
+        var table = $('#oirm_transfer');
+        table.empty();
+        table.append('<thead><tr><th></th><th> Status </th><th> Return </th>' +
+                            '<th> Rejected / Authorized </th><th> Comments </th></tr> </thead><tbody>');
+        $.ajax({
+            type: 'GET',
+            url: '/Marking/Inwardmarking?handler=FilterOut',
+            dataType: 'json',
+            data: {
+                "IQA": IQA, "MICR": MICR, "STD": STD, "Defer": Defer, "FRH": FRH, "QR": QR, "UV": UV, "Dup": Dup, "amt_min": amt_min,
+                "amt_max": amt_max, "chq": chq, "acc": acc, "DDL_Bank": DDL_Bank, "DDL_City": DDL_City, "DDL_Cycle": DDL_Cycle, "DDL_Branch": DDL_Branch
+            },
+            success: function (result) {
+
+                $.each(result, function (id, elem) {
+                    if (elem.isAuth == "1") {
+                        class_ = "far fa-square-check check fa-2x fas";
+                    }
+                    else {
+                        class_ = "";
+                    }
+
+                    if (elem.settled == 1) {
+                        class_2 = "far fa-square-xmark xmark fa-2x fas";
+                    }
+                    else {
+                        class_2 = "";
+                    }
+                    table.append('<tr><td>'
+                        + '<table><tbody><tr class="odd-row"><th></th><th colspan="2"> Tr Seq No </th><th colspan="3"> OW Bank Name </th>'
+                        + '<th colspan="4"> OW Br Name </th><th> Tran Code </th><th colspan="2"> Acc No </th><th> Chq No </th><th> Amount </th></tr>'
+
+                        + '  <tr><td class="text-danger">MICR Data</td><td colspan="2">' + elem.trCode + '</td><td colspan="3">' + elem.sBkNm + ' </td>'
+                        + '  <td colspan="4">' + elem.sBrNm + ' </td><td>' + String('000' + elem.trId).slice(-3) + ' </td> <td colspan="2"> ' + String('0000000000000000' + elem.accNo).slice(-16) + ' </td> '
+                        + '  <td>' + elem.chqNo + ' </td> <td>' + addComas(parseFloat(elem.amount).toFixed(2)) + ' </td></tr>'
+
+
+                        + '  <tr class="even-row"><th></th><th>IQA</th><th>UV</th><th>UV %</th><th>UV Tmp</th><th>QR Code</th><th>Micr</th><th>Std</th><th>Dup</th>'
+                        + '  <th>Defer</th><th>Fraud History</th><th></th><th>Avg Chq Amt</th><th>Total Chq</th><th>Total Chq Rtn</th></tr><tr>'
+                        + ' <td class="text-danger">IQA Result</td>'
+                        + '   <td>' + elem.iqa + ' </td><td>' + elem.uv + ' </td> <td>' + elem.uvperc + '</td> <td>' + elem.tempid + ' </td> <td>' + elem.bar + ' </td>'
+                        + '<td>' + elem.micr + ' </td> <td>' + elem.std + ' </td> <td>' + elem.dup + ' </td> <td>' + elem.isDeffer + ' </td>'
+                        + '   <td>' + elem.wMark + ' </td>'
+                        + '<td class="text-danger">History</td> <td>' + addComas(parseFloat(elem.avgChqSize).toFixed(2)) + ' </td><td>' + elem.tChq + '</td> <td>' + elem.tChqR + ' </td></tr> </tbody></table> </td>'
+
+                        + '<td rowspan="1">' + elem.reason + '</td>'
+
+                        + '<td><button onclick="return ImageButton1(' + elem.hostID + ',\'' + elem.trCode + '\',\'' + elem.sBkNm + '\',\'' + elem.sBrNm + '\','
+                        + '\'' + elem.rBkNm + '\',\'' + elem.rBrNm + '\',\'' + elem.trId + '\',\'' + elem.sBkId + '\',\'' + elem.sBrId + '\',\'' + elem.accNo + '\',\'' + elem.chqNo + '\',\'' + elem.amount + '\',\'' + elem.rBrId + '\','
+                        + '\'' + elem.undersize_Image + '\',\'' + elem.folded_or_Torn_Document_Corners + '\',\'' + elem.folded_or_Torn_Document_Edges + '\',\'' + elem.framing_Error + '\',\'' + elem.document_Skew + '\',\'' + elem.oversize_image + '\','
+                        + '\'' + elem.piggy_Back + '\',\'' + elem.image_Too_Light + '\',\'' + elem.image_Too_Dark + '\',\'' + elem.horizontal_Streaks + '\',\'' + elem.below_Minimum_Compressed_Image_Size + '\','
+                        + '\'' + elem.above_Maximum_Compressed_Image_Size + '\',\'' + elem.front_Rear_Dimension_Mismatch + '\',\'' + elem.carbon_Strip + '\',\'' + elem.out_of_Focus + '\','
+                        + '\'' + elem.cycleDesc + '\',\'' + elem.clgType + '\',\'' + elem.cityName + '\',\'' + elem.reasonID + '\',\'' + elem.reason + '\')" type = "button" class= "btn btn-secondary view_btn"> <i class= "fa-solid fa-eye"> </i> View</button></td>'
+
+
+                        + '<td rowspan = "1" > <i class="' + class_ + '" id = "xmark" > </i><i class="' + class_2 + '" id="tmark" ></i > </td>'
+                        + '<td rowspan = "1" ><button type="button" class= "btn btn-danger" id = "edit_btn_' + elem.hostID + '" onclick = "Click_Edit(' + elem.hostID + ')" > <i class="fa - solid fa - pen" > </i> Edit</button>'
+                        + '<p class="mb-0 pt-3" > Maker </p>'
+                        + '<input type = "text" class= "form-control" style = "display:none;" id = "maker_' + elem.hostID + '">'
+                        + '<label>' + elem.comment1 + ' </label>'
+                        + '<p class= "mb-0" > Authorizer </p>'
+                        + ' <input type = "text" class= "form-control" style = "display:none;" id = "authorizer">'
+                        + ' <label>' + elem.comment2 + ' </label>'
+                        + '<button type = "button" class= "btn btn-danger" id = "upd_btn_' + elem.hostID + '" onclick = "Update_Comment(' + elem.hostID + ')" style = "display:none;"> Update </button>'
+                        + '<button type = "button" class= "btn btn-danger" id = "canc_btn_' + elem.hostID + '" onclick = "Click_Canc(' + elem.hostID + ')" style = "display:none;"> Cancel </button>'
+                        + '</td></tr>');
+                    $("td").addClass("bold_");
+                });
+                table.append('</tbody>');
+                if (!DataTable.isDataTable('#oirm_transfer')) {
+                    $('#oirm_transfer').DataTable({
+                        dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                        buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+                        "ordering": false
+                    });
+                }
+            }
+                
+        });
+    });
+</script>
+

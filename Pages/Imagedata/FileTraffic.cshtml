@@ -1,0 +1,136 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Imagedata.FileTrafficModel
+@{
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#bICL_view').addClass('active');
+        $('#imgfl_').addClass('u-side-nav-opened active');
+        $('#subMenu2').css('display', 'block');
+    });
+
+
+</script>
+<style>
+    .hide {
+        display: none;
+    }
+
+</style>
+
+<div class="g-pa-20">
+    <div id="div_msg" class="card bg-danger text-white shadow hide">
+        <div class="card-body">
+            <label id="msg"></label>
+        </div>
+    </div>
+
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+            <li class="list-inline-item">
+                <h4 class="mb-0 text-white">File Transfer View (Inward Return - Upload)</h4>
+            </li>
+        </ul>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped bank-transfer text-center" id="dgFile">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>User Name</th>
+                            <th>File Name</th>
+                            <th>Cycle No</th>
+                            <th>Cycle</th>
+                            <th>File Update Date</th>
+                            <th>File Update Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var item in Model.reports)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>@item.username</td>
+                                    <td>@item.FileName</td>
+                                    <td>@item.CycleNo</td>
+                                    <td>@item.CycleDesc</td>
+                                    <td>@item.FileUpdateDate</td>
+                                    <td>@item.FileUpdateTime</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+            <li class="list-inline-item">
+                <h4 class="mb-0 text-white">File Transfer View (Inward Clearing / Outward Return - Upload)</h4>
+            </li>
+        </ul>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped bank-transfer text-center" id="dgFile2">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            @* <th>User Name</th> *@
+                            <th>File Name</th>
+                            <th>Cycle</th>
+                            <th>File Update Date</th>
+                            <th>File Update Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var item in Model.reports2)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td>@item.hubimgname</td>
+                                    <td>@item.cycle_desc</td>
+                                    <td>@item.Fileupdatedate</td>
+                                    <td>@item.Fileupdatetime</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('#dgFile').DataTable({
+            // dom: 'lBfrtip',
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            // buttons: [ 'csv', 'excel' ],
+            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        });
+
+        $('#dgFile2').DataTable({
+            // dom: 'lBfrtip',
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            // buttons: [ 'csv', 'excel' ],
+            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        });
+    });
+</script>

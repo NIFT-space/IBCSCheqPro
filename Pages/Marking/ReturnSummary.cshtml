@@ -1,0 +1,1359 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Marking.ReturnSummaryModel
+@{
+    var Bank = Model.BindBankDD();
+    var City = Model.BindCityDD();
+    var Cycle = Model.BindCycleDD();
+}
+<div class="loader-wrapper" id="loader_ct" style="visibility:hidden">
+    <span class="loader">
+        <img src="~/assets/img/logo/favicon.png" alt="Logo">
+    </span>
+</div>
+<div class="g-pa-20">
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+                <h4 class="mb-0 text-white">Inward Cheque Return Summary</h4>
+            </li>
+        </ul>
+    </div>
+    <form method="post">
+        <section class="section1">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6 col-lg-4 g-mb-10">
+                                    <label for="icrs_bank">Bank:</label>
+                                    <select class="form-control" id="icrs_bank">
+                                        @{
+                                            if (Bank != null && Bank.Count != 0)
+                                            {
+                                                foreach (var bank in Bank)
+                                                {
+                                                              <option value="@bank.InstId">@bank.InstName</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-sm-12 col-lg-4 g-mb-10">
+                                    <label for="icrs_cycle">Cycle:</label>
+                                    <select class="form-control" id="icrs_cycle">
+                                        @{
+                                            if (Cycle != null && Cycle.Count != 0)
+                                            {
+                                                foreach (var cycle in Cycle)
+                                                {
+                                                              <option value="@cycle.CycleNo">@cycle.CycleDesc</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-sm-6 col-lg-4 g-mb-10">
+                                    <label for="icrs_city">City:</label>
+                                    <select class="form-control" id="icrs_city">
+                                        @{
+                                            if (City != null && City.Count != 0)
+                                            {
+                                                foreach (var city in City)
+                                                {
+                                                              <option value="@city.cityid">@city.cityname</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <input id="DDL_BankType" value="0" hidden />
+
+                                @* <div class="col-sm-6 col-lg-4 g-mb-10">
+                                    <label for="DDL_Cycle"> Clearing Type:</label>
+                                    <select name="DDL_BankType" id="DDL_BankType" class="form-control">
+                                        @{
+                                            var dt = ViewData["DtType"] as System.Data.DataTable;
+
+                                            @foreach (System.Data.DataRow dr in dt.Rows)
+                                            {
+                                                <option value="@dr["ClgID"].ToString()">@dr["ClgType"].ToString()</option>
+                                            }
+                                        }
+                                    </select>
+                                </div> *@
+
+                                <div class="col-12 text-right mt-3">
+                                    <button type="button" class="btn btn-danger btn-submit" id="submitted"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table u-table--v3--bordered g-color-black text-center" id="mytable1">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Count</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                    <th>Count</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                    <th>Count</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                    <th>Count</th>
+                                    <th>Amount</th>
+                                    <th></th>
+                                    <th>Count</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <ul class="nav nav-pills mb-3 icrs-tabs" id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="pay-tab" data-toggle="pill" data-target="#pay" type="button" role="tab" aria-controls="pay" aria-selected="true">Pay</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="awaiting-tab" data-toggle="pill" data-target="#awaiting" type="button" role="tab" aria-controls="awaiting" aria-selected="false">Awaiting Auth</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="authorize-tab" data-toggle="pill" data-target="#authorize" type="button" role="tab" aria-controls="authorize" aria-selected="false">Authorized</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="rejected-tab" data-toggle="pill" data-target="#rejected" type="button" role="tab" aria-controls="rejected" aria-selected="false">Rejected</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="deffered-tab" data-toggle="pill" data-target="#deffered" type="button" role="tab" aria-controls="deffered" aria-selected="false">Deffered</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mt-4" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pay" role="tabpanel" aria-labelledby="pay-tab">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" id="icrs_1">
+                                    <thead>
+                                        <tr>
+                                            <th>Branch Name</th>
+                                            <th>Pay</th>
+                                            <th>Amount</th>
+                                            <th>Awaiting Auth</th>
+                                            <th>Amount</th>
+                                            <th>Authorized</th>
+                                            <th>Amount</th>
+                                            <th>Rejected</th>
+                                            <th>Amount</th>
+                                            <th>Deffered</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="mb-0 mt-3 font-weight-bold">Note: Account number if not read from MICR will not be included in duplicate cheques as well as in additional information statistics</p>
+                        </div>
+                        <div class="tab-pane fade fade" id="awaiting" role="tabpanel" aria-labelledby="awaiting-tab">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" id="icrs_2">
+                                    <thead>
+                                        <tr>
+                                            <th>Branch Name</th>
+                                            <th>Pay</th>
+                                            <th>Amount</th>
+                                            <th>Awaiting Auth</th>
+                                            <th>Amount</th>
+                                            <th>Authorized</th>
+                                            <th>Amount</th>
+                                            <th>Rejected</th>
+                                            <th>Amount</th>
+                                            <th>Deffer</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="mb-0 mt-3 font-weight-bold">Note: Account number if not read from MICR will not be included in duplicate cheques as well as in additional information statistics</p>
+                        </div>
+                        <div class="tab-pane fade" id="authorize" role="tabpanel" aria-labelledby="authorize-tab">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" id="icrs_3">
+                                    <thead>
+                                        <tr>
+                                            <th>Branch Name</th>
+                                            <th>Pay</th>
+                                            <th>Amount</th>
+                                            <th>Awaiting Auth</th>
+                                            <th>Amount</th>
+                                            <th>Authorized</th>
+                                            <th>Amount</th>
+                                            <th>Rejected</th>
+                                            <th>Amount</th>
+                                            <th>Deffered</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="mb-0 mt-3 font-weight-bold">Note: Account number if not read from MICR will not be included in duplicate cheques as well as in additional information statistics</p>
+                        </div>
+                        <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" id="icrs_4">
+                                    <thead>
+                                        <tr>
+                                            <th>Branch Name</th>
+                                            <th>Pay</th>
+                                            <th>Amount</th>
+                                            <th>Awaiting Auth</th>
+                                            <th>Amount</th>
+                                            <th>Authorized</th>
+                                            <th>Amount</th>
+                                            <th>Rejected</th>
+                                            <th>Amount</th>
+                                            <th>Deffered</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="mb-0 mt-3 font-weight-bold">Note: Account number if not read from MICR will not be included in duplicate cheques as well as in additional information statistics</p>
+                        </div>
+                        <div class="tab-pane fade" id="deffered" role="tabpanel" aria-labelledby="deffered-tab">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" id="icrs_5">
+                                    <thead>
+                                        <tr>
+                                            <th>Branch Name</th>
+                                            <th>Pay</th>
+                                            <th>Amount</th>
+                                            <th>Awaiting Auth</th>
+                                            <th>Amount</th>
+                                            <th>Authorized</th>
+                                            <th>Amount</th>
+                                            <th>Rejected</th>
+                                            <th>Amount</th>
+                                            <th>Deffered</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="mb-0 mt-3 font-weight-bold">Note: Account number if not read from MICR will not be included in duplicate cheques as well as in additional information statistics</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="section2">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-md-6 mt-lg-auto">
+                                    <p class="font-weight-bold mb-0" id="bankname"></p>
+                                </div>
+                                <div class="col-12 col-md-6 text-right">
+                                    <button type="button" class="btn btn-danger back_btn_2"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0">Cycle: <span id="cycle"></span> </p>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0">Clearing Type: <span id="cleartype"></span></p>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0">City: <span id="city"></span></p>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0" id="branch"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="table-responsive mt-4">
+                        <table class="table table-bordered table-striped bank-transfer text-center" id="icrs_transfer1">
+                            <thead>
+                                <tr>
+                                    <th>Tr Seq No</th>
+                                    <th>OW Bank</th>
+                                    <th>OW Branch</th>
+                                    <th>Acc No</th>
+                                    <th>Chq No</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Image</th>
+                                    <th>Authorized</th>
+                                    <th>Rejected</th>
+                                    <th>Maker Comments</th>
+                                    <th>Authorizer Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section3">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-md-6 mt-lg-auto">
+                                    <p class="font-weight-bold mb-0" id="banknamed"></p>
+                                </div>
+                                <div class="col-12 col-md-6 text-right">
+                                    <button type="button" class="btn btn-danger back_btn_1"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0">Cycle: <span id="cycled"></span> </p>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0">Clearing Type: <span id="cleartyped"></span></p>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0">City: <span id="cityd"></span></p>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    <p class="font-weight-bold mb-0" id="branchd"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <table class="table-responsive">
+                        <table class="table table-bordered table-striped text-center" id="icrs_transfer2">
+                            <thead>
+                                <tr>
+                                    <th>Tr Seq No</th>
+                                    <th>OW Bank Name</th>
+                                    <th>OW Branch Name</th>
+                                    <th>IW Bank Name</th>
+                                    <th>IW Branch Name</th>
+                                    <th>Tran Code</th>
+                                    <th>Acc No</th>
+                                    <th>Chq No</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-12 col-lg-6">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="bg-danger p-2 text-center text-white font-weight-bold">IQA Result</div>
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <table class="table iqa-result-table">
+                                <tbody>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Undersize Instrument</td>
+                                                        <td id="Undersize_Image"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Folded or Torn Document Corners</td>
+                                                        <td id="Folded_or_Torn_Document_Corners"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Folded or Torn Document Edges</td>
+                                                        <td id="Folded_or_Torn_Document_Edges"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Framing Error</td>
+                                                        <td id="Framing_Error"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Document Skew</td>
+                                                        <td id="Document_Skew"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Oversize Instrument</td>
+                                                        <td id="Oversize_Image"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Piggy Back</td>
+                                                        <td id="Piggy_Back"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Image Too Light</td>
+                                                        <td id="Image_Too_Light"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Image Too Dark</td>
+                                                        <td id="Image_Too_Dark"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Horizontal Streaks</td>
+                                                        <td id="Horizontal_Streaks"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td id="">Below Mimimum Compressed Image Size</td>
+                                                        <td id="Below_Minimum_Compressed_Image_Size"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Above Mimimum Compressed Image Size</td>
+                                                        <td id="Above_Maximum_Compressed_Image_Size">OK</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border-0 pl-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td> Front Rear Dimension Mismatch</td>
+                                                        <td id="Front_Rear_Dimension_Mismatch"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Carbon Strip</td>
+                                                        <td id="Carbon_Strip"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="border-0 pr-0 pt-0">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Out of Focus</td>
+                                                        <td id="Out_of_Focus"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <div class="box1">
+                        <img src="@ViewData["ImageDataURL"]" id="img1" alt="Cheque" class="image hover-shadow cursor">
+                        <div class="middle">
+                            <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(1)"></i>
+                        </div>
+                    </div>
+
+                    <div class="box2 mt-3">
+                        <img src="@ViewData["ImageDataURL2"]" id="img2" alt="Cheque" class="image hover-shadow cursor">
+                        <div class="middle">
+                            <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(2)"></i>
+                        </div>
+                    </div>
+
+                    <div class="box3 mt-3">
+                        <img src="@ViewData["ImageDataURL3"]" id="img3" alt="Cheque" class="image hover-shadow cursor">
+                        <div class="middle">
+                            <i class="fa-solid fa-magnifying-glass" onclick="openModal();currentSlide(3)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+    <div id="myModal" class="modal img-modal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- <span class="rotate cursor" onclick="rotateImg()"><i class="fa-solid fa-rotate fa-1x"></i></span> -->
+                    <span class="close cursor" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></span>
+                </div>
+                <div class="modal-body">
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL"]" id="img4" class="w-100 rotate-img" alt="Cheque">
+                    </div>
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL2"]" id="img5" class="w-100 rotate-img" alt="Cheque">
+                    </div>
+                    <div class="mySlides">
+                        <img src="@ViewData["ImageDataURL3"]" id="img6" class="w-100 rotate-img" alt="Cheque">
+                    </div>
+                    <a class="prev-btn" onclick="plusSlides(-1)"><i class="fa-solid fa-chevron-left"></i></a>
+                    <a class="next-btn" onclick="plusSlides(1)"><i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#home_').removeClass('has-active');
+        $('#summ').addClass('active');
+        $('#rtn_').addClass('u-side-nav-opened active');
+        $('#subMenu4').css('display', 'block');
+        $(".section2").hide();
+        $(".section3").hide();
+
+        //$(".view_btn_1").on("click", function () {
+        //    $(".section2").show();
+        //    $(".section1").hide();
+        //    $(".section3").hide();
+        //});
+        //$(".view_btn_2").on("click", function () {
+        //    $(".section2").hide();
+        //    $(".section1").hide();
+        //    $(".section3").show();
+        //});
+        $(".back_btn_1").on("click", function () {
+            $(".section1").hide();
+            $(".section2").show();
+            $(".section3").hide();
+        });
+        $(".back_btn_2").on("click", function () {
+            $(".section1").show();
+            $(".section2").hide();
+            $(".section3").hide();
+        });
+
+        $("#maker").hide();
+        $("#authorizer").hide();
+        $("#edit_btn").on("click", function () {
+            $("#maker").show();
+            $("#authorizer").show();
+        });
+
+
+
+
+        //$('#icrs_bank').select2();
+        //$('#icrs_city').select2();
+        //$('#icrs_cycle').select2();
+
+        //$('#icrs_1').DataTable({
+        //    dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //        "<'row'<'col-sm-12'tr>>" +
+        //        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //    buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+        //});
+
+        //$('#icrs_2').DataTable({
+        //    dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //        "<'row'<'col-sm-12'tr>>" +
+        //        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //    buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+        //});
+
+        //$('#icrs_3').DataTable({
+        //    dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //        "<'row'<'col-sm-12'tr>>" +
+        //        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //    buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+        //});
+
+        //$('#icrs_4').DataTable({
+        //    dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //        "<'row'<'col-sm-12'tr>>" +
+        //        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //    buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+        //});
+
+        //$('#icrs_5').DataTable({
+        //    dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //        "<'row'<'col-sm-12'tr>>" +
+        //        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //    buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+        //});
+
+        //$('#icrs_transfer1').DataTable({
+        //    dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+        //        "<'row'<'col-sm-12'tr>>" +
+        //        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+        //    buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }],
+        //});
+
+    });
+</script>
+
+<script>
+    function addComas(x) {
+        var parts = x.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    }
+    function openModal() {
+        document.getElementById("myModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+    }
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        if (n > slides.length) {
+            slideIndex = 1
+        }
+        if (n < 1) {
+            slideIndex = slides.length
+        }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slides[slideIndex - 1].style.display = "block";
+    }
+
+    // const rotate = () => {
+    //     document.querySelector(".rotate-img").classList.add("rotate180");
+    // }
+</script>
+
+
+
+<script>
+    $("#submitted").click(function () {
+        document.getElementById('loader_ct').style.visibility = "visible";
+        var bank = $("#icrs_bank").val();
+        var cyclecode = $("#icrs_cycle").val();
+        var city = $("#icrs_city").val();
+        var bktype_ = $("#DDL_BankType").val();
+        var data = {
+            cycleno: cyclecode,
+            citycode: city,
+            bkcode: bank,
+            bkType: bktype_
+        }
+        console.log(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Marking/ReturnSummary?handler=LoadDataFromDb',
+            contentType: 'application/json',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: JSON.stringify(data),
+            dataType: 'json',
+            success: function (result) {
+
+
+                console.log(result);
+                $("#mytable1 td").remove();
+                $("#icrs_1 td").remove();
+                $("#icrs_2 td").remove();
+                $("#icrs_3 td").remove();
+                $("#icrs_4 td").remove();
+                $("#icrs_5 td").remove();
+
+                var row = '<tr><td class="text-danger"> Pay </td>'
+                row += '<td>' + result.mainTableCount.pCnt + ' </td >'
+                row += '<td>' + addComas(parseFloat(result.mainTableCount.pAmt).toFixed(2)) + '</td>'
+                row += '<td class="text-danger"> Awaiting Auth </td>'
+                row += '<td>' + result.mainTableCount.nCnt + '</td>'
+                row += '<td>' + addComas(parseFloat(result.mainTableCount.nAmt).toFixed(2)) + '</td>'
+                row += '<td class="text-danger"> Authorized </td>'
+                row += '<td>' + result.mainTableCount.aCnt + '</td>'
+                row += '<td>' + addComas(parseFloat(result.mainTableCount.aAmt).toFixed(2)) + '</td>'
+                row += '<td class="text-danger"> Rejected </td>'
+                row += '<td>' + result.mainTableCount.rCnt + '</td>'
+                row += '<td>' + addComas(parseFloat(result.mainTableCount.rAmt).toFixed(2)) + '</td>'
+                row += '<td class="text-danger"> Deffered </td>'
+                row += '<td>' + result.mainTableCount.dCnt + '</td>'
+                row += '<td>' + addComas(parseFloat(result.mainTableCount.dAmt).toFixed(2)) + '</td><tr/>'
+                $('#mytable1').append(
+                    row
+                );
+                //authorize
+                for (var i = 0; i < result.authorizeTable.length; i++) {
+                    var row3 = '<tr><td>' + result.authorizeTable[i].branchName + ' </td >'
+                    row3 += '<td>' + result.authorizeTable[i].pay + '</td>'
+                    row3 += '<td>' + addComas(parseFloat(result.authorizeTable[i].payAmount).toFixed(2)) + '</td>'
+                    row3 += '<td>' + result.authorizeTable[i].nonAuth + '</td>'
+                    row3 += '<td>' + addComas(parseFloat(result.authorizeTable[i].nonAuthAmount).toFixed(2)) + '</td>'
+                    row3 += '<td>' + result.authorizeTable[i].authorize + '</td>'
+                    row3 += '<td>' + addComas(parseFloat(result.authorizeTable[i].authorizeAmount).toFixed(2)) + '</td>'
+                    row3 += '<td>' + result.authorizeTable[i].reject + '</td>'
+                    row3 += '<td>' + addComas(parseFloat(result.authorizeTable[i].rejectAmount).toFixed(2)) + '</td>'
+                    row3 += '<td>' + result.authorizeTable[i].defer + '</td>'
+                    row3 += '<td>' + addComas(parseFloat(result.authorizeTable[i].deferAmount).toFixed(2)) + '</td>'
+                    row3 += '<td style="display:none;">' + result.authorizeTable[i].branchID + '</td>'
+                    row3 += '<td><button type="button" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr>'
+                    $('#icrs_3').append(
+                        row3
+                    );
+                }
+
+                //PayTable
+                for (var i = 0; i < result.payTable.length; i++) {
+                    var row1 = '<tr><td>' + result.payTable[i].branchName + ' </td >'
+                    row1 += '<td>' + result.payTable[i].pay + '</td>'
+                    row1 += '<td>' + addComas(parseFloat(result.payTable[i].payAmount).toFixed(2)) + '</td>'
+                    row1 += '<td>' + result.payTable[i].nonAuth + '</td>'
+                    row1 += '<td>' + addComas(parseFloat(result.payTable[i].nonAuthAmount).toFixed(2)) + '</td>'
+                    row1 += '<td>' + result.payTable[i].authorize + '</td>'
+                    row1 += '<td>' + addComas(parseFloat(result.payTable[i].authorizeAmount).toFixed(2)) + '</td>'
+                    row1 += '<td>' + result.payTable[i].reject + '</td>'
+                    row1 += '<td>' + addComas(parseFloat(result.payTable[i].rejectAmount).toFixed(2)) + '</td>'
+                    row1 += '<td>' + result.payTable[i].defer + '</td>'
+                    row1 += '<td>' + addComas(parseFloat(result.payTable[i].deferAmount).toFixed(2)) + '</td>'
+                    row1 += '<td style="display:none;">' + result.payTable[i].branchID + '</td>'
+                    $('#icrs_1').append(
+                        row1
+                    );
+                }
+
+                //Awaiting Auth
+                for (var i = 0; i < result.noActionTable.length; i++) {
+                    var row2 = '<tr><td>' + result.noActionTable[i].branchName + ' </td >'
+                    row2 += '<td>' + result.noActionTable[i].pay + '</td>'
+                    row2 += '<td>' + addComas(parseFloat(result.noActionTable[i].payAmount).toFixed(2)) + '</td>'
+                    row2 += '<td>' + result.noActionTable[i].nonAuth + '</td>'
+                    row2 += '<td>' + addComas(parseFloat(result.noActionTable[i].nonAuthAmount).toFixed(2)) + '</td>'
+                    row2 += '<td>' + result.noActionTable[i].authorize + '</td>'
+                    row2 += '<td>' + addComas(parseFloat(result.noActionTable[i].authorizeAmount).toFixed(2)) + '</td>'
+                    row2 += '<td>' + result.noActionTable[i].reject + '</td>'
+                    row2 += '<td>' + addComas(parseFloat(result.noActionTable[i].rejectAmount).toFixed(2)) + '</td>'
+                    row2 += '<td>' + result.noActionTable[i].defer + '</td>'
+                    row2 += '<td>' + addComas(parseFloat(result.noActionTable[i].deferAmount).toFixed(2)) + '</td>'
+                    row2 += '<td style="display:none;">' + result.noActionTable[i].branchID + '</td>'
+                    row2 += '<td><button type="button" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr>'
+                    $('#icrs_2').append(
+                        row2
+                    );
+                }
+
+                //Rejected
+                for (var i = 0; i < result.rejectTable.length; i++) {
+                    var row4 = '<tr><td>' + result.rejectTable[i].branchName + ' </td >'
+                    row4 += '<td>' + result.rejectTable[i].pay + '</td>'
+                    row4 += '<td>' + addComas(parseFloat(result.rejectTable[i].payAmount).toFixed(2)) + '</td>'
+                    row4 += '<td>' + result.rejectTable[i].nonAuth + '</td>'
+                    row4 += '<td>' + addComas(parseFloat(result.rejectTable[i].nonAuthAmount).toFixed(2)) + '</td>'
+                    row4 += '<td>' + result.rejectTable[i].authorize + '</td>'
+                    row4 += '<td>' + addComas(parseFloat(result.rejectTable[i].authorizeAmount).toFixed(2)) + '</td>'
+                    row4 += '<td>' + result.rejectTable[i].reject + '</td>'
+                    row4 += '<td>' + addComas(parseFloat(result.rejectTable[i].rejectAmount).toFixed(2)) + '</td>'
+                    row4 += '<td>' + result.rejectTable[i].defer + '</td>'
+                    row4 += '<td>' + addComas(parseFloat(result.rejectTable[i].deferAmount).toFixed(2)) + '</td>'
+                    row4 += '<td style="display:none;">' + result.rejectTable[i].branchID + '</td>'
+                    row4 += '<td><button type="button" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr>'
+                    $('#icrs_4').append(
+                        row4
+                    );
+                }
+                //deffered
+                for (var i = 0; i < result.deferTable.length; i++) {
+                    var row5 = '<tr><td>' + result.deferTable[i].branchName + ' </td >'
+                    row5 += '<td>' + result.deferTable[i].pay + '</td>'
+                    row5 += '<td>' + addComas(parseFloat(result.deferTable[i].payAmount).toFixed(2)) + '</td>'
+                    row5 += '<td>' + result.deferTable[i].nonAuth + '</td>'
+                    row5 += '<td>' + addComas(parseFloat(result.deferTable[i].nonAuthAmount).toFixed(2)) + '</td>'
+                    row5 += '<td>' + result.deferTable[i].authorize + '</td>'
+                    row5 += '<td>' + addComas(parseFloat(result.deferTable[i].authorizeAmount).toFixed(2)) + '</td>'
+                    row5 += '<td>' + result.deferTable[i].reject + '</td>'
+                    row5 += '<td>' + addComas(parseFloat(result.deferTable[i].rejectAmount).toFixed(2)) + '</td>'
+                    row5 += '<td>' + result.deferTable[i].defer + '</td>'
+                    row5 += '<td>' + addComas(parseFloat(result.deferTable[i].deferAmount).toFixed(2)) + '</td>'
+                    row5 += '<td style="display:none;">' + result.deferTable[i].branchID + '</td>'
+                    row5 += '<td><button type="button" class="btn btn-secondary view_btn_1"><i class="fa-solid fa-eye"></i> Details</button></td></tr>'
+                    $('#icrs_5').append(
+                        row5
+                    );
+                }
+            }
+        });
+        setTimeout(
+            function () {
+                document.getElementById('loader_ct').style.visibility = "hidden";
+            }, 1000);
+        
+    });
+
+    $('#icrs_1').on('click', '.view_btn_1', function () {
+        $(".section2").show();
+        $(".section1").hide();
+        $(".section3").hide();
+        var brcode = $(this).closest("tr").find("td").eq(11).text();
+        var bktype_ = $("#DDL_BankType").val();
+        var data = {
+            brcode: brcode
+        }
+        console.log(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Marking/ReturnSummary?handler=Details',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data:{ "brcode": brcode , "tab" :"1", "bktype": bktype_ },
+            dataType: 'json',
+            success: function (result) {
+                $("#icrs_transfer1").empty();
+                $("#icrs_transfer1").append('<thead><tr><th>Tr Seq No</th><th> OW Bank </th><th> OW Branch </th><th> Acc No </th><th> Chq No </th>'+
+                '<th> Amount </th><th> Status </th><th> Image </th><th> Authorized </th><th> Rejected </th><th> Maker Comments </th>'+
+                '<th> Authorizer Comments </th></tr></thead><tbody>');
+                console.log(result);
+                $("#bankname").text(result.header.bankname);
+                $("#cycle").text(result.header.cycle);
+                $("#cleartype").text(result.header.clearingtype);
+                $("#city").text(result.header.city);
+                $("#branch").text(result.header.branchname);
+                for (var i = 0; i < result.detail.length; i++) {
+                    var row = '<tr><td>' + result.detail[i].trCode + '</td>'
+                    row += '<td>' + result.detail[i].sBkNm + '</td>'
+                    row += '<td>' + result.detail[i].sBrNm + '</td>'
+                    row += '<td>' + result.detail[i].accNo + '</td>'
+                    row += '<td>' + result.detail[i].chqNo + '</td>'
+                    row += '<td>' + addComas(parseFloat(result.detail[i].amount).toFixed(2)) + '</td>'
+                    row += '<td>' + result.detail[i].reason + '</td>'
+                    row += '<td style="display:none;">' + result.detail[i].hostID + '</td>'
+                    row += '<td><button type="button" class="btn btn-secondary view_btn_2"><i class="fa-solid fa-eye"></i> View</button></td>'
+
+                    if (result.detail[i].isAuth == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+
+                    if (result.detail[i].settled == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+                    
+                    row += '<td><label>' + result.detail[i].comment1 + '</label></td>'
+                    row += ' <td><label>' + result.detail[i].comment2 + '</label></td></tr></tbody>'
+                    $("#icrs_transfer1").append(row);
+                }
+            }
+        });
+        event.preventDefault();
+    });
+    $('#icrs_2').on('click', '.view_btn_1', function () {
+        $(".section2").show();
+        $(".section1").hide();
+        $(".section3").hide();
+        var brcode = $(this).closest("tr").find("td").eq(11).text();
+        var bktype_ = $("#DDL_BankType").val();
+        var data = {
+            brcode: brcode
+        }
+        console.log(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Marking/ReturnSummary?handler=Details',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: { "brcode": brcode, "tab": "2", "bktype": bktype_ },
+            dataType: 'json',
+            success: function (result) {
+                $("#icrs_transfer1").empty();
+                $("#icrs_transfer1").append('<thead><tr><th>Tr Seq No</th><th> OW Bank </th><th> OW Branch </th><th> Acc No </th><th> Chq No </th>'+
+                    '<th> Amount </th><th> Status </th><th> Image </th><th> Authorized </th><th> Rejected </th><th> Maker Comments </th>'+
+                    '<th> Authorizer Comments </th></tr></thead><tbody>');
+                console.log(result);
+                $("#bankname").text(result.header.bankname);
+                $("#cycle").text(result.header.cycle);
+                $("#cleartype").text(result.header.clearingtype);
+                $("#city").text(result.header.city);
+                $("#branch").text(result.header.branchname);
+                for (var i = 0; i < result.detail.length; i++) {
+                    var row = '<tr><td>' + result.detail[i].trCode + '</td>'
+                    row += '<td>' + result.detail[i].sBkNm + '</td>'
+                    row += '<td>' + result.detail[i].sBrNm + '</td>'
+                    row += '<td>' + result.detail[i].accNo + '</td>'
+                    row += '<td>' + result.detail[i].chqNo + '</td>'
+                    row += '<td>' + addComas(parseFloat(result.detail[i].amount).toFixed(2)) + '</td>'
+                    row += '<td>' + result.detail[i].reason + '</td>'
+                    row += '<td style="display:none;">' + result.detail[i].hostID + '</td>'
+                    row += '<td><button type="button" class="btn btn-secondary view_btn_2"><i class="fa-solid fa-eye"></i> View</button></td>'
+                    if (result.detail[i].isAuth == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+
+                    if (result.detail[i].settled == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+                    row += '<td><label>' + result.detail[i].comment1 + '</label></td>'
+                    row += ' <td><label>' + result.detail[i].comment2 + '</label></td></tr>'
+                    $("#icrs_transfer1").append(row);
+                }
+            }
+        });
+        event.preventDefault();
+    });
+    $('#icrs_3').on('click', '.view_btn_1', function () {
+        $(".section2").show();
+        $(".section1").hide();
+        $(".section3").hide();
+        var brcode = $(this).closest("tr").find("td").eq(11).text();
+        var bktype_ = $("#DDL_BankType").val();
+        var data = {
+            brcode: brcode
+        }
+        console.log(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Marking/ReturnSummary?handler=Details',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: { "brcode": brcode, "tab": "3", "bktype":bktype_ },
+            dataType: 'json',
+            success: function (result) {
+                $("#icrs_transfer1").empty();
+                $("#icrs_transfer1").append('<thead><tr><th>Tr Seq No</th><th> OW Bank </th><th> OW Branch </th><th> Acc No </th><th> Chq No </th>'+
+                    '<th> Amount </th><th> Status </th><th> Image </th><th> Authorized </th><th> Rejected </th><th> Maker Comments </th>'+
+                    '<th> Authorizer Comments </th></tr></thead><tbody>');
+                console.log(result);
+                $("#bankname").text(result.header.bankname);
+                $("#cycle").text(result.header.cycle);
+                $("#cleartype").text(result.header.clearingtype);
+                $("#city").text(result.header.city);
+                $("#branch").text(result.header.branchname);
+                for (var i = 0; i < result.detail.length; i++) {
+                    var row = '<tr><td>' + result.detail[i].trCode + '</td>'
+                    row += '<td>' + result.detail[i].sBkNm + '</td>'
+                    row += '<td>' + result.detail[i].sBrNm + '</td>'
+                    row += '<td>' + result.detail[i].accNo + '</td>'
+                    row += '<td>' + result.detail[i].chqNo + '</td>'
+                    row += '<td>' + addComas(parseFloat(result.detail[i].amount).toFixed(2)) + '</td>'
+                    row += '<td>' + result.detail[i].reason + '</td>'
+                    row += '<td style="display:none;">' + result.detail[i].hostID + '</td>'
+                    row += '<td><button type="button" class="btn btn-secondary view_btn_2"><i class="fa-solid fa-eye"></i> View</button></td>'
+                    if (result.detail[i].isAuth == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+
+                    if (result.detail[i].settled == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+                    row += '<td><label>' + result.detail[i].comment1 + '</label></td>'
+                    row += ' <td><label>' + result.detail[i].comment2 + '</label></td></tr>'
+                    $("#icrs_transfer1").append(row);
+                }
+            }
+        });
+        event.preventDefault();
+    });
+    $('#icrs_4').on('click', '.view_btn_1', function () {
+        $(".section2").show();
+        $(".section1").hide();
+        $(".section3").hide();
+        var brcode = $(this).closest("tr").find("td").eq(11).text();
+        var bktype_ = $("#DDL_BankType").val();
+        var data = {
+            brcode: brcode
+        }
+        console.log(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Marking/ReturnSummary?handler=Details',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: { "brcode": brcode, "tab": "4", "bktype": bktype_ },
+            dataType: 'json',
+            success: function (result) {
+                $("#icrs_transfer1").empty();
+                $("#icrs_transfer1").append('<thead><tr><th>Tr Seq No</th><th> OW Bank </th><th> OW Branch </th><th> Acc No </th><th> Chq No </th>'+
+                    '<th> Amount </th><th> Status </th><th> Image </th><th> Authorized </th><th> Rejected </th><th> Maker Comments </th>'+
+                    '<th> Authorizer Comments </th></tr></thead><tbody>');
+                console.log(result);
+                $("#bankname").text(result.header.bankname);
+                $("#cycle").text(result.header.cycle);
+                $("#cleartype").text(result.header.clearingtype);
+                $("#city").text(result.header.city);
+                $("#branch").text(result.header.branchname);
+                for (var i = 0; i < result.detail.length; i++) {
+                    var row = '<tr><td>' + result.detail[i].trCode + '</td>'
+                    row += '<td>' + result.detail[i].sBkNm + '</td>'
+                    row += '<td>' + result.detail[i].sBrNm + '</td>'
+                    row += '<td>' + result.detail[i].accNo + '</td>'
+                    row += '<td>' + result.detail[i].chqNo + '</td>'
+                    row += '<td>' + addComas(parseFloat(result.detail[i].amount).toFixed(2)) + '</td>'
+                    row += '<td>' + result.detail[i].reason + '</td>'
+                    row += '<td style="display:none;">' + result.detail[i].hostID + '</td>'
+                    row += '<td><button type="button" class="btn btn-secondary view_btn_2"><i class="fa-solid fa-eye"></i> View</button></td>'
+                    if (result.detail[i].isAuth == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+
+                    if (result.detail[i].settled == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+                    row += '<td><label>' + result.detail[i].comment1 + '</label></td>'
+                    row += ' <td><label>' + result.detail[i].comment2 + '</label></td></tr>'
+                    $("#icrs_transfer1").append(row);
+                }
+            }
+        });
+        event.preventDefault();
+    });
+    $('#icrs_5').on('click', '.view_btn_1', function () {
+        $(".section2").show();
+        $(".section1").hide();
+        $(".section3").hide();
+        var brcode = $(this).closest("tr").find("td").eq(11).text();
+        var bktype_ = $("#DDL_BankType").val();
+        var data = {
+            brcode: brcode
+        }
+        console.log(data);
+        $.ajax({
+            type: 'Post',
+            url: '/Marking/ReturnSummary?handler=Details',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: { "brcode": brcode, "tab": "5", "bktype": bktype_ },
+            dataType: 'json',
+            success: function (result) {
+                $("#icrs_transfer1").empty();
+                $("#icrs_transfer1").append('<thead><tr><th>Tr Seq No</th><th> OW Bank </th><th> OW Branch </th><th> Acc No </th><th> Chq No </th>'+
+                    '<th> Amount </th><th> Status </th><th> Image </th><th> Authorized </th><th> Rejected </th><th> Maker Comments </th>'+
+                    '<th> Authorizer Comments </th></tr></thead><tbody>');
+                console.log(result);
+                $("#bankname").text(result.header.bankname);
+                $("#cycle").text(result.header.cycle);
+                $("#cleartype").text(result.header.clearingtype);
+                $("#city").text(result.header.city);
+                $("#branch").text(result.header.branchname);
+                for (var i = 0; i < result.detail.length; i++) {
+                    var row = '<tr><td>' + result.detail[i].trCode + '</td>'
+                    row += '<td>' + result.detail[i].sBkNm + '</td>'
+                    row += '<td>' + result.detail[i].sBrNm + '</td>'
+                    row += '<td>' + result.detail[i].accNo + '</td>'
+                    row += '<td>' + result.detail[i].chqNo + '</td>'
+                    row += '<td>' + addComas(parseFloat(result.detail[i].amount).toFixed(2)) + '</td>'
+                    row += '<td>' + result.detail[i].reason + '</td>'
+                    row += '<td style="display:none;">' + result.detail[i].hostID + '</td>'
+                    row += '<td><button type="button" class="btn btn-secondary view_btn_2"><i class="fa-solid fa-eye"></i> View</button></td>'
+                    if (result.detail[i].isAuth == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+
+                    if (result.detail[i].settled == 1) {
+                        row += '<td><i class="far fa-square-check check fa-2x fas"></i></td>'
+                    }
+                    else {
+                        row += '<td><i class=""></i></td>'
+                    }
+                    row += '<td><label>' + result.detail[i].comment1 + '</label></td>'
+                    row += ' <td><label>' + result.detail[i].comment2 + '</label></td></tr>'
+                    $("#icrs_transfer1").append(row);
+                }
+            }
+        });
+        event.preventDefault();
+    });
+
+    $('#icrs_transfer1').on('click', '.view_btn_2', function () {
+        document.getElementById('loader_ct').style.visibility = "visible";
+        $(".section2").hide();
+        $(".section1").hide();
+        $(".section3").show();
+        var hostID = $(this).closest("tr").find("td").eq(7).text();
+        //console.log(hostID);
+        $.ajax({
+            type: 'Post',
+            url: '/Marking/ReturnSummary?handler=CheckImages',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: { "hostID": hostID },
+            success: function (result) {
+                //console.log(result);
+                $("#icrs_transfer2 td").remove();
+                $("#banknamed").text(result.header.bankname);
+                $("#cycled").text(result.header.cycle);
+                $("#cleartyped").text(result.header.clearingtype);
+                $("#cityd").text(result.header.city);
+                $("#branchd").text(result.header.branchname);
+                $('#img1').prop('src', result.image1);
+                $('#img2').prop('src', result.image2);
+                $('#img3').prop('src', result.image3);
+                $('#img4').prop('src', result.image1);
+                $('#img5').prop('src', result.image2);
+                $('#img6').prop('src', result.image3);
+                for (var i = 0; i < result.data.length; i++) {
+                    if (result.data[i].hostID == hostID) {
+                        var row = '<tr><td>' + result.data[i].hostID + '</td>'
+                        row += '<td>' + result.data[i].sBkNm + '</td>'
+                        row += '<td>' + result.data[i].sBrNm + '</td>'
+                        row += '<td>' + result.data[i].rBkNm + '</td>'
+                        row += '<td>' + result.data[i].rBrNm + '</td>'
+                        row += '<td>' + result.data[i].trCode + '</td>'
+                        row += '<td>' + result.data[i].accNo + '</td>'
+                        row += '<td>' + result.data[i].chqNo + '</td>'
+                        row += '<td>' + addComas(parseFloat(result.data[i].amount).toFixed(2)) + '</td>'
+                        $("#icrs_transfer2").append(row);
+                        $("#Undersize_Image").text(result.data[i].undersize_Image);
+                        $("#Folded_or_Torn_Document_Corners").text(result.data[i].folded_or_Torn_Document_Corners);
+                        $("#Folded_or_Torn_Document_Edges").text(result.data[i].folded_or_Torn_Document_Edges);
+                        $("#Framing_Error").text(result.data[i].framing_Error);
+                        $("#Document_Skew").text(result.data[i].document_Skew);
+                        $("#Oversize_Image").text(result.data[i].oversize_Image);
+                        $("#Piggy_Back").text(result.data[i].piggy_Back);
+                        $("#Image_Too_Light").text(result.data[i].image_Too_Light);
+                        $("#Image_Too_Dark").text(result.data[i].image_Too_Dark);
+                        $("#Below_Minimum_Compressed_Image_Size").text(result.data[i].below_Minimum_Compressed_Image_Size);
+                        $("#Above_Maximum_Compressed_Image_Size").text(result.data[i].above_Maximum_Compressed_Image_Size);
+                        $("#Front_Rear_Dimension_Mismatch").text(result.data[i].front_Rear_Dimension_Mismatch);
+                        $("#Carbon_Strip").text(result.data[i].carbon_Strip);
+                        $("#Out_of_Focus").text(result.data[i].out_of_Focus);
+                        $("#Horizontal_Streaks").text(result.data[i].horizontal_Streaks);
+
+                        if (result.data[i].undersize_Image == "Not OK") {
+                            $('#Undersize_Image').css('color', '#d61f2a');
+                            $('#Undersize_Image').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].folded_or_Torn_Document_Corners == "Not OK") {
+                            $('#Folded_or_Torn_Document_Corners').css('color', '#d61f2a');
+                            $('#Folded_or_Torn_Document_Corners').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].folded_or_Torn_Document_Edges == "Not OK") {
+                            $('#Folded_or_Torn_Document_Edges').css('color', '#d61f2a');
+                            $('#Folded_or_Torn_Document_Edges').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].framing_Error == "Not OK") {
+                            $('#Framing_Error').css('color', '#d61f2a');
+                            $('#Framing_Error').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].document_Skew == "Not OK") {
+                            $('#Document_Skew').css('color', '#d61f2a');
+                            $('#Document_Skew').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].oversize_Image == "Not OK") {
+                            $('#Oversize_Image').css('color', '#d61f2a');
+                            $('#Oversize_Image').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].piggy_Back == "Not OK") {
+                            $('#Piggy_Back').css('color', '#d61f2a');
+                            $('#Piggy_Back').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].image_Too_Light == "Not OK") {
+                            $('#Image_Too_Light').css('color', '#d61f2a');
+                            $('#Image_Too_Light').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].image_Too_Dark == "Not OK") {
+                            $('#Image_Too_Dark').css('color', '#d61f2a');
+                            $('#Image_Too_Dark').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].horizontal_Streaks == "Not OK") {
+                            $('#Horizontal_Streaks').css('color', '#d61f2a');
+                            $('#Horizontal_Streaks').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].below_Minimum_Compressed_Image_Size == "Not OK") {
+                            $('#Below_Minimum_Compressed_Image_Size').css('color', '#d61f2a');
+                            $('#Below_Minimum_Compressed_Image_Size').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].above_Maximum_Compressed_Image_Size == "Not OK") {
+                            $('#Above_Maximum_Compressed_Image_Size').css('color', '#d61f2a');
+                            $('#Above_Maximum_Compressed_Image_Size').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].front_Rear_Dimension_Mismatch == "Not OK") {
+                            $('#Front_Rear_Dimension_Mismatch').css('color', '#d61f2a');
+                            $('#Front_Rear_Dimension_Mismatch').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].carbon_Strip == "Not OK") {
+                            $('#Carbon_Strip').css('color', '#d61f2a');
+                            $('#Carbon_Strip').css('font-weight', 'bold');
+                        }
+                        if (result.data[i].out_of_Focus == "Not OK") {
+                            $('#Out_of_Focus').css('color', '#d61f2a');
+                            $('#Out_of_Focus').css('font-weight', 'bold');
+                        }
+                    }
+                }
+                document.getElementById('loader_ct').style.visibility = "hidden";
+            }
+        });
+    });
+
+</script>

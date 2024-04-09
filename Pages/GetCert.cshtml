@@ -1,0 +1,25 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.GetCertModel
+@{
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Certificate Selection</title>
+</head>
+<body>
+    <h1>Certificate Selection</h1>
+    
+    <form method="post">
+        <button type="submit">Select Certificate</button>
+    </form>
+    
+    @if (Model.SelectedCertificate != null)
+    {
+        <h2>Selected Certificate</h2>
+        <p>@Model.SelectedCertificate.Subject</p>
+        <p>@Model.SelectedCertificate.Thumbprint</p>
+    }
+</body>
+</html>

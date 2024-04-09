@@ -1,0 +1,202 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Cycleinfo.CycleTimeModel
+@{
+}
+<style>
+	.inward-table{
+		height:0%;
+	}
+</style>
+<script>
+	$(document).ready(function () {
+		////GET PROCESS DATE//////
+		// var ddlbank = document.querySelector('#input_date');
+		// var option1 = ddlbank.value;
+		// $.ajax({
+		// 	type: 'GET',
+		// 	url: '/Cycleinfo/CycleTime?handler=SelectedDt',
+		// 	dataType: 'json',
+		// 	data: { "dt": option1 },
+		// 	async:false
+		// });
+
+		$('#home_').removeClass('has-active');
+		$('#cyc_').addClass('active');
+	});
+</script>
+<div class="g-pa-20">
+	<div class="g-hidden-sm-down header-title g-pa-20 text-center">
+		<ul class="u-list-inline g-color-gray-dark-v6">
+			<li class="list-inline-item g-mr-10">
+				<h4 class="mb-0 text-white">Clearing Cycle Time</h4>
+			</li>
+		</ul>
+	</div>
+	<div class="row mt-3">
+		<div class="col-12">
+			<div class="table-responsive mt-4">
+				<table class="table table-bordered table-striped text-center" id="cycle_time">
+					<thead>
+						<tr>
+							<th>Cycle Description</th>
+							<th>City Name</th>
+							<th>Cycle Start Time</th>
+							<th>Cycle End Time</th>
+							<th>Days : Hours : Minutes</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+							@if (Model.iCCycleTimings != null)
+							{
+								foreach (var items in Model.iCCycleTimings)
+								{
+									<tr>
+										<td>@items.Cycle_desc</td>
+										<td>@items.CityName</td>
+										<td>@items.CycleStartTime</td>
+										<td>@items.CycleEndTime</td>
+										@if (items.mindiff > 0)
+										{
+
+											string sSta = items.CycleStartTime;
+											string sEnd = items.CycleEndTime;
+
+											string sTime = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToString("HH:mm");
+											//
+
+											string dt_ = HttpContext.Session.GetString(GetProdtModel.dtFrom);
+											string d1 = dt_.Substring(0, 10);
+											string[] aStartDate = d1.ToString().Split('-');
+											string d2 = aStartDate[2] + "-" + aStartDate[1] + "-" + aStartDate[0];
+											string eTime = d2 + " " + sEnd;
+											//
+											//string eTime = Session["dtFrom"].ToString() + " " + sEnd; //lblEnd.Text; //e.Row.Cells[3].Text;
+											DateTime sdt = System.DateTime.Now;
+											DateTime edt = System.DateTime.Now;
+											if (DateTime.TryParseExact(sTime, "dd-MM-yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out sdt))
+											{
+
+											}
+											if (DateTime.TryParseExact(eTime, "dd-MM-yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out edt))
+											{
+
+											}
+											// for testing
+											//edt = edt.AddDays(30);
+											//
+
+
+											TimeSpan span = edt.Subtract(sdt);
+											if (span.Ticks < 0)
+											{
+												<td>Cycle Closed</td>
+											}
+											else
+											{
+												string open_time = span.Days.ToString("00") + ":" + span.Hours.ToString("00") + ":" + span.Minutes.ToString("00");
+												<td>@open_time</td>
+											}
+
+										}
+										else
+										{
+											<td>Cycle Closed</td>
+										}
+									</tr>
+								}
+							}
+						
+					</tbody>
+				</table>
+			</div>
+
+			<div class="table-responsive mt-5">
+				<table class="table u-table--v3--bordered g-color-black text-center inward-table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th colspan="8" class="bg-danger text-white">Clearing Cycle Calendar</th>
+						</tr>
+						<tr>
+							<th>Cycle Description</th>
+							<th>Monday</th>
+							<th>Tuesday</th>
+							<th>Wednesday</th>
+							<th>Thursday</th>
+							<th>Friday</th>
+							<th>Saturday</th>
+							<th>Sunday</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (Model.iCCycleTimings != null)
+						{
+							foreach (var items in Model.iCCycleTimings2)
+							{
+								<tr>
+									<td>@items.Cycle_desc</td>
+									@if(items.Monday == "ON")
+									{
+										<td><i class="fa-solid fa-check"></i></td>
+									}
+									else
+									{
+										<td><i class="fa-solid fa-xmark"></i></td>
+									}
+									@if (items.Tuesday == "ON")
+									{
+										<td><i class="fa-solid fa-check"></i></td>
+									}
+									else
+									{
+										<td><i class="fa-solid fa-xmark"></i></td>
+									}
+									@if (items.Wednesday == "ON")
+									{
+										<td><i class="fa-solid fa-check"></i></td>
+									}
+									else
+									{
+										<td><i class="fa-solid fa-xmark"></i></td>
+									}
+									@if (items.Thursday == "ON")
+									{
+										<td><i class="fa-solid fa-check"></i></td>
+									}
+									else
+									{
+										<td><i class="fa-solid fa-xmark"></i></td>
+									}
+									@if (items.Friday == "ON")
+									{
+										<td><i class="fa-solid fa-check"></i></td>
+									}
+									else
+									{
+										<td><i class="fa-solid fa-xmark"></i></td>
+									}
+									@if (items.Saturday == "ON")
+									{
+										<td><i class="fa-solid fa-check"></i></td>
+									}
+									else
+									{
+										<td><i class="fa-solid fa-xmark"></i></td>
+									}
+									@if (items.Sunday == "ON")
+									{
+										<td><i class="fa-solid fa-check"></i></td>
+									}
+									else
+									{
+										<td><i class="fa-solid fa-xmark"></i></td>
+									}
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,471 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.IBCSHomeModel
+@{
+}
+<style>
+    .h3_title{
+        padding-right: 30px;
+        padding-left: 30px;
+        padding-bottom: 10px;
+    }
+</style>
+<div class="loader-wrapper" id="loader_ih" style="visibility:hidden">
+    <span class="loader">
+        <img src="~/assets/img/logo/favicon.png" alt="Logo">
+    </span>
+</div>
+<div class="g-pa-20" onload="">
+    <div class="row mt-3">
+
+      <div class="col-12">
+            <div class="table-responsive">
+                <table class="table u-table--v3--bordered g-color-black text-center inward-table table-bordered table-striped" id="inward_table">
+                    <thead>
+                        <tr>
+                            <th colspan="9" class="text-white">CLEARING DATA STATUS</th>
+                        </tr>
+                        <tr>
+                            <th>Cycle Description</th>
+                            <th>Normal Clearing</th>
+                            <th>Sameday Clearing</th>
+                            <th>Intercity Clearing</th>
+                            <th>Dollar Clearing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-weight:800;">Image Data</td>
+                            <td>N/A&nbsp;&nbsp;<i id="i_1" class="fa-solid fa-xmark"></i></td>
+                            <td>Available&nbsp;&nbsp;<i id="i_2" class="fa-solid fa-check"></i></td>
+                            <td>Available&nbsp;&nbsp;<i id="i_2" class="fa-solid fa-check"></i></td>
+                            <td>N/A&nbsp;&nbsp;<i id="i_1" class="fa-solid fa-xmark"></i></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:800;">Report Data</td>
+                            <td>Available&nbsp;&nbsp;<i id="i_2" class="fa-solid fa-check"></i></td>
+                            <td>N/A&nbsp;&nbsp;<i id="i_1" class="fa-solid fa-xmark"></i></td>
+                            <td>N/A&nbsp;&nbsp;<i id="i_1" class="fa-solid fa-xmark"></i></td>
+                            <td>N/A&nbsp;&nbsp;<i id="i_1" class="fa-solid fa-xmark"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+
+        <div class="col-12 mt-3">
+            <div class="row">
+
+
+                <div class="h3_title">
+                    <h3 class="g-font-size-16 g-font-weight-800 g-color-gray-dark-v6 mb-0">Scoreboard Position</h3>
+                </div>
+                <div class="col-sm-6 col-lg-12" style="display:flex;">
+                    <div class="col-sm-6 col-lg-3 g-mb-30">
+                    <a href="/Scoreboard/Netboard" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-lightblue-v3 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-layers g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Banks Net</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3 g-mb-30">
+                    <a href="/Scoreboard/Cityboard" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-teal-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-home g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Banks Clearing</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3 g-mb-30">
+                    <a href="/Scoreboard/Branchboard" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-darkblue-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-view-list g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Branch Clearing</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    </div>
+                </div>
+
+                <div class="h3_title">
+                    <h3 class="g-font-size-16 g-font-weight-800 g-color-gray-dark-v6 mb-0">Inward Return</h3>
+                </div>
+                <div class="col-sm-6 col-lg-12" style="display:flex;">
+                <div class="col-sm-6 col-lg-3 g-mb-30">
+                    <a href="/Marking/Inwardmarking" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-lightred-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-write g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Marking</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-3 g-mb-30">
+                    <a href="/Marking/Inwardauthorization" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-brown g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-check-box g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Authorization</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-lg-3 g-mb-30">
+                        <a href="/Marking/Inwardmarking" class="dashboard-link">
+                            <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                                <div class="card-block g-font-weight-300 g-pa-20">
+                                    <div class="media">
+                                        <div class="d-flex g-mr-15">
+                                            <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-lightred-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                                <i class="hs-admin-write g-absolute-centered"></i>
+                                            </div>
+                                        </div>
+                                        <div class="media-body align-self-center">
+                                            <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Auto Posting</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <div class="col-sm-6 col-lg-3 g-mb-30">
+                        <a href="/Imagedata/UploadICLFile" class="dashboard-link">
+                            <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                                <div class="card-block g-font-weight-300 g-pa-20">
+                                    <div class="media">
+                                        <div class="d-flex g-mr-15">
+                                            <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-darkpurple g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                                <i class="hs-admin-export g-absolute-centered"></i>
+                                            </div>
+                                        </div>
+                                        <div class="media-body align-self-center">
+                                            <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">File upload</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="h3_title">
+                    <h3 class="g-font-size-16 g-font-weight-800 g-color-gray-dark-v6 mb-0">Cheque Summary</h3>
+                </div>
+                <div class="col-sm-6 col-lg-12" style="display:flex;">
+                <div class="col-sm-6 col-lg-3 g-mb-30">
+                    <a href="/Marking/ReturnSummary" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                            <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-teal-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                                <i class="hs-admin-layers g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Clearing/Return</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                </div>
+
+                <div class="h3_title">
+                    <h3 class="g-font-size-16 g-font-weight-800 g-color-gray-dark-v6 mb-0">Customer Support</h3>
+                </div>
+                <div class="col-sm-6 col-lg-12" style="display:flex;">
+                    <div class="col-sm-6 col-lg-3 g-mb-30">
+                        <a href="/Marking/ReturnSummary" class="dashboard-link">
+                            <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                                <div class="card-block g-font-weight-300 g-pa-20">
+                                    <div class="media">
+                                        <div class="d-flex g-mr-15">
+                                            <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-darkblue-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                                <i class="hs-admin-write g-absolute-centered"></i>
+                                            </div>
+                                        </div>
+                                        <div class="media-body align-self-center">
+                                            <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Complaint/Request</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                @*
+                <div class="col-sm-6 col-lg-4 g-mb-30">
+                    <a href="/Imagedata/FileTraffic" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-Teal-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-files g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">File Transfer View</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-4 g-mb-30">
+                    <a href="/Cycleinfo/CycleTime" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-darkblue-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-time g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Clearing Cycle Time</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-4 g-mb-30">
+                    <a href="/Cycleinfo/BankEmail" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-lightblue-v3 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-email g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Bank Branch Email Setup</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-4 g-mb-30">
+                    <a href="/Tickets/OtherRequest" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-lightblue-v3 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-write g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Request</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-sm-6 col-lg-4 g-mb-30">
+                    <a href="/Tickets/ComplaintManagement" class="dashboard-link">
+                        <div class="card h-100 g-brd-gray-light-v7 g-rounded-3">
+                            <div class="card-block g-font-weight-300 g-pa-20">
+                                <div class="media">
+                                    <div class="d-flex g-mr-15">
+                                        <div class="u-header-dropdown-icon-v1 g-pos-rel g-width-60 g-height-60 g-bg-darkblue-v2 g-font-size-18 g-font-size-24--md g-color-white rounded-circle">
+                                            <i class="hs-admin-write g-absolute-centered"></i>
+                                        </div>
+                                    </div>
+                                    <div class="media-body align-self-center">
+                                        <h6 class="g-font-size-16 g-font-weight-300 g-color-gray-dark-v6 mb-0">Complain Management</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div> *@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        // $.ajax({
+        // 	type: 'GET',
+        // 	url: '/IBCSHome?handler=LoadDt',
+        // 	success: function (result) {
+        // 		var resp = result.split("|");
+        // 		if (resp[0] == "Success") {
+        // 			$('#input_date option').remove();
+        // 			$('#input_date').append('<option selected value=' + resp[1] + '>' + resp[1] + '</option>');
+        // 			$('#input_date').append('<option value=' + resp[2] + '>' + resp[2] + '</option>');
+        // 			$('#input_date').append('<option value=' + resp[3] + '>' + resp[3] + '</option>');
+        // 			$('#input_date').append('<option value=' + resp[4] + '>' + resp[4] + '</option>');
+        // 			$('#input_date').append('<option value=' + resp[5] + '>' + resp[5] + '</option>');
+        //
+        // 		}
+        // 	}
+        // });
+        GetClgData();
+    });
+    // function GetProdate() {
+    // 	document.getElementById('loader_ih').style.visibility = "visible";
+    // 	var ddlbank = document.querySelector('#input_date');
+    // 	var option1 = ddlbank.value;
+    // 	$.ajax({
+    // 		type: 'GET',
+    // 		url: '/IBCSHome?handler=SelectedDt',
+    // 		dataType: 'json',
+    // 		data: { "dt": option1 },
+    // 		success: function (res) {
+    // 			if (res == "login") {
+    // 				window.location.replace('/login');
+    // 				//GetClgData();
+    // 			}
+    // 		}
+    // 	});
+    // 	document.getElementById('loader_ih').style.visibility = "hidden";
+    // }
+    //document.addEventListener("DOMContentLoaded", function () {
+    function GetClgData() {
+        document.getElementById('loade_it').style.visibility = "hidden";
+        document.getElementById('loader_ih').style.visibility = "visible";
+        var getdt = $('#input_date').val();
+        $.ajax({
+            type: 'GET',
+            url: '/IBCSHome?handler=ProvideDT',
+            dataType: 'json',
+            data: { "dt_": getdt },
+            success: function (data) {
+                if (data == "failed") {
+
+                }
+                else {
+                    var resp = data.split("&");
+                    var img_res = resp[0].split("|");
+
+                    if (img_res[0] == "0" || img_res[0] == "" || img_res[0] == null) {
+                        $("#i_1").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_1").addClass("fa-solid fa-check");
+                    }
+
+                    if (img_res[1] == "0" || img_res[1] == "" || img_res[1] == null) {
+                        $("#i_2").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_2").addClass("fa-solid fa-check");
+                    }
+
+                    if (img_res[2] == "0" || img_res[2] == "" || img_res[2] == null) {
+                        $("#i_3").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_3").addClass("fa-solid fa-check");
+                    }
+
+                    if (img_res[3] == "0" || img_res[3] == "" || img_res[3] == null) {
+                        $("#i_4").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_4").addClass("fa-solid fa-check");
+                    }
+
+                    var rep_res = resp[1].split("|");
+
+
+                    if (rep_res[0] == "0" || rep_res[0] == "" || rep_res[0] == null) {
+                        $("#i_5").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_5").addClass("fa-solid fa-check");
+                    }
+
+                    if (rep_res[1] == "0" || rep_res[1] == "" || rep_res[1] == null) {
+                        $("#i_6").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_6").addClass("fa-solid fa-check");
+                    }
+
+                    if (rep_res[2] == "0" || rep_res[2] == "" || rep_res[2] == null) {
+                        $("#i_7").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_7").addClass("fa-solid fa-check");
+                    }
+
+                    if (rep_res[3] == "0" || rep_res[3] == "" || rep_res[3] == null) {
+                        $("#i_8").addClass("fa-solid fa-xmark");
+                    }
+                    else {
+                        $("#i_8").addClass("fa-solid fa-check");
+                    }
+
+                }
+            }
+        });
+        setTimeout(function () {
+            document.getElementById('loader_ih').style.visibility = "hidden";
+        }, 100);
+    }
+</script>

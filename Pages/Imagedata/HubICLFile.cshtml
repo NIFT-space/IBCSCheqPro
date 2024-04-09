@@ -1,0 +1,293 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Imagedata.HubICLFileModel
+@{
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#home_').removeClass('has-active');
+        $('#bICL_HubFile').addClass('active');
+        $('#imgfl_').addClass('u-side-nav-opened active');
+        $('#subMenu2').css('display', 'block');
+
+        if (location.search != '') {
+            try {
+
+                $("#DDL_Bank").val(location.search.split('&')[0].split('=')[1]);
+                $("#DDL_City").val(location.search.split('&')[1].split('=')[1]);
+                $("#DDL_Cycle").val(location.search.split('&')[2].split('=')[1]);
+            }
+            catch { }
+        }
+
+        $("#submit_").click(function () {
+            var dttable = $('#dgFile').DataTable();
+            var DDL_Bank = $('#DDL_Bank').val();
+            var DDL_Cycle = $('#DDL_Cycle').val();
+            var DDL_City = $('#DDL_City').val();
+            var DDL_Clg = $('#DDL_BankType').val();
+            var brd = {
+                DDL_Bank: DDL_Bank,
+                DDL_Cycle: DDL_Cycle,
+                DDL_City: DDL_City,
+                DDL_BankType: DDL_Clg
+            }
+            if ((DDL_Bank != "" && DDL_Bank != null) && (DDL_City != "" && DDL_City != null) && (DDL_Clg != "" && DDL_Clg != null) && (DDL_Cycle != "" && DDL_Cycle != null && DDL_Cycle != "Select Cycle")) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Imagedata/HubICLFile?handler=GetFiles',
+                    contentType: "application/json",
+                    headers: {
+                        RequestVerificationToken:
+                            $('input:hidden[name="__RequestVerificationToken"]').val()
+                    },
+                    data: JSON.stringify(brd),
+                    dataType: "json",
+                    success: function (result) {
+                        dttable.clear();
+                        let newrow = '';
+
+                        if (result == null) {
+                            $('#dgFile > tbody').html("");
+                            dttable.draw();
+                        }
+                        else if (result == "Failed") {
+                            $('#dgFile > tbody').html("");
+                            dttable.draw();
+                        }
+                        else {
+                            $('#dgFile > tbody').html("");
+                            $.each(result, function (id, data_) {
+                                newrow += '<tr><td></td>' +
+                                    '<td> ' + data_.instname + '</td>' +
+                                    '<td> ' + data_.cityname + ' </td>' +
+                                    '<td> ' + data_.inOutTag + ' </td>' +
+                                    '<td> ' + data_.fileupdatedate + '</td>' +
+                                    '<td> ' + data_.fileupdatetime + ' </td>' +
+                                    '<td> ' + data_.fsize + '</td><td>' +
+                                    // '<button formmethod="post" type="submit" asp-page-handler="DownloadFile" asp-route-v301x913="' + data_.repId + '" asp-route-c036x9210="' + data_.repName + '" class="btn btn-secondary">' +
+                                    //     '<i class="fa-solid fa-download"></i>Download</button>'+
+                                    '<button id="btn_dn" type="button" onclick="btn_dnclick(\'' + data_.hubimgid + '\',\'' + data_.hubimgname + '\')" data-v301x913="' + data_.hubimgid + '" data-c036x9210="' + data_.hubimgname + '" class="btn btn-secondary">' +
+                                    '<i class="fa-solid fa-download"></i>Download</button>' +
+                                    '</td></tr>';
+                                dttable.row.add($(newrow)).draw();
+                                newrow = '';
+                            });
+                        }
+                    }
+                });
+            }
+            else {
+                $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                $("#msg").text("Please select required fields!");
+                setTimeout(
+                    function () {
+                        $('#div_msg').addClass("hide");
+                    }, 5000);
+            }
+        });
+    });
+
+    // function GetselectedCity() {
+    //     var DDL_Bank = $('#DDL_Bank').val();
+    //     var DDL_City = $('#DDL_City').val();
+    //     $.ajax({
+    //         url: '/Imagedata/HubICLFile?handler=BindHubDD',
+    //         type: 'POST',
+    //         data: { CityID: DDL_City, InstID: DDL_Bank },
+    //         headers: {
+    //             RequestVerificationToken:
+    //                 $('input:hidden[name="__RequestVerificationToken"]').val()
+    //         },
+    //         success: function (resp) {
+    //             $('#DDL_Hub').empty();
+    //             $.each(resp, function (id, br) {
+    //                 $('#DDL_Hub').append('<option value=' + br.hubcode + '>' + br.hubname + '</option>')
+    //             });
+    //         }
+    //     });
+    // }
+
+    function btn_dnclick(repid_, repname_) {
+        document.getElementById('loader_ct').style.visibility = "visible";
+        // Get the data from data attributes
+        var value1 = repid_;//$("#btn_dn").data("v301x913");
+        var value2 = repname_;//$("#btn_dn").data("c036x9210");
+
+        $.ajax({
+            type: 'POST',
+            url: '/Imagedata/HubICLFile?handler=DownloadFile',
+            headers: {
+                RequestVerificationToken:
+                    $('input:hidden[name="__RequestVerificationToken"]').val()
+            },
+            data: { v301x913: value1, c036x9210: value2 },
+            xhrFields: { responseType: 'blob' },
+            success: function (data) {
+                document.getElementById('loader_ct').style.visibility = "hidden";
+                if (data == "RLimit") {
+                    $("#div_msg").removeClass("hide").removeClass("bg-success").addClass("show").addClass("bg-danger");
+                    $("#msg").text("Download limit is reached!");
+                    setTimeout(
+                        function () {
+                            $('#div_msg').addClass("hide");
+                        }, 5000);
+                }
+                else {
+                    var blob = new Blob([data]);
+                    var link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = value2;
+                    link.click();
+                }
+            }
+        });
+    }
+</script>
+<style>
+    .hide {
+        display: none;
+    }
+
+</style>
+<div class="loader-wrapper" id="loader_ct" style="visibility:hidden">
+    <span class="loader">
+        <img src="~/assets/img/logo/favicon.png" alt="Logo">
+    </span>
+</div>
+<div class="g-pa-20">
+    <div id="div_msg" class="card bg-danger text-white shadow hide">
+        <div class="card-body">
+            <label id="msg"></label>
+        </div>
+    </div>
+    <div class="g-hidden-sm-down header-title g-pa-20 text-center">
+        <ul class="u-list-inline g-color-gray-dark-v6">
+            <li class="list-inline-item g-mr-10">
+            <li class="list-inline-item">
+                <h4 class="mb-0 text-white">Bank ICL HUB File</h4>
+            </li>
+        </ul>
+    </div>
+    <form method="post">
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-6 col-xl-3 g-mb-10">
+                                <label for="DDL_Bank">Bank:</label>
+                                <select class="form-control" id="DDL_Bank">
+                                    @if (Model.instBanks != null)
+                                    {
+                                        @foreach (var bk in Model.instBanks)
+                                        {
+                                            <option value="@bk.InstId">@bk.InstName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                             <div class="col-sm-6 col-lg-6 col-xl-2 g-mb-10">
+                                <label for="DDL_City">Select City:</label>
+                                <select class="form-control" id="DDL_City">
+                                    <option value="0" selected>All</option>
+                                    @if (Model.cities != null)
+                                    {
+                                        @foreach (var ct in Model.cities)
+                                        {
+                                            <option value="@ct.cityid">@ct.cityname</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div> 
+
+                            @* <div class="col-sm-6 col-lg-6 col-xl-3 g-mb-10">
+                                <label for="DDL_Hub">Select Hub:</label>
+                                <select class="form-control" id="DDL_Hub">
+                                </select>
+                            </div> *@
+
+                            <div class="col-sm-6 col-lg-6 col-xl-2 g-mb-10">
+                                <label for="DDL_Cycle">Select Cycle:</label>
+                                <select class="form-control" id="DDL_Cycle">
+                                    <option selected>Select Cycle</option>
+                                    @if (Model.cycle != null)
+                                    {
+                                        @foreach (var cyc in Model.cycle)
+                                        {
+                                            <option value="@cyc.CycleNo">@cyc.CycleDesc</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-6 col-xl-2 g-mb-10">
+                                <label for="DDL_Cycle"> Clearing Type:</label>
+                                <select name="DDL_BankType" id="DDL_BankType" class="form-control">
+                                    @{
+                                        var dt = ViewData["DtType"] as System.Data.DataTable;
+
+                                        @foreach (System.Data.DataRow dr in dt.Rows)
+                                        {
+                                            if (dr["ClgID"].ToString() == "1")
+                                            {
+                                                <option selected value="@dr["ClgID"].ToString()">@dr["ClgType"].ToString()</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@dr["ClgID"].ToString()">@dr["ClgType"].ToString()</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-6 col-xl-2 g-mb-10 mt-xl-auto">
+                                <button id="submit_" formmethod="post" type="button" class="btn btn-danger btn-submit"><i class="fa-solid fa-arrow-right-from-arc"></i> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped bank-transfer text-center" id="dgFile">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Bank Name</th>
+                            <th>City</th>
+                            <th>Clg Type</th>
+                            <th>File Update Date</th>
+                            <th>File Update Time</th>
+                            <th>Size (KB)</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('#dgFile').DataTable({
+            // dom: 'lBfrtip',
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            // buttons: [ 'csv', 'excel' ],
+            buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+        });
+    });
+</script>

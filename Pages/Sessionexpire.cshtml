@@ -1,0 +1,51 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.SessionexpireModel
+@{
+    Layout = null;
+}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/vendor/toastr/toastr.min.css" rel="stylesheet" />
+    <link href="~/assets/css/proximanova.css" rel="stylesheet" />
+    <link href="~/assets/css/login.css" rel="stylesheet" />
+    <link href="~/assets/css/custom.css" rel="stylesheet" />
+    <title>NIFT Image Based Clearing</title>
+
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<form class="signin-form" id="form1">
+    <div class="container">
+        <div class="row no-gutters justify-content-center">
+            <div class="col-lg-6">
+                <div class="card logout-card">
+                    <img src="assets/img/logo/nift-eclearing-logo-login.png" class="d-block mx-auto login-logo pt-4" />
+                    <h5 class="mb-0 text-center">IBCS Clearing System</h5>
+                    <div class="wrap text-center">
+                        <div class="login-wrap p-4 px-md-5 py-md-4">
+                            <div class="d-flex">
+                                <div class="w-100">
+                                    <h3 class="mb-4 font-weight-bold text-danger">System Message</h3>
+                                    <h4>Your session is expired due to security reasons.</h4>
+                                    <h4>Please Login again by clicking the button below.</h4>
+                                    <h4>Or Contact <span class="font-weight-bold text-danger">NIFT@111 112 222 EXT 247, 277 & 276</span> for further details.</h4>
+                                    <h4>Thank You.</h4>
+                                </div>
+                            </div>
+                            <div class="form-group text-center my-3">
+                                <a href="/login" class="btn btn-secondary btn-lg rounded submit px-3 w-100">Re-Login</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="mt-4 mb-0 text-center powered">Powered by NIFT</p>
+    </div>
+</form>

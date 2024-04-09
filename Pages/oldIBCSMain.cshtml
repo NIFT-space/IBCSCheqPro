@@ -1,0 +1,517 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.IBCSMainModel
+@{
+}
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="GENERATOR" content="Microsoft FrontPage 5.0" />
+    <meta name="ProgId" content="FrontPage.Editor.Document" />
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+
+
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'/>
+
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="includes/css/style.css" />
+    <link rel="stylesheet" href="includes/tooltip/css/jquery-ui.css" />
+    <script type="text/javascript" src="assets/js/jquery.js"></script>
+    <script type="text/javascript" src="assets/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="assets/js/custom.js"></script>
+    <script type="text/javascript" src="includes/tooltip/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="includes/js/custom.js"></script>
+
+    <style>
+        #load {
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            z-index: 9999;
+            background-image: url("logooo.png"),url("gif1.gif"),url("../logooo.png"),url("../gif1.gif");
+            /*background-image: url("NIFTePay-Animation.gif");
+            background-image: url("15.gif"); */
+            background-position: 50% 40%, 50% 52%;
+            background-repeat: no-repeat, no-repeat;
+            background-color: white;
+
+            /*width: 30%;
+            height: 30%;
+            position: fixed;
+            z-index: 9999;*/
+            /*background-image: url("logooo.png"),url("gif1.gif"),url("../logooo.png"),url("../gif1.gif");*/
+            /*background-image: url("NIFTePay-Animation.gif");*/
+            /*background-image: url("15.gif"); */
+            /*background-position:  50% 40%, 50% 52%;
+            background-repeat: no-repeat, no-repeat;
+            background-color: white;*/
+        }
+        a:hover {
+            text-decoration: none
+        }
+
+        .hovercomp {
+            position: relative;
+            display: inline-block;
+        }
+
+        .fadetxt {
+            height: 1;
+            border-radius: 7px;
+            padding: 8px;
+            width: 120px;
+            position: absolute;
+            left: 50px;
+            right: 0;
+            bottom: 92px;
+            background: #c03;
+            color: #fff;
+            opacity: 0;
+            transition: 1s;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .hovercomp:hover .fadetxt {
+            opacity: 1;
+        }
+
+        .wthree-services-grids {
+            margin: 1em .5em 0 .5em;
+            position: relative;
+        }
+
+        .wthree-services-info {
+            padding: 3em 0 3em 0;
+            background: #FFFFFF;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #000;
+            /* margin: .5em .75em; */
+            margin: .5em .25em;
+        }
+
+        .p_white1 {
+            color: Black;
+            margin-top: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .p_white2 {
+            color: Black;
+            margin-top: -10px;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+        img#i1 {
+            background: #008200;
+            box-shadow: 0 0px 3px #000;
+        }
+
+        img#i4 {
+            background: #511378;
+            box-shadow: 0 0px 3px #000;
+        }
+
+        img#i5 {
+            background: #d50a0a;
+            box-shadow: 0 0px 3px #000;
+        }
+
+        img#i9 {
+            background: #ffcc00;
+            box-shadow: 0 0px 3px #000;
+        }
+
+        img#i11 {
+            background: #6633cc;
+            box-shadow: 0 0px 3px #000;
+        }
+
+        img#i13 {
+            background: #ff4f81;
+            box-shadow: 0 0px 3px #000;
+        }
+
+        img#i14 {
+            background: #001a57;
+            box-shadow: 0 0px 3px #000;
+        }
+
+        .daskboard-area graybackarea > .dashboard-container > .row {
+            display: block;
+        }
+
+        .lidaboxes {
+            width: 100%;
+            position: relative;
+        }
+
+        .wthree-services {
+            height: 210px;
+            float: left;
+        }
+
+        .home-slider {
+            width: 70%;
+            height:275px;
+            background : none;
+            margin-bottom: 0px;
+        }
+        .main_div {
+            display: flex;
+        }
+
+        .GridMain {
+            width: 89%;
+        }
+
+            .GridMain th {
+                text-transform: uppercase;
+                word-break: break-word;
+            }
+
+            .GridMain td {
+                padding-bottom: 2px;
+                padding-top: 2px;
+                text-align: center;
+            }
+
+        .ingrd {
+            font-size: 10pt;
+            padding-left: 5px;
+            padding-right: 5px;
+            border: 1px solid white;
+            text-align: center !important;
+            font-weight: bold;
+            text-transform: uppercase;
+            word-break: break-word;
+        }
+
+        .btn_ref {
+            width: 20%;
+            margin-top: 50px;
+            margin-bottom: -10px;
+            margin-left: 41%;
+            cursor: pointer;
+        }
+
+        .imgd {
+            margin-top: 15%;
+            width: 30px;
+        }
+        </style>
+    <script type="text/javascript">
+        document.onreadystatechange = function () {
+            var state = document.readyState
+            if (state == 'interactive') {
+                document.getElementById('contents').style.visibility = "hidden";
+            } else if (state == 'complete') {
+                setTimeout(function () {
+                    document.getElementById('interactive');
+                    document.getElementById('load').style.visibility = "hidden";
+                    document.getElementById('contents').style.visibility = "visible";
+                }, 1000);
+            }
+        }
+    </script>
+
+   
+    <base target="_Self" />
+    <title>NiFT Image Based Clearing</title>
+</head>
+<body onload="display_ct();">
+    <div class="resolution-warning">
+        <img src="~/assets/img/top/nift-logo.png" alt="NiFT" /><br />
+        <br />
+        YOUR SCREEN RESOLUTION TOO SMALL.
+        <br />
+        REQUIRED 1024 x 768 OR HIGHER<br />
+        TO DISPLAY THE WEB CONTENT<br />
+        <br />
+        Operating System Must be Windows 8.1 or higher<br />
+        <br />
+        Browser Must be Microsoft Internet explorer 11 or higher,<br />
+        Microsoft EDGE or Latest Version of Google Chrome
+        <br />
+        <br />
+        2MBPS of Internet Connection
+    </div>
+    <form id="Form1" runat="server">
+        <div id="load">
+        </div>
+
+        <div id="contents" class="homepanel">            
+            <div class="container">
+                <div class="rightareapabel" style="clear: both;">
+
+ 
+                    <div id="loadingDIV" class="preloading">
+                        <span class="loader"><span class="loader-inner"></span></span>
+                    </div>
+
+                    <div class="main_div">
+                    <div class="home-slider">
+                        <div id="slideshow">
+                            <div>
+                                    <img src="~/assets/img/slider/boothnift.png" />
+                            </div>
+                            <div>
+                                    <img src="~/assets/img/slider/25nift.png" />
+                            </div>
+                            <div>
+                                    <img src="~/assets/img/slider/B1.jpg" />
+                            </div>
+                            <div>
+                                    <img src="~/assets/img/slider/B2.jpg" />
+                            </div>
+                            <div>
+                                    <img src="~/assets/img/slider/B3.jpg" />
+                            </div>
+                            <div>
+                                    <img src="~/assets/img/slider/B4.jpg" />
+                            </div>
+                            <div>
+                                    <img src="~/assets/img/slider/B5.jpg" />
+                            </div>
+                            <div>
+                                <img src="~/assets/img/slider/B6.jpg" />
+                            </div>
+                        </div>
+
+                    </div>
+                        <div class="cnfrm_cyc_display" style="width:30%;">
+                            <a class="btn_ref" onclick="Cyc_refresh">
+                            <span class="button-text"><img src="~/assets/img/top/refresh.png" class="imgd" /></span>
+                            </a>
+                            <table ID="ccyc_display" class="GridMain">
+                                <thead>
+                                <th>Cycle Description</th>
+                                <th>Image Uploaded</th>
+                                <th>Report Uploaded</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Normal</td>
+                                        <td>X</td>
+                                        <td>✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sameday</td>
+                                        <td>X</td>
+                                        <td>✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Intercity</td>
+                                        <td>X</td>
+                                        <td>X</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dollar</td>
+                                        <td>✓</td>
+                                        <td>X</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                    </div>
+@*                    <%-- Tiles Menu --%>*@
+                    <div class="daskboard-area graybackarea">
+                        <div class="dashboard-container">
+                            <div class="row">
+                                <div class="lidaboxes">
+                                    <div class="wthree-services-grids">
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Scoreboard/Netboard" target="_self">
+                                                        <img src="~/assets/img/top/net.png" alt="" class="shakeImg" id="i1" />
+                                                        <p class="p_white1">Scoreboard</p>
+                                                        <p class="p_white2">Banks Net Position</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Scoreboard/Cityboard">
+                                                        <img src="~/assets/img/top/city.png" alt="" class="shakeImg" id="i1" />
+                                                        <p class="p_white1">Scoreboard</p>
+                                                        <p class="p_white2">Banks Clearing Position</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Scoreboard/Branchboard">
+                                                        <img src="~/assets/img/top/branch.png" alt="" class="shakeImg" id="i1" />
+                                                        <p class="p_white1">Scoreboard</p>
+                                                        <p class="p_white2">Branch Clearing Position</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Cycleinfo/CycleTime">
+                                                        <img src="~/assets/img/top/time.png" alt="" class="shakeImg" id="i4" />
+                                                        <p class="p_white1">Clearing</p>
+                                                        <p class="p_white2">Cycle Timing</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @*<%--<div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="ComplaintManagement" class="hovercomp">
+                                                        <h2 class="fadetxt">Complaints:
+                                            <asp:Label ID="Tickts" runat="server">10</asp:Label></h2>
+                                                        <img src="assets/images/ticket.png" alt="" class="shakeImg" id="i9" />
+                                                        <p class="p_white1">Complaint</p>
+                                                        <p class="p_white2">Management</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>--%>*@
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Cycleinfo/BankEmail">
+                                                        <img src="~/assets/img/top/email.png" alt="" class="shakeImg" id="i9" />
+                                                        <p class="p_white1">Bank Branch</p>
+                                                        <p class="p_white2">Email Setup</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="wthree-services-grids">
+                                        @*<%--<div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="InwardReturnFileupload">
+                                                        <img src="assets/images/up.png" alt="" class="shakeImg" id="i5" />
+                                                        <p class="p_white1">Inward Return</p>
+                                                        <p class="p_white2">File upload</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>--%>*@
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Marking/Inwardmarking">
+                                                        <img src="~/assets/img/top/mark.png" alt="" class="shakeImg" id="i5" />
+                                                        <p class="p_white1">Inward Return</p>
+                                                        <p class="p_white2">Online Marking</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Marking/Inwardauthorization">
+                                                        <img src="~/assets/img/top/auth.png" alt="" class="shakeImg" id="i5" />
+                                                        <p class="p_white1">Inward Return</p>
+                                                        <p class="p_white2">Online Authorization</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="/Marking/ReturnSummary">
+                                                        <img src="~/assets/img/top/close.png" alt="" class="shakeImg" id="i5" />
+                                                        <p class="p_white1">Cheque</p>
+                                                        <p class="p_white2">Return Summary</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<%--<div class="wthree-services-grids">
+                                        
+                                        
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="ManageChequeBookRequest">
+                                                        <img src="assets/images/book.png" alt="" class="shakeImg" id="i11" />
+                                                        <p class="p_white1">Cheque Book</p>
+                                                        <p class="p_white2">Request</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="OtherRequest">
+                                                        <img src="assets/images/imagereq.png" alt="" class="shakeImg" id="i11" />
+                                                        <p class="p_white1">Other</p>
+                                                        <p class="p_white2">Request</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>--%>*@
+                                        @*<%--<div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="FileTransferView">
+                                                        <img src="assets/images/traffic.png" alt="" class="shakeImg" id="i13" />
+                                                        <p class="p_white1">File Transfer</p>
+                                                        <p class="p_white2">View</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="ElectronicCheque">
+                                                        <img src="assets/images/echeque.png" alt="" class="shakeImg" id="i14" />
+                                                        <p class="p_white1">eCheque</p>
+                                                        <p class="p_white2">Application</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 wthree-services">
+                                            <div class="wthree-services-grid">
+                                                <div class="wthree-services-info">
+                                                    <a href="ChequeCapture">
+                                                        <img src="assets/images/capture.png" alt="" class="shakeImg" id="i14" />
+                                                        <p class="p_white1">Capture</p>
+                                                        <p class="p_white2">Outward Clearing</p>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>--%>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </form>
+</body>
+</html>

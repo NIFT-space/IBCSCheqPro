@@ -1,0 +1,1338 @@
+﻿@page
+@model IBCS_Core_Web_Portal.Pages.Marking.NetboardModel
+@{
+}
+
+	<div class="g-pa-20">
+		<div class="g-hidden-sm-down header-title g-pa-20 text-center">
+			<ul class="u-list-inline g-color-gray-dark-v6">
+				<li class="list-inline-item g-mr-10">
+				<li class="list-inline-item">
+					<h4 class="mb-0 text-white">Scoreboard Banks Net Position</h4>
+				</li>
+			</ul>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-12">
+				<div class="card">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-6 col-lg-6 g-mb-10">
+								<label for="DDL_Bank">Bank:</label>
+								<select name="DDL_Bank" id="DDL_Bank" class="form-control">
+									@if (Model.instBanks != null)
+									{
+										@foreach (var bk in Model.instBanks)
+										{
+											<option value="@bk.InstId">@bk.InstName</option>
+										}
+									}
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row mt-4">
+			<div class="col-12">
+				<ul class="nav nav-pills mb-3 text-center" id="pills-tab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="pkr-clearing-tab" data-toggle="pill" data-target="#pkr-clearing" type="button" role="tab" aria-controls="pkr-clearing" aria-selected="true">PKR Clearing</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="pkr-returns-tab" data-toggle="pill" data-target="#pkr-returns" type="button" role="tab" aria-controls="pkr-returns" aria-selected="false">PKR Returns</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="fc-clearing-tab" data-toggle="pill" data-target="#fc-clearing" type="button" role="tab" aria-controls="fc-clearing" aria-selected="false">FC Clearing</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="fc-returns-tab" data-toggle="pill" data-target="#fc-returns" type="button" role="tab" aria-controls="fc-returns" aria-selected="false">FC Returns</button>
+					</li>
+				</ul>
+				<div class="tab-content mt-4" id="pills-tabContent">
+					<div class="tab-pane fade show active" id="pkr-clearing" role="tabpanel" aria-labelledby="pkr-clearing-tab">
+						<div class="table-responsive">
+							<table class="table table-bordered table-striped bank-transfer text-center" id="sbnp_transfer_1">
+								<thead>
+									<tr>
+										<th>Cycle Description</th>
+										<th>Outward Count</th>
+										<th>Outward Amount</th>
+										<th>Inward Count</th>
+										<th>Inward Amount</th>
+										<th>Net Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+								@if (Model.hostnet_ != null)
+									{
+									foreach (var data in Model.hostnet_)
+										{
+											<tr>
+												<td>@data.cyclename</td>
+												<td>@data.Owcount</td>
+											<td>@String.Format("{0:N}", data.Owamount)</td>
+												<td>@data.Incount</td>
+											<td>@String.Format("{0:N}", data.Inamount)</td>
+											<td>@String.Format("{0:N}", data.Netamount)</td>
+											</tr>
+										}
+									}										
+								</tbody>
+							</table>
+						</div>
+
+						<div class="row mt-4">
+							<div class="col-lg-6">
+								<div id="chart1"></div>
+							</div>
+
+							<div class="col-lg-6 mt-3 mt-lg-0">
+								<div id="chart2"></div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="tab-pane fade" id="pkr-returns" role="tabpanel" aria-labelledby="pkr-returns-tab">
+						<div class="table-responsive">
+							<table class="table table-bordered table-striped bank-transfer text-center" id="sbnp_transfer_2">
+								<thead>
+									<tr>
+										<th>Cycle Description</th>
+										<th>Outward Count</th>
+										<th>Outward Amount</th>
+										<th>Inward Count</th>
+										<th>Inward Amount</th>
+										<th>Net Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+								@if (Model.hostnet_ != null)
+									{
+									foreach (var data1 in Model.hostnet_)
+										{
+											<tr>
+												<td>@data1.rtn_cyclename</td>
+												<td>@data1.rtn_Owcount</td>
+												<td>@String.Format("{0:N}", data1.rtn_Owamount)</td>
+											<td>@data1.rtn_Incount</td>
+											<td>@String.Format("{0:N}", data1.rtn_Inamount)</td>
+												<td>@String.Format("{0:N}", data1.rtn_Netamount)</td>
+											</tr>
+										}
+									}
+								</tbody>
+							</table>
+						</div>
+						<div class="row mt-4">
+							<div class="col-lg-6">
+								<div id="chart3"></div>
+							</div>
+
+							<div class="col-lg-6 mt-3 mt-lg-0">
+								<div id="chart4"></div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="fc-clearing" role="tabpanel" aria-labelledby="fc-clearing-tab">
+						<div class="table-responsive">
+							<table class="table table-bordered table-striped bank-transfer text-center" id="sbnp_transfer_3">
+								<thead>
+									<tr>
+										<th>Cycle Description</th>
+										<th>Outward Count</th>
+										<th>Outward Amount</th>
+										<th>Inward Count</th>
+										<th>Inward Amount</th>
+										<th>Net Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+								@if (Model.hostnet_ != null)
+									{
+									foreach (var data2 in Model.hostnet_)
+										{
+											<tr>
+												<td>@data2.FC_cyclename</td>
+												<td>@data2.FC_Owcount</td>
+												<td>@String.Format("{0:N}",data2.FC_Owamount)</td>
+												<td>@data2.FC_Incount</td>
+												<td>@String.Format("{0:N}",data2.FC_Inamount)</td>
+												<td>@String.Format("{0:N}",data2.FC_Netamount)</td>
+											</tr>
+										}
+									}
+								</tbody>
+							</table>
+						</div>
+						<div class="row mt-4">
+							<div class="col-lg-6">
+								<div id="chart5"></div>
+							</div>
+
+							<div class="col-lg-6 mt-3 mt-lg-0">
+								<div id="chart6"></div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="fc-returns" role="tabpanel" aria-labelledby="fc-returns-tab">
+						<div class="table-responsive">
+							<table class="table table-bordered table-striped bank-transfer text-center" id="sbnp_transfer_4">
+								<thead>
+									<tr>
+										<th>Cycle Description</th>
+										<th>Outward Count</th>
+										<th>Outward Amount</th>
+										<th>Inward Count</th>
+										<th>Inward Amount</th>
+										<th>Net Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+								@if (Model.hostnet_ != null)
+									{
+									foreach (var data3 in Model.hostnet_)
+										{
+											<tr>
+												<td>@data3.FC_RTNcyclename</td>
+												<td>@data3.FC_RTNOwcount</td>
+												<td>@String.Format("{0:N}",data3.FC_RTNOwamount)</td>
+												<td>@data3.FC_RTNIncount</td>
+												<td>@String.Format("{0:N}",data3.FC_RTNInamount)</td>
+												<td>@String.Format("{0:N}",data3.FC_RTNNetamount)</td>
+											</tr>
+										}
+									}
+								</tbody>
+							</table>
+						</div>
+						<div class="row mt-4">
+							<div class="col-lg-6">
+								<div id="chart7"></div>
+							</div>
+
+							<div class="col-lg-6 mt-3 mt-lg-0">
+								<div id="chart8"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+<script type="text/javascript">
+        
+	$(document).ready(function () {
+		$('#home_').removeClass('has-active');
+		$('#net_').addClass('active');
+		$('#sc_p').addClass('u-side-nav-opened active');
+		$('#subMenu3').css('display', 'block');
+		// var ddlbank = document.querySelector('#DDL_Bank');
+		// $.ajax({
+		// 	type: 'GET',
+		// 	url: '/Scoreboard/Netboard?handler=LoadDataFromDB',
+		// 	dataType: 'json',
+		// 	data: { "bank": ddlbank.value },
+		// 	success: function(data) {
+		// 		var table = $("#sbnp_transfer_1 tbody");
+		// 		$.each(data, function (idx, elem) {
+		// 			table.append("<tr><td>" + elem.cyclename + "</td><td>" + elem.Owcount + "</td>   <td>" + elem.Owamount + "</td></tr>");
+		// 		});
+		// 	}
+		// });
+
+		$('#sbnp_transfer_1').DataTable({
+			// dom: 'lBfrtip',
+			dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-5'><'col-sm-7'p>>",
+			// buttons: [ 'csv', 'excel' ],
+			buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+		});
+
+		$('#sbnp_transfer_2').DataTable({
+			// dom: 'lBfrtip',
+			dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-5'><'col-sm-7'p>>",
+			// buttons: [ 'csv', 'excel' ],
+			buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+		});
+
+		$('#sbnp_transfer_3').DataTable({
+			// dom: 'lBfrtip',
+			dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-5'><'col-sm-7'p>>",
+			// buttons: [ 'csv', 'excel' ],
+			buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+		});
+
+		$('#sbnp_transfer_4').DataTable({
+			// dom: 'lBfrtip',
+			dom: "<'row'<'col-sm-4'l><'col-sm-4 d-flex justify-content-center'B><'col-sm-4'f>>" +
+				"<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-5'><'col-sm-7'p>>",
+			// buttons: [ 'csv', 'excel' ],
+			buttons: [{ extend: 'csv', text: 'Export to CSV' }, { extend: 'excel', text: 'Export to Excel' }]
+		});
+
+		var ddlbank = document.querySelector('#DDL_Bank');
+		$.ajax({
+			type: 'GET',
+			url: '/Scoreboard/Netboard?handler=LoadDataFromDB',
+			dataType: 'json',
+			data: { "bank": ddlbank.value },
+			success: function (data) {
+				if (data != null) {
+					var dttable = $('#sbnp_transfer_1').DataTable();
+					var table2 = $("#sbnp_transfer_2").DataTable();
+					var table3 = $("#sbnp_transfer_3").DataTable();
+					var table4 = $("#sbnp_transfer_4").DataTable();
+					var c1 = 0;
+					var c2 = 0;
+					var c3 = 0;
+					var c4 = 0;
+					var c5 = 0;
+					var c6 = 0;
+
+					// table1.empty();
+					// table2.empty();
+					// table3.empty();
+					// table4.empty();
+
+					// table1.append('<thead><tr><th>Cycle Description</th>' +
+					// 	'<th> Outward Count </th>' + '<th> Outward Amount </th>' + '<th> Inward Count </th>' + '<th> Inward Amount </th>'
+					// 	+ '<th> Net Amount </th>' + '</tr></thead><tbody>')
+
+					// table2.append('<thead><tr><th>Cycle Description</th>' +
+					// 	'<th> Outward Count </th>' + '<th> Outward Amount </th>' + '<th> Inward Count </th>' + '<th> Inward Amount </th>'
+					// 	+ '<th> Net Amount </th>' + '</tr></thead><tbody>')
+
+					// table3.append('<thead><tr><th>Cycle Description</th>' +
+					// 	'<th> Outward Count </th>' + '<th> Outward Amount </th>' + '<th> Inward Count </th>' + '<th> Inward Amount </th>'
+					// 	+ '<th> Net Amount </th>' + '</tr></thead><tbody>')
+
+					// table4.append('<thead><tr><th>Cycle Description</th>' +
+					// 	'<th> Outward Count </th>' + '<th> Outward Amount </th>' + '<th> Inward Count </th>' + '<th> Inward Amount </th>'
+					// 	+ '<th> Net Amount </th>' + '</tr></thead><tbody>')
+					dttable.clear();
+					let newrow = '';
+					$("#sbnp_transfer_1 > tbody").html("");
+					$.each(data, function (idx, elem) {
+						if (elem.pK_cyclename != null) {
+							newrow += '<tr><td>' + elem.pK_cyclename + '</td><td>' + elem.pK_Owcount + '</td>   <td>' + addComas(parseFloat(elem.pK_Owamount).toFixed(2)) + '</td>' +
+								'<td>' + elem.pK_Incount + '</td>' + '<td>' + addComas(parseFloat(elem.pK_Inamount).toFixed(2))+ '</td>' + '<td>' + addComas(parseFloat(elem.pK_Netamount).toFixed(2)) + '</td></tr></tbody>';
+							c1 = c1 + elem.pK_Owcount;
+							c2 = c2 + elem.pK_Incount;
+							c3 = c3 + elem.pK_Netcount;
+
+							c4 = c4 + elem.pK_Owamount; 
+							c5 = c5 + elem.pK_Inamount;
+							c6 = c6 + elem.pK_Netamount;
+
+							dttable.row.add($(newrow)).draw();
+						}
+						Getchart1(c1, c2, c3);
+						Getchart2(c4, c5, c6);
+					});
+					c1 = 0;
+					c2 = 0;
+					c3 = 0;
+					c4 = 0;
+					c5 = 0;
+					c6 = 0;
+					table2.clear();
+					let newrow2 = '';
+					$("#sbnp_transfer_2 > tbody").html("");
+					$.each(data, function (idx, elem) {
+						if (elem.rtn_cyclename != null) {
+								newrow2 += '<tr><td>' + elem.rtn_cyclename + '</td><td>' + elem.rtn_Owcount + '</td>   <td>' + addComas(parseFloat(elem.rtn_Owamount).toFixed(2)) + '</td>' +
+								'<td>' + elem.rtn_Incount + '</td>' + '<td>' + addComas(parseFloat(elem.rtn_Inamount).toFixed(2)) + '</td>' + '<td>' + addComas(parseFloat(elem.rtn_Netamount).toFixed(2)) + '</td></tr></tbody>';
+							c1 = c1 + elem.rtn_Owcount;
+							c2 = c2 + elem.rtn_Incount;
+							c3 = c3 + elem.rtn_Netcount; 
+
+							c4 = c4 + elem.rtn_Owamount;
+							c5 = c5 + elem.rtn_Inamount;
+							c6 = c6 + elem.rtn_netamount;
+
+							table2.row.add($(newrow2)).draw();
+						}
+						Getchart3(c1, c2, c3);
+						Getchart4(c4, c5, c6);
+					});
+					c1 = 0;
+					c2 = 0;
+					c3 = 0;
+					c4 = 0;
+					c5 = 0;
+					c6 = 0;
+					table3.clear();
+					let newrow3 = '';
+					$("#sbnp_transfer_3 > tbody").html("");
+					$.each(data, function (idx, elem) {
+						if (elem.fC_cyclename != null) {
+							newrow3 += '<tr><td>' + elem.fC_cyclename + '</td><td>' + elem.fC_Owcount + '</td>   <td>' + addComas(parseFloat(elem.fC_Owamount).toFixed(2)) + '</td>' +
+								'<td>' + elem.fC_Incount + '</td>' + '<td>' + addComas(parseFloat(elem.fC_Inamount).toFixed(2)) + '</td>' + '<td>' + addComas(parseFloat(elem.fC_Netamount).toFixed(2)) + '</td></tr></tbody>';
+							c1 = c1 + elem.fC_Owcount;
+							c2 = c2 + elem.fC_Incount;
+							c3 = c3 + elem.fC_Netcount;
+
+							c4 = c4 + elem.fC_Owamount;
+							c5 = c5 + elem.fC_Inamount;
+							c6 = c6 + elem.fC_Netamount;
+
+							table3.row.add($(newrow3)).draw();
+						}
+						Getchart5(c1, c2, c3);
+						Getchart6(c4, c5, c6);
+					});
+					c1 = 0;
+					c2 = 0;
+					c3 = 0;
+					c4 = 0;
+					c5 = 0;
+					c6 = 0;
+					table4.clear();
+					let newrow4 = '';
+					$("#sbnp_transfer_4 > tbody").html("");
+					$.each(data, function (idx, elem) {
+						if (elem.fC_RTNcyclename != null) {
+							newrow4 += '<tr><td>' + elem.fC_RTNcyclename + '</td><td>' + elem.fC_RTNOwcount + '</td>   <td>' + parseFloat(elem.fC_RTNOwamount).toFixed(2) + '</td>' +
+								'<td>' + elem.fC_RTNIncount + '</td>' + '<td>' + parseFloat(elem.fC_RTNInamount).toFixed(2) + '</td>' + '<td>' + parseFloat(elem.fC_RTNNetamount).toFixed(2) + '</td></tr></tbody>';
+							c1 = c1 + elem.fC_RTNOwcount;
+							c2 = c2 + elem.fC_RTNIncount;
+							c3 = c3 + elem.fC_RTNNetcount;
+
+							c4 = c4 + elem.fC_RTNOwamount;
+							c5 = c5 + elem.fC_RTNInamount;
+							c6 = c6 + elem.fC_RTNNetamount;
+
+							table4.row.add($(newrow4)).draw();
+						}
+						Getchart7(c1, c2, c3);
+						Getchart8(c4, c5, c6);
+					});
+				}
+			}
+			// success: function(res) {
+			// 	var resp = res.split("|");
+
+			// 	$('#sbnp_transfer_1').empty();
+			// 	$('#sbnp_transfer_1').append('<td>' + cyclename + '</td>', '<td>' + Owcount + '</td>', '<td>' + Owamount + '</td>',
+			// 		'<td>' + trId + '</td>', '<td>' + Incount + '</td>', '<td>' + Inamount + '</td>', '<td>' + Netamount + '</td>');
+			// }
+		});
+
+		$("#DDL_Bank").on("change", function () {
+			var ddlbank = document.querySelector('#DDL_Bank');
+			$.ajax({
+				type: 'GET',
+				url: '/Scoreboard/Netboard?handler=LoadDataFromDB',
+				dataType: 'json',
+				data: { "bank": ddlbank.value },
+				success: function (data) {
+					if (data != null) {
+						var table1 = $("#sbnp_transfer_1");
+						var table2 = $("#sbnp_transfer_2");
+						var table3 = $("#sbnp_transfer_3");
+						var table4 = $("#sbnp_transfer_4");
+						var c1 = 0;
+						var c2 = 0;
+						var c3 = 0;
+						var c4 = 0;
+						var c5 = 0;
+						var c6 = 0;
+
+						table1.empty();
+						table2.empty();
+						table3.empty();
+						table4.empty();
+
+						table1.append('<thead><tr><th>Cycle Description</th>'+
+								'<th> Outward Count </th>'+'<th> Outward Amount </th>'+'<th> Inward Count </th>'+'<th> Inward Amount </th>'
+												+'<th> Net Amount </th>'+'</tr></thead><tbody>')
+
+						table2.append('<thead><tr><th>Cycle Description< /th>' +
+							'<th> Outward Count </th>' + '<th> Outward Amount </th>' + '<th> Inward Count </th>' + '<th> Inward Amount </th>'
+							+ '<th> Net Amount </th>' + '</tr></thead><tbody>')
+
+						table3.append('<thead><tr><th>Cycle Description< /th>' +
+							'<th> Outward Count </th>' + '<th> Outward Amount </th>' + '<th> Inward Count </th>' + '<th> Inward Amount </th>'
+							+ '<th> Net Amount </th>' + '</tr></thead><tbody>')
+
+						table4.append('<thead><tr><th>Cycle Description< /th>' +
+							'<th> Outward Count </th>' + '<th> Outward Amount </th>' + '<th> Inward Count </th>' + '<th> Inward Amount </th>'
+							+ '<th> Net Amount </th>' + '</tr></thead><tbody>')
+
+						$.each(data, function (idx, elem) {
+							if (elem.pK_cyclename != null) {
+							table1.append('<tr><td>' + elem.pK_cyclename + '</td><td>' + elem.pK_Owcount + '</td>   <td>' + elem.pK_Owamount + '</td>' +
+									'<td>' + elem.pK_Incount + '</td>' + '<td>' + elem.pK_Inamount + '</td>' + '<td>' + elem.pK_Netamount + '</td></tr></tbody>');
+								c1 = c1 + elem.pK_Owcount;
+								c2 = c2 + elem.pK_Incount;
+								c3 = c3 + elem.pK_Netcount;
+
+								c4 = c4 + elem.pK_Owamount;
+								c5 = c5 + elem.pK_Inamount;
+								c6 = c6 + elem.pK_Netamount;
+							}
+							Getchart1(c1,c2,c3);
+							Getchart2(c4,c5,c6);
+						});
+						c1 = "";
+						c2="";
+						c3 = "";
+						$.each(data, function (idx, elem) {
+							if (elem.rtn_cyclename != null) {
+							table2.append('<tr><td>' + elem.rtn_cyclename + '</td><td>' + elem.rtn_Owcount + '</td>   <td>' + elem.rtn_Owamount + '</td>' +
+									'<td>' + elem.rtn_Incount + '</td>' + '<td>' + elem.rtn_Inamount + '</td>' + '<td>' + elem.rtn_netamount + '</td></tr></tbody>');
+								c1 = c1 + elem.rtn_Owcount;
+								c2 = c2 + elem.rtn_Incount;
+								c3 = c3 + elem.rtn_Netcount;
+
+								c4 = c4 + elem.rtn_Owamount;
+								c5 = c5 + elem.rtn_Inamount;
+								c6 = c6 + elem.rtn_netamount;
+							}
+							Getchart3(c1, c2, c3);
+							Getchart4(c4, c5, c6);
+						});
+						c1 = "";
+						c2 = "";
+						c3 = "";
+						$.each(data, function (idx, elem) {
+							if (elem.fC_cyclename != null) {
+							table3.append('<tr><td>' + elem.fC_cyclename + '</td><td>' + elem.fC_Owcount + '</td>   <td>' + elem.fC_Owamount + '</td>' +
+									'<td>' + elem.fC_Incount + '</td>' + '<td>' + elem.fC_Inamount + '</td>' + '<td>' + elem.fC_Netamount + '</td></tr></tbody>');
+								c1 = c1 + elem.fC_Owcount;
+								c2 = c2 + elem.fC_Incount;
+								c3 = c3 + elem.fC_Netcount;
+
+								c4 = c4 + elem.fC_Owamount;
+								c5 = c5 + elem.fC_Inamount;
+								c6 = c6 + elem.fC_Netamount;
+							}
+							Getchart5(c1, c2, c3);
+							Getchart6(c4, c5, c6);
+						});
+						c1 = "";
+						c2 = "";
+						c3 = "";
+						$.each(data, function (idx, elem) {
+							if (elem.fC_RTNcyclename != null) {
+							table4.append('<tr><td>' + elem.fC_RTNcyclename + '</td><td>' + elem.fC_RTNOwcount + '</td>   <td>' + elem.fC_RTNOwamount + '</td>' +
+									'<td>' + elem.fC_RTNIncount + '</td>' + '<td>' + elem.fC_RTNInamount + '</td>' + '<td>' + elem.fC_RTNNetamount + '</td></tr></tbody>');
+								c1 = c1 + elem.fC_RTNOwcount;
+								c2 = c2 + elem.fC_RTNIncount;
+								c3 = c3 + elem.fC_RTNNetcount;
+
+								c4 = c4 + elem.fC_RTNOwamount;
+								c5 = c5 + elem.fC_RTNInamount;
+								c6 = c6 + elem.fC_RTNNetamount;
+							}
+							Getchart7(c1, c2, c3);
+							Getchart8(c4, c5, c6);
+						});
+					}
+				}
+				// success: function(res) {
+				// 	var resp = res.split("|");
+
+				// 	$('#sbnp_transfer_1').empty();
+				// 	$('#sbnp_transfer_1').append('<td>' + cyclename + '</td>', '<td>' + Owcount + '</td>', '<td>' + Owamount + '</td>',
+				// 		'<td>' + trId + '</td>', '<td>' + Incount + '</td>', '<td>' + Inamount + '</td>', '<td>' + Netamount + '</td>');
+				// }
+			});
+		});
+		//$('#sbnp_bank').select2();
+
+		
+
+
+		if (location.search != '') {
+			try {
+
+				$("#DDL_Bank").val(location.search.split('&')[0].split('=')[1]);
+			}
+			catch { }
+		}
+
+		$(".section2").hide();
+		$(".view_btn").on("click", function () {
+			$(".section2").show();
+			$(".section1").hide();
+
+		});
+		$(".back_btn").on("click", function () {
+			$(".section1").show();
+			$(".section2").hide();
+		});
+
+	});
+
+	function addComas(x) {
+		var parts = x.toString().split(".");
+		parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		return parts.join(".");
+	}
+	function Getchart1(yOut1, yIn1) {
+		let Net1 = yOut1 - yIn1;
+		if (Net1 < 0) {
+			Net1 = Math.abs(Net1);
+		}
+		var total = yOut1 + yIn1 + Net1;
+		var con_1 = (yOut1 * 100) / total;
+		var con_2 = (yIn1 * 100) / total;
+		var con_3 = (Net1 * 100) / total;
+		Highcharts.chart('chart1', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+
+			title: {
+				text: 'Count',
+				align: 'center',
+			},
+
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+	}
+	function Getchart2(yOut2, yIn2) {
+		let Net2 = yOut2 - yIn2;
+		if (Net2 < 0) {
+			Net2 = Math.abs(Net2);
+		}
+		var total = yOut2 + yIn2 + Net2;
+		var con_1 = (yOut2 * 100) / total;
+		var con_2 = (yIn2 * 100) / total;
+		var con_3 = (Net2 * 100) / total;
+		Highcharts.chart('chart2', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+
+			title: {
+				text: 'Amount',
+				align: 'center',
+			},
+
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+
+	}
+	function Getchart3(yOut, yIn) {
+		let Net = yOut - yIn;
+		if (Net < 0) {
+			Net = Math.abs(Net);
+		}
+		var total = yOut + yIn + Net;
+		var con_1 = (yOut * 100) / total;
+		var con_2 = (yIn * 100) / total;
+		var con_3 = (Net * 100) / total;
+		Highcharts.chart('chart3', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+			title: {
+				text: 'Count',
+				align: 'center'
+			},
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+	}
+	function Getchart4(yOut, yIn) {
+		let Net = yOut - yIn;
+		if (Net < 0) {
+			Net = Math.abs(Net);
+		}
+		var total = yOut + yIn + Net;
+		var con_1 = (yOut * 100) / total;
+		var con_2 = (yIn * 100) / total;
+		var con_3 = (Net * 100) / total;
+		Highcharts.chart('chart4', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+
+			title: {
+				text: 'Amount',
+				align: 'center',
+			},
+
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+	}
+	function Getchart5(yOut, yIn) {
+		let Net = yOut - yIn;
+		if (Net < 0) {
+			Net = Math.abs(Net);
+		}
+		var total = yOut + yIn + Net;
+		var con_1 = (yOut * 100) / total;
+		var con_2 = (yIn * 100) / total;
+		var con_3 = (Net * 100) / total;
+		Highcharts.chart('chart5', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+			title: {
+				text: 'Count',
+				align: 'center'
+			},
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+	}
+	function Getchart6(yOut, yIn) {
+		let Net = yOut - yIn;
+		if (Net < 0) {
+			Net = Math.abs(Net);
+		}
+		var total = yOut + yIn + Net;
+		var con_1 = (yOut * 100) / total;
+		var con_2 = (yIn * 100) / total;
+		var con_3 = (Net * 100) / total;
+		Highcharts.chart('chart6', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+
+			title: {
+				text: 'Amount',
+				align: 'center',
+			},
+
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+	}
+	function Getchart7(yOut, yIn) {
+		let Net = yOut - yIn;
+		if (Net < 0) {
+			Net = Math.abs(Net);
+		}
+		var total = yOut + yIn + Net;
+		var con_1 = (yOut * 100) / total;
+		var con_2 = (yIn * 100) / total;
+		var con_3 = (Net * 100) / total;
+		Highcharts.chart('chart7', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+			title: {
+				text: 'Count',
+				align: 'center'
+			},
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+	}
+	function Getchart8(yOut, yIn) {
+		let Net = yOut - yIn;
+		if (Net < 0) {
+			Net = Math.abs(Net);
+		}
+		var total = yOut + yIn + Net;
+		var con_1 = (yOut * 100) / total;
+		var con_2 = (yIn * 100) / total;
+		var con_3 = (Net * 100) / total;
+		Highcharts.chart('chart8', {
+			chart: {
+				type: 'pie',
+				height: 300,
+			},
+
+			title: {
+				text: 'Amount',
+				align: 'center',
+			},
+
+			subtitle: {
+				text: '',
+				align: ''
+			},
+
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				},
+				point: {
+					valueSuffix: '%'
+				}
+			},
+
+			plotOptions: {
+				series: {
+					// borderRadius: 5,
+					dataLabels: {
+						enabled: true,
+						format: '{point.name}: {point.y:.1f}%',
+						style: {
+							fontSize: 14,
+							color: 'rgb(255,0,0)',
+						}
+					}
+				}
+			},
+
+			credits: {
+				enabled: false
+			},
+
+			tooltip: {
+				headerFormat: '',
+				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.1f}%</b>',
+				style: {
+					fontWeight: 'bold',
+					fontSize: 12
+				}
+			},
+
+			series: [
+				{
+					name: '',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Outward',
+							y: con_1,
+							drilldown: 'Outward',
+							color: '#fe6383',
+							fontSize: 16
+						},
+						{
+							name: 'Inward',
+							y: con_2,
+							drilldown: 'Inward',
+							color: '#4ac0c0'
+						},
+						{
+							name: 'Net',
+							y: con_3,
+							drilldown: 'Net',
+							color: '#ffcc56'
+						}
+					]
+				}
+			]
+		});
+
+	}
+
+</script>
+<script src="~/assets/vendor/highcharts/highcharts.js"></script>
+<script src="~/assets/vendor/highcharts/data.js"></script>
+<script src="~/assets/vendor/highcharts/drilldown.js"></script>
+<script src="~/assets/vendor/highcharts/accessibility.js"></script>
+<style>
+	div#sbnp_transfer_1_length {
+		display: none;
+	}
+
+	div#sbnp_transfer_1_filter {
+		display: none;
+	}
+	div#sbnp_transfer_2_length {
+		display: none;
+	}
+
+	div#sbnp_transfer_2_filter {
+		display: none;
+	}
+	div#sbnp_transfer_3_length {
+		display: none;
+	}
+
+	div#sbnp_transfer_3_filter {
+		display: none;
+	}
+
+	div#sbnp_transfer_4_length {
+		display: none;
+	}
+
+	div#sbnp_transfer_4_filter {
+		display: none;
+	}
+</style>
